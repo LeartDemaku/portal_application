@@ -1,0 +1,98 @@
+@using PortalApp.Models
+@using PortalApp.Models.ViewModels
+@model ArticleStoreViewModel
+
+@{
+    Layout = "~/Views/Shared/Admin/_Layout.cshtml";
+    ViewData["Title"] = "Shto artikull";
+    var categories = ViewBag.ArticleCategories as List<ArticleCategory> ?? new List<ArticleCategory>();
+    var tags = ViewBag.ArticleTags as List<ArticleTag> ?? new List<ArticleTag>();
+    var canApprove = ViewBag.CanApprove is true;
+}
+
+@section Styles
+{
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+}
+
+<div class="admin-card">
+    <form asp-action="Create" asp-controller="AdminArticle" method="post" enctype="multipart/form-data" class="admin-form">
+        @Html.AntiForgeryToken()
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="admin-form-grid">
+            <div class="admin-form-main">
+                <div class="form-field">
+                    <label asp-for="Title"></label>
+                    <input asp-for="Title" />
+                    <span asp-validation-for="Title" class="text-danger"></span>
+                </div>
+
+                <div class="form-field">
+                    <label asp-for="Content"></label>
+                    <textarea asp-for="Content" rows="14"></textarea>
+                    <span asp-validation-for="Content" class="text-danger"></span>
+                </div>
+            </div>
+
+            <aside class="admin-form-side">
+                <div class="form-field">
+                    <label asp-for="ArticleCategoryId">Kategoria</label>
+                    <select asp-for="ArticleCategoryId">
+                        <option value="0">Zgjidh kategorine</option>
+                        @foreach (var category in categories)
+                        {
+                            <option value="@category.Id">@category.Name</option>
+                        }
+                    </select>
+                    <span asp-validation-for="ArticleCategoryId" class="text-danger"></span>
+                </div>
+
+                <div class="form-field">
+                    <label asp-for="ArticleTags">Tagjet</label>
+                    <select asp-for="ArticleTags" class="select2" multiple>
+                        @foreach (var tag in tags)
+                        {
+                            <option value="@tag.Title">@tag.Title</option>
+                        }
+                    </select>
+                    <span asp-validation-for="ArticleTags" class="text-danger"></span>
+                </div>
+
+                <div class="form-field">
+                    <label asp-for="CoverImage">Imazhi i kopertines</label>
+                    <input asp-for="CoverImage" type="file" accept="image/*" />
+                    <span asp-validation-for="CoverImage" class="text-danger"></span>
+                </div>
+
+                @if (canApprove)
+                {
+                    <label class="toggle-field">
+                        <input asp-for="IsApproved" />
+                        <span>Publikoje menjehere</span>
+                    </label>
+                }
+
+                <div class="admin-form-actions">
+                    <button type="submit" class="primary-button">Ruaj artikullin</button>
+                    <a asp-action="Index" asp-controller="AdminArticle" class="secondary-button">Anulo</a>
+                </div>
+            </aside>
+        </div>
+    </form>
+</div>
+
+@section Scripts
+{
+    <partial name="_ValidationScriptsPartial" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+        $(function () {
+            $('.select2').select2({
+                tags: true,
+                width: '100%',
+                placeholder: 'Zgjidh ose shkruaj tagjet'
+            });
+        });
+    </script>
+}

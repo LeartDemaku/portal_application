@@ -1,0 +1,121 @@
+@model PortalArticleDetailsViewModel
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<div class="portal-page">
+    <div class="container">
+        <section class="article-hero">
+            <div class="article-hero-copy">
+                <a class="article-category" asp-controller="Sections" asp-action="Show" asp-route-slug="@Model.CategorySlug">@Model.CategoryName</a>
+                <h1>@Model.Title</h1>
+                <div class="meta-row">
+                    <span>@Model.AuthorName</span>
+                    <span>@Model.CreatedAt.ToString("dd.MM.yyyy")</span>
+                    <span>@Model.ReadTimeMinutes min lexim</span>
+                </div>
+            </div>
+            <div class="article-hero-media">
+                <img src="@Model.CoverImageUrl" alt="@Model.Title" />
+            </div>
+        </section>
+
+        <div class="article-layout">
+            <article class="article-body-card">
+                <div class="article-body">
+                    @foreach (var paragraph in Model.Paragraphs)
+                    {
+                        <p>@paragraph</p>
+                    }
+                </div>
+
+                @if (Model.Tags.Any())
+                {
+                    <div class="tag-list">
+                        @foreach (var tag in Model.Tags)
+                        {
+                            <a asp-controller="Tag" asp-action="Show" asp-route-name="@tag">#@tag</a>
+                        }
+                    </div>
+                }
+
+                <section class="comments-section">
+                    <div class="section-heading">
+                        <div>
+                            <span class="eyebrow">Komente</span>
+                            <h2>Diskutimi i lexuesve</h2>
+                        </div>
+                    </div>
+
+                    <form class="comment-form" method="post" asp-controller="Home" asp-action="Comment" asp-route-id="@Model.Id">
+                        @Html.AntiForgeryToken()
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="comment-form-grid">
+                            <div class="form-field">
+                                <label asp-for="CommentForm.Name">Emri</label>
+                                <input asp-for="CommentForm.Name" />
+                                <span asp-validation-for="CommentForm.Name" class="text-danger"></span>
+                            </div>
+                            <div class="form-field">
+                                <label asp-for="CommentForm.Email">Email</label>
+                                <input asp-for="CommentForm.Email" />
+                                <span asp-validation-for="CommentForm.Email" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="form-field">
+                            <label asp-for="CommentForm.Comment">Komenti</label>
+                            <textarea asp-for="CommentForm.Comment" rows="5"></textarea>
+                            <span asp-validation-for="CommentForm.Comment" class="text-danger"></span>
+                        </div>
+                        <button type="submit" class="primary-button">Dergo komentin</button>
+                    </form>
+
+                    <div class="comment-list">
+                        @if (Model.Comments.Any())
+                        {
+                            @foreach (var comment in Model.Comments)
+                            {
+                                <partial name="Partials/_ArticleComment" model="comment" />
+                            }
+                        }
+                        else
+                        {
+                            <div class="empty-state small">
+                                <h3>Nuk ka komente ende</h3>
+                                <p>Behu i pari qe hap diskutimin per kete artikull.</p>
+                            </div>
+                        }
+                    </div>
+                </section>
+            </article>
+
+            <aside class="article-sidebar">
+                <div class="sidebar-card">
+                    <span class="eyebrow">Me shume nga @Model.CategoryName</span>
+                    <h3>Artikuj te ngjashem</h3>
+                    <div class="sidebar-list">
+                        @if (Model.RelatedArticles.Any())
+                        {
+                            @foreach (var article in Model.RelatedArticles)
+                            {
+                                <partial name="Partials/_ArticleMini" model="article" />
+                            }
+                        }
+                        else
+                        {
+                            <div class="empty-state small">
+                                <h3>Nuk ka artikuj te tjere</h3>
+                                <p>Kjo kategori nuk ka ende artikuj te lidhur.</p>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,55 @@
+
+@model List<ApplicationUserViewModel>
+
+@{
+    Layout = "~/Views/Shared/Admin/_Layout.cshtml";
+    ViewData["Title"] = "Përdoruesit";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="mb-0">Përdoruesit</h2>
+        <a asp-action="Create" asp-controller="AdminUser" class="btn btn-success">Krijo përdorues</a>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Emri</th>
+                    <th>Email</th>
+                    <th>Roli</th>
+                    <th class="text-end">Veprimi</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Any())
+                {
+                    @foreach (var item in Model.Select((value, i) => new { i, value }))
+                    {
+                        <tr>
+                            <th>@(item.i + 1)</th>
+                            <td>@(string.Concat(item.value.FirstName, " ", item.value.LastName).Trim())</td>
+                            <td>@item.value.Email</td>
+                            <td>@(item.value.Roles.FirstOrDefault() ?? "-")</td>
+                            <td class="text-end">
+                                <a asp-action="Edit" asp-controller="AdminUser" asp-route-id="@item.value.Id" class="btn btn-outline-primary btn-sm">Edito</a>
+                                <form asp-action="Delete" asp-controller="AdminUser" asp-route-id="@item.value.Id" method="post" class="d-inline">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('A dëshironi ta fshini përdoruesin?');">Fshij</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="5" class="text-center text-muted py-4">Nuk ka përdorues për t'u shfaqur.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

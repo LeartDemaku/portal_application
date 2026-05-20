@@ -1,0 +1,52 @@
+@model IEnumerable<PortalApp.Models.ArticleCategory>
+
+@{
+    Layout = "~/Views/Shared/Admin/_Layout.cshtml";
+    ViewData["Title"] = "Kategoritë";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="mb-0">Kategoritë</h2>
+        <a asp-action="Create" asp-controller="AdminArticleCategory" class="btn btn-success">Shto kategori</a>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Emri</th>
+                    <th>Krijuar më</th>
+                    <th class="text-end">Veprime</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Any())
+                {
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.Id</td>
+                            <td>@item.Name</td>
+                            <td>@item.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                            <td class="text-end">
+                                <a asp-action="Edit" asp-controller="AdminArticleCategory" asp-route-id="@item.Id" class="btn btn-outline-primary btn-sm">Edito</a>
+                                <form asp-action="Delete" asp-controller="AdminArticleCategory" asp-route-id="@item.Id" method="post" class="d-inline">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('A dëshironi ta fshini kategorinë?');">Fshij</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="4" class="text-center text-muted py-4">Nuk ka kategori për t'u shfaqur.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

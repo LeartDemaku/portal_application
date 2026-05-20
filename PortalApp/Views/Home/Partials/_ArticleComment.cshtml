@@ -1,0 +1,9 @@
+@model ArticleComment
+
+<article class="comment-card">
+    <div class="comment-card-head">
+        <strong>@Model.Name</strong>
+        <span>@Model.CreatedAt.ToString("dd.MM.yyyy HH:mm")</span>
+    </div>
+    <p>@Model.Comment</p>
+</article>

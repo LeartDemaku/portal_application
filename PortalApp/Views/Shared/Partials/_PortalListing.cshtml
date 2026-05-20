@@ -1,0 +1,67 @@
+@model PortalListingPageViewModel
+
+<section class="listing-hero" style="--listing-accent:@Model.AccentColor">
+    <div>
+        <span class="eyebrow">Editorial</span>
+        <h1>@Model.Title</h1>
+        <p>@Model.Description</p>
+    </div>
+    <form class="listing-search" asp-controller="Home" asp-action="Search" method="get">
+        <input type="search" name="q" value="@Model.SearchQuery" placeholder="Kerko ne portal" />
+        <button type="submit">Kerko</button>
+    </form>
+</section>
+
+@if (Model.FeaturedArticle != null)
+{
+    <section class="hero-grid compact">
+        <article class="hero-card compact">
+            <div class="hero-card-media">
+                <img src="@Model.FeaturedArticle.CoverImageUrl" alt="@Model.FeaturedArticle.Title" />
+            </div>
+            <div class="hero-card-body">
+                <a class="hero-card-category" asp-controller="Sections" asp-action="Show" asp-route-slug="@Model.FeaturedArticle.CategorySlug">@Model.FeaturedArticle.CategoryName</a>
+                <h2>@Model.FeaturedArticle.Title</h2>
+                <p>@Model.FeaturedArticle.Summary</p>
+                <div class="meta-row">
+                    <span>@Model.FeaturedArticle.AuthorName</span>
+                    <span>@Model.FeaturedArticle.CreatedAt.ToString("dd.MM.yyyy")</span>
+                    <span>@Model.FeaturedArticle.ReadTimeMinutes min lexim</span>
+                </div>
+                <a class="primary-link" asp-controller="Home" asp-action="Show" asp-route-id="@Model.FeaturedArticle.Id">Lexo artikullin</a>
+            </div>
+        </article>
+        <div class="headline-stack">
+            @foreach (var article in Model.HeadlineArticles)
+            {
+                <partial name="~/Views/Home/Partials/_ArticleMini.cshtml" model="article" />
+            }
+        </div>
+    </section>
+}
+
+@if (Model.Articles.Any())
+{
+    <section class="content-section">
+        <div class="section-heading">
+            <div>
+                <span class="eyebrow">Arkiva</span>
+                <h2>Me shume nga kjo faqe</h2>
+            </div>
+        </div>
+        <div class="editorial-grid">
+            @foreach (var article in Model.Articles)
+            {
+                <partial name="~/Views/Home/Partials/_Article.cshtml" model="article" />
+            }
+        </div>
+    </section>
+}
+else if (Model.FeaturedArticle == null)
+{
+    <section class="empty-state">
+        <h2>Nuk u gjet asnje artikull</h2>
+        <p>Provoni nje kerkese tjeter ose rikthehuni ne balline.</p>
+        <a class="primary-link" asp-controller="Home" asp-action="Index">Kthehu ne balline</a>
+    </section>
+}

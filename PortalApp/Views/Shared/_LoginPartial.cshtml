@@ -1,0 +1,19 @@
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+<div class="account-actions">
+@if (SignInManager.IsSignedIn(User))
+{
+    <a class="account-link" asp-controller="AdminArticle" asp-action="Index">Admin</a>
+    <a class="account-link" asp-area="Identity" asp-page="/Account/Manage/Index">@User.Identity?.Name</a>
+    <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+        <button type="submit" class="account-button">Dil</button>
+    </form>
+}
+else
+{
+    <a class="account-link" asp-area="Identity" asp-page="/Account/Register">Regjistrohu</a>
+    <a class="account-button" asp-area="Identity" asp-page="/Account/Login">Hyr</a>
+}
+</div>

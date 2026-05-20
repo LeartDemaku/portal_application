@@ -1,0 +1,100 @@
+@using PortalApp.Services
+@inject IPortalQueryService PortalQueryService
+@{
+    var sections = await PortalQueryService.GetNavigationItemsAsync();
+    var currentPath = Context.Request.Path.Value ?? "/";
+}
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - PortalX</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/PortalApp.styles.css" asp-append-version="true" />
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body class="portal-body">
+    <header class="site-header" data-site-header>
+        <div class="site-topbar">
+            <div class="container site-topbar-inner">
+                <span>Edicioni digjital</span>
+                <span>@DateTime.Now.ToString("dd.MM.yyyy")</span>
+            </div>
+        </div>
+        <nav class="navbar navbar-expand-lg portal-navbar">
+            <div class="container">
+                <a class="navbar-brand portal-brand" asp-controller="Home" asp-action="Index">
+                    <span class="portal-brand-mark">PX</span>
+                    <span class="portal-brand-copy">
+                        <strong>PortalX</strong>
+                        <small>Lajmet qe levizin diten</small>
+                    </span>
+                </a>
+                <button class="navbar-toggler portal-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#portalNavigation" aria-controls="portalNavigation" aria-expanded="false" aria-label="Hap navigimin">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <div class="collapse navbar-collapse" id="portalNavigation">
+                    <ul class="navbar-nav portal-nav-links mx-auto">
+                        <li class="nav-item">
+                            <a class="nav-link @(currentPath == "/" ? "active" : null)" asp-controller="Home" asp-action="Index">Ballina</a>
+                        </li>
+                        @foreach (var navSection in sections)
+                        {
+                            var sectionPath = $"/kategori/{navSection.Slug}";
+                            <li class="nav-item">
+                                <a class="nav-link @(currentPath.StartsWith(sectionPath, StringComparison.OrdinalIgnoreCase) || currentPath.Equals($"/{navSection.Slug}", StringComparison.OrdinalIgnoreCase) ? "active" : null)" asp-controller="Sections" asp-action="Show" asp-route-slug="@navSection.Slug">@navSection.Title</a>
+                            </li>
+                        }
+                    </ul>
+                    <div class="portal-actions">
+                        <form class="portal-search" asp-controller="Home" asp-action="Search" method="get">
+                            <input type="search" name="q" value="@Context.Request.Query["q"]" placeholder="Kerko lajme" aria-label="Kerko lajme" />
+                            <button type="submit">Kerko</button>
+                        </form>
+                        <partial name="_LoginPartial" />
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="site-main">
+        @RenderBody()
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="site-footer-grid">
+                <div>
+                    <p class="site-footer-title">PortalX</p>
+                    <p class="site-footer-copy">Platforme editoriale me fokus te qarte ne ekonomi, teknologji, sport dhe shendetesi.</p>
+                </div>
+                <div>
+                    <p class="site-footer-title">Navigimi</p>
+                    <div class="site-footer-links">
+                        <a asp-controller="Home" asp-action="Index">Ballina</a>
+                        <a asp-controller="Home" asp-action="Search">Kerko</a>
+                        <a asp-controller="Home" asp-action="Privacy">Privatesia</a>
+                    </div>
+                </div>
+                <div>
+                    <p class="site-footer-title">Redaksia</p>
+                    <p class="site-footer-copy">Publikim i shpejte, i strukturuar dhe i pershtatur per cdo pajisje.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

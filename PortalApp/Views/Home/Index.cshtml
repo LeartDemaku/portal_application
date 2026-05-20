@@ -1,0 +1,88 @@
+@model PortalHomeViewModel
+@{
+    ViewData["Title"] = "Ballina";
+}
+
+<div class="portal-page">
+    <div class="container">
+        @if (Model.FeaturedArticle != null)
+        {
+            <section class="hero-grid">
+                <article class="hero-card">
+                    <div class="hero-card-media">
+                        <img src="@Model.FeaturedArticle.CoverImageUrl" alt="@Model.FeaturedArticle.Title" />
+                    </div>
+                    <div class="hero-card-body">
+                        <span class="eyebrow">Kryesore</span>
+                        <a class="hero-card-category" asp-controller="Sections" asp-action="Show" asp-route-slug="@Model.FeaturedArticle.CategorySlug">@Model.FeaturedArticle.CategoryName</a>
+                        <h1>@Model.FeaturedArticle.Title</h1>
+                        <p>@Model.FeaturedArticle.Summary</p>
+                        <div class="meta-row">
+                            <span>@Model.FeaturedArticle.AuthorName</span>
+                            <span>@Model.FeaturedArticle.CreatedAt.ToString("dd.MM.yyyy")</span>
+                            <span>@Model.FeaturedArticle.ReadTimeMinutes min lexim</span>
+                        </div>
+                        <a class="primary-link" asp-controller="Home" asp-action="Show" asp-route-id="@Model.FeaturedArticle.Id">Lexo artikullin</a>
+                    </div>
+                </article>
+
+                <div class="headline-stack">
+                    @foreach (var article in Model.HeadlineArticles)
+                    {
+                        <partial name="Partials/_ArticleMini" model="article" />
+                    }
+                </div>
+            </section>
+        }
+
+        <section class="content-section">
+            <div class="section-heading">
+                <div>
+                    <span class="eyebrow">Te fundit</span>
+                    <h2>Rrjedha editoriale e dites</h2>
+                </div>
+                <a class="text-link" asp-controller="Home" asp-action="Search">Kerko arkiven</a>
+            </div>
+            <div class="editorial-grid">
+                @foreach (var article in Model.LatestArticles)
+                {
+                    <partial name="Partials/_Article" model="article" />
+                }
+            </div>
+        </section>
+
+        @if (Model.Sections.Any())
+        {
+            <section class="content-section">
+                <div class="section-heading">
+                    <div>
+                        <span class="eyebrow">Kategorite</span>
+                        <h2>Faqe tematike me hyrje te unifikuar</h2>
+                    </div>
+                </div>
+
+                <div class="section-showcase">
+                    @foreach (var sectionPreview in Model.Sections)
+                    {
+                        <article class="section-panel" style="--section-accent:@(sectionPreview.AccentColor)">
+                            <div class="section-panel-head">
+                                <div>
+                                    <span class="section-dot"></span>
+                                    <h3>@sectionPreview.Title</h3>
+                                </div>
+                                <a asp-controller="Sections" asp-action="Show" asp-route-slug="@sectionPreview.Slug">Shiko kategorine</a>
+                            </div>
+                            <p>@sectionPreview.Description</p>
+                            <div class="section-panel-grid">
+                                @foreach (var article in sectionPreview.Articles)
+                                {
+                                    <partial name="Partials/_ArticleMini" model="article" />
+                                }
+                            </div>
+                        </article>
+                    }
+                </div>
+            </section>
+        }
+    </div>
+</div>

@@ -1,0 +1,30 @@
+@model PortalArticleCardViewModel
+
+<article class="story-card">
+    <a class="story-card-media" asp-controller="Home" asp-action="Show" asp-route-id="@Model.Id">
+        <img src="@Model.CoverImageUrl" alt="@Model.Title" />
+    </a>
+    <div class="story-card-body">
+        <div class="story-card-meta">
+            <a asp-controller="Sections" asp-action="Show" asp-route-slug="@Model.CategorySlug">@Model.CategoryName</a>
+            <span>@Model.CreatedAt.ToString("dd.MM.yyyy")</span>
+        </div>
+        <h3 class="story-card-title">
+            <a asp-controller="Home" asp-action="Show" asp-route-id="@Model.Id">@Model.Title</a>
+        </h3>
+        <p class="story-card-summary">@Model.Summary</p>
+        @if (Model.Tags.Any())
+        {
+            <div class="story-card-tags">
+                @foreach (var tag in Model.Tags)
+                {
+                    <a asp-controller="Tag" asp-action="Show" asp-route-name="@tag">#@tag</a>
+                }
+            </div>
+        }
+        <div class="story-card-footer">
+            <span>@Model.AuthorName</span>
+            <span>@Model.ReadTimeMinutes min</span>
+        </div>
+    </div>
+</article>

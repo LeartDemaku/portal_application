@@ -1,0 +1,10 @@
+@model PortalListingPageViewModel
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<div class="portal-page">
+    <div class="container">
+        <partial name="~/Views/Shared/Partials/_PortalListing.cshtml" model="Model" />
+    </div>
+</div>

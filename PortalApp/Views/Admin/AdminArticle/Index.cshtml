@@ -1,0 +1,78 @@
+@model List<PortalApp.Models.Article>
+
+@{
+    Layout = "~/Views/Shared/Admin/_Layout.cshtml";
+    ViewData["Title"] = "Artikujt";
+}
+
+<div class="admin-card">
+    <div class="admin-toolbar">
+        <div>
+            <span class="eyebrow">Menaxhim</span>
+            <h2>Lista e artikujve</h2>
+        </div>
+        <a asp-action="Create" asp-controller="AdminArticle" class="primary-button">Shto artikull</a>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table admin-table align-middle">
+            <thead>
+                <tr>
+                    <th>Titulli</th>
+                    <th>Kategoria</th>
+                    <th>Autori</th>
+                    <th>Statusi</th>
+                    <th>Data</th>
+                    <th class="text-end">Veprime</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Any())
+                {
+                    @foreach (var article in Model)
+                    {
+                        var author = article.CreatedByUser == null
+                            ? "Pa autor"
+                            : string.Join(" ", new[] { article.CreatedByUser.FirstName, article.CreatedByUser.LastName }.Where(x => !string.IsNullOrWhiteSpace(x)));
+                        <tr>
+                            <td>
+                                <div class="table-title-cell">
+                                    <strong>@article.Title</strong>
+                                    <small>@(string.IsNullOrWhiteSpace(author) ? "Pa autor" : author)</small>
+                                </div>
+                            </td>
+                            <td>@article.ArticleCategory?.Name</td>
+                            <td>@(string.IsNullOrWhiteSpace(author) ? "Pa autor" : author)</td>
+                            <td>
+                                <span class="status-pill @(string.IsNullOrWhiteSpace(article.ApprovedBy) ? "draft" : "live")">
+                                    @(string.IsNullOrWhiteSpace(article.ApprovedBy) ? "Draft" : "Publikuar")
+                                </span>
+                            </td>
+                            <td>@article.CreatedAt.ToString("dd.MM.yyyy HH:mm")</td>
+                            <td class="text-end">
+                                <div class="table-actions">
+                                    <a asp-action="Edit" asp-controller="AdminArticle" asp-route-id="@article.Id" class="secondary-button">Edito</a>
+                                    <form asp-action="Delete" asp-controller="AdminArticle" asp-route-id="@article.Id" method="post">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="danger-button" onclick="return confirm('A deshironi ta fshini artikullin?');">Fshij</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="6">
+                            <div class="empty-state small">
+                                <h3>Nuk ka artikuj per shfaqje</h3>
+                                <p>Krijoni artikullin e pare per te nisur publikimin.</p>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

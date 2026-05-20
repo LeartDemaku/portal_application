@@ -1,0 +1,17 @@
+@model PortalArticleCardViewModel
+
+<article class="mini-story">
+    <div class="mini-story-copy">
+        <a class="mini-story-category" asp-controller="Sections" asp-action="Show" asp-route-slug="@Model.CategorySlug">@Model.CategoryName</a>
+        <h3 class="mini-story-title">
+            <a asp-controller="Home" asp-action="Show" asp-route-id="@Model.Id">@Model.Title</a>
+        </h3>
+        <div class="meta-row">
+            <span>@Model.CreatedAt.ToString("dd.MM.yyyy")</span>
+            <span>@Model.ReadTimeMinutes min</span>
+        </div>
+    </div>
+    <a class="mini-story-media" asp-controller="Home" asp-action="Show" asp-route-id="@Model.Id">
+        <img src="@Model.CoverImageUrl" alt="@Model.Title" />
+    </a>
+</article>
