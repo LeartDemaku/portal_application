@@ -8114,11 +8114,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Swisstech\\OneDrive\\Desktop\\Konceptet e Avancuara në Ueb\\portal_application\\PortalApp\\PortalApp.csproj",
+      "projectUniqueName": "C:\\Users\\Swisstech\\OneDrive\\Desktop\\portal_application\\PortalApp\\PortalApp.csproj",
       "projectName": "PortalApp",
-      "projectPath": "C:\\Users\\Swisstech\\OneDrive\\Desktop\\Konceptet e Avancuara në Ueb\\portal_application\\PortalApp\\PortalApp.csproj",
+      "projectPath": "C:\\Users\\Swisstech\\OneDrive\\Desktop\\portal_application\\PortalApp\\PortalApp.csproj",
       "packagesPath": "C:\\Users\\Swisstech\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Swisstech\\OneDrive\\Desktop\\Konceptet e Avancuara në Ueb\\portal_application\\PortalApp\\obj\\",
+      "outputPath": "C:\\Users\\Swisstech\\OneDrive\\Desktop\\portal_application\\PortalApp\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Swisstech\\AppData\\Roaming\\NuGet\\NuGet.Config",

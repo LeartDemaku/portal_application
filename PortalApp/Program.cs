@@ -32,6 +32,7 @@ using (var scope = app.Services.CreateScope())
 {
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
     var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
     var roles = new[] { "Drejtor", "Admin", "Administrator", "Gazetar", "Redaktor" };
 
     foreach (var role in roles)
@@ -39,6 +40,16 @@ using (var scope = app.Services.CreateScope())
         if (!await roleManager.RoleExistsAsync(role))
         {
             await roleManager.CreateAsync(new IdentityRole(role));
+        }
+    }
+
+    var firstUser = await dbContext.Users.OrderBy(x => x.Email).FirstOrDefaultAsync();
+    if (firstUser != null)
+    {
+        var hasAdminRole = await userManager.IsInRoleAsync(firstUser, "Admin");
+        if (!hasAdminRole)
+        {
+            await userManager.AddToRoleAsync(firstUser, "Admin");
         }
     }
 

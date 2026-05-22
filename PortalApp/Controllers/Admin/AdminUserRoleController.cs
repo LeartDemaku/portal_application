@@ -7,7 +7,7 @@ using PortalApp.Models.ViewModels;
 
 namespace PortalApp.Controllers.Admin
 {
-    [Authorize]
+    [Authorize(Roles = "Drejtor,Admin,Administrator")]
     public class AdminUserRoleController : Controller
     {
         private readonly ApplicationDbContext _db;
