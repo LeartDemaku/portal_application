@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "u9vgg+S4mqW5uKeuxFG+qAGHqzy8856WEESgTQ7McMQ=",
+  "Hash": "ePdWpfmNXy/QCOHc5quQCAIG6R3UshUADFJMRES6knw=",
   "Source": "PortalApp",
   "BasePath": "_content/PortalApp",
   "Mode": "Default",
@@ -1250,6 +1250,25 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\images\\articles\\1.png"
+    },
+    {
+      "Identity": "C:\\Users\\Swisstech\\OneDrive\\Desktop\\portal_application\\PortalApp\\wwwroot\\images\\articles\\10811742-8019-4305-8da2-1fbeb68c35f9.webp",
+      "SourceId": "PortalApp",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Swisstech\\OneDrive\\Desktop\\portal_application\\PortalApp\\wwwroot\\",
+      "BasePath": "_content/PortalApp",
+      "RelativePath": "images/articles/10811742-8019-4305-8da2-1fbeb68c35f9.webp",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\articles\\10811742-8019-4305-8da2-1fbeb68c35f9.webp"
     },
     {
       "Identity": "C:\\Users\\Swisstech\\OneDrive\\Desktop\\portal_application\\PortalApp\\wwwroot\\images\\articles\\2.jpg",

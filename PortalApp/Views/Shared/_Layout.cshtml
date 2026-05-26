@@ -35,30 +35,43 @@
                         <small>Lajmet qe levizin diten</small>
                     </span>
                 </a>
-                <button class="navbar-toggler portal-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#portalNavigation" aria-controls="portalNavigation" aria-expanded="false" aria-label="Hap navigimin">
+                
+                <button class="navbar-toggler portal-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Hap navigimin">
                     <span></span>
                     <span></span>
                     <span></span>
                 </button>
-                <div class="collapse navbar-collapse" id="portalNavigation">
-                    <ul class="navbar-nav portal-nav-links mx-auto">
-                        <li class="nav-item">
-                            <a class="nav-link @(currentPath == "/" ? "active" : null)" asp-controller="Home" asp-action="Index">Ballina</a>
-                        </li>
-                        @foreach (var navSection in sections)
-                        {
-                            var sectionPath = $"/kategori/{navSection.Slug}";
+                
+                <div class="offcanvas offcanvas-end portal-offcanvas" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+                    <div class="offcanvas-header">
+                        <h5 class="offcanvas-title portal-brand" id="offcanvasNavbarLabel">
+                            <span class="portal-brand-mark">PX</span>
+                            <strong class="text-white">PortalX</strong>
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Mbyll"></button>
+                    </div>
+                    <div class="offcanvas-body">
+                        <ul class="navbar-nav portal-nav-links mx-auto mb-4 mb-lg-0 align-items-lg-center">
                             <li class="nav-item">
-                                <a class="nav-link @(currentPath.StartsWith(sectionPath, StringComparison.OrdinalIgnoreCase) || currentPath.Equals($"/{navSection.Slug}", StringComparison.OrdinalIgnoreCase) ? "active" : null)" asp-controller="Sections" asp-action="Show" asp-route-slug="@navSection.Slug">@navSection.Title</a>
+                                <a class="nav-link @(currentPath == "/" ? "active" : null)" asp-controller="Home" asp-action="Index">Ballina</a>
                             </li>
-                        }
-                    </ul>
-                    <div class="portal-actions">
-                        <form class="portal-search" asp-controller="Home" asp-action="Search" method="get">
-                            <input type="search" name="q" value="@Context.Request.Query["q"]" placeholder="Kerko lajme" aria-label="Kerko lajme" />
-                            <button type="submit">Kerko</button>
-                        </form>
-                        <partial name="_LoginPartial" />
+                            @foreach (var navSection in sections)
+                            {
+                                var sectionPath = $"/kategori/{navSection.Slug}";
+                                <li class="nav-item">
+                                    <a class="nav-link @(currentPath.StartsWith(sectionPath, StringComparison.OrdinalIgnoreCase) || currentPath.Equals($"/{navSection.Slug}", StringComparison.OrdinalIgnoreCase) ? "active" : null)" asp-controller="Sections" asp-action="Show" asp-route-slug="@navSection.Slug">@navSection.Title</a>
+                                </li>
+                            }
+                        </ul>
+                        <div class="portal-actions">
+                            <form class="portal-search" asp-controller="Home" asp-action="Search" method="get">
+                                <input type="search" name="q" value="@Context.Request.Query["q"]" placeholder="Kerko..." aria-label="Kerko" />
+                                <button type="submit">Kerko</button>
+                            </form>
+                            <div class="mobile-auth-wrapper mt-3 mt-lg-0">
+                                <partial name="_LoginPartial" />
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
