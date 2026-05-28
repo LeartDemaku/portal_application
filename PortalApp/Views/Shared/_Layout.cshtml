@@ -9,7 +9,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - PortalX</title>
+    <title>@ViewData["Title"] - ZëriYnë</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet" />
@@ -22,36 +22,49 @@
     <header class="site-header" data-site-header>
         <div class="site-topbar">
             <div class="container site-topbar-inner">
-                <span>Edicioni digjital</span>
-                <span>@DateTime.Now.ToString("dd.MM.yyyy")</span>
+                <div class="topbar-left">
+                    <span class="topbar-edition">Edicioni Digjital</span>
+                </div>
+                <div class="topbar-right">
+                    <span class="topbar-date">@DateTime.Now.ToString("dd MMMM yyyy")</span>
+                </div>
             </div>
         </div>
-        <nav class="navbar navbar-expand-lg portal-navbar">
-            <div class="container">
+        <nav class="navbar navbar-expand-lg portal-navbar" id="main-navbar">
+            <div class="container navbar-inner">
                 <a class="navbar-brand portal-brand" asp-controller="Home" asp-action="Index">
-                    <span class="portal-brand-mark">PX</span>
+                    <span class="portal-brand-mark">
+                        <span class="brand-mark-text">ZY</span>
+                        <span class="brand-mark-glow"></span>
+                    </span>
                     <span class="portal-brand-copy">
-                        <strong>PortalX</strong>
-                        <small>Lajmet qe levizin diten</small>
+                        <strong class="brand-name">ZëriYnë</strong>
+                        <small class="brand-tagline">Jehona e së vërtetës</small>
                     </span>
                 </a>
-                
-                <button class="navbar-toggler portal-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Hap navigimin">
-                    <span></span>
-                    <span></span>
-                    <span></span>
+
+                <button class="portal-toggler" id="navToggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Hap navigimin">
+                    <span class="toggler-bar"></span>
+                    <span class="toggler-bar"></span>
+                    <span class="toggler-bar"></span>
                 </button>
-                
+
                 <div class="offcanvas offcanvas-end portal-offcanvas" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
                     <div class="offcanvas-header">
-                        <h5 class="offcanvas-title portal-brand" id="offcanvasNavbarLabel">
-                            <span class="portal-brand-mark">PX</span>
-                            <strong class="text-white">PortalX</strong>
-                        </h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Mbyll"></button>
+                        <div class="offcanvas-brand">
+                            <span class="portal-brand-mark small-mark">
+                                <span class="brand-mark-text">ZY</span>
+                            </span>
+                            <span class="offcanvas-brand-name">ZëriYnë</span>
+                        </div>
+                        <button type="button" class="offcanvas-close-btn" data-bs-dismiss="offcanvas" aria-label="Mbyll">
+                            <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                                <path d="M1 1L17 17M17 1L1 17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                        </button>
                     </div>
                     <div class="offcanvas-body">
-                        <ul class="navbar-nav portal-nav-links mx-auto mb-4 mb-lg-0 align-items-lg-center">
+                        <ul class="navbar-nav portal-nav-links">
                             <li class="nav-item">
                                 <a class="nav-link @(currentPath == "/" ? "active" : null)" asp-controller="Home" asp-action="Index">Ballina</a>
                             </li>
@@ -65,10 +78,14 @@
                         </ul>
                         <div class="portal-actions">
                             <form class="portal-search" asp-controller="Home" asp-action="Search" method="get">
-                                <input type="search" name="q" value="@Context.Request.Query["q"]" placeholder="Kerko..." aria-label="Kerko" />
-                                <button type="submit">Kerko</button>
+                                <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                                    <circle cx="11" cy="11" r="8"/>
+                                    <path d="m21 21-4.35-4.35"/>
+                                </svg>
+                                <input type="search" name="q" value="@Context.Request.Query["q"]" placeholder="Kërko lajme..." aria-label="Kërko" />
+                                <button type="submit" aria-label="Kërko">Kërko</button>
                             </form>
-                            <div class="mobile-auth-wrapper mt-3 mt-lg-0">
+                            <div class="portal-auth">
                                 <partial name="_LoginPartial" />
                             </div>
                         </div>
@@ -86,20 +103,20 @@
         <div class="container">
             <div class="site-footer-grid">
                 <div>
-                    <p class="site-footer-title">PortalX</p>
-                    <p class="site-footer-copy">Platforme editoriale me fokus te qarte ne ekonomi, teknologji, sport dhe shendetesi.</p>
+                    <p class="site-footer-title">ZëriYnë</p>
+                    <p class="site-footer-copy">Platformë editoriale me fokus të qartë në ekonomi, teknologji, sport dhe shëndetësi.</p>
                 </div>
                 <div>
                     <p class="site-footer-title">Navigimi</p>
                     <div class="site-footer-links">
                         <a asp-controller="Home" asp-action="Index">Ballina</a>
-                        <a asp-controller="Home" asp-action="Search">Kerko</a>
-                        <a asp-controller="Home" asp-action="Privacy">Privatesia</a>
+                        <a asp-controller="Home" asp-action="Search">Kërko</a>
+                        <a asp-controller="Home" asp-action="Privacy">Privatësia</a>
                     </div>
                 </div>
                 <div>
                     <p class="site-footer-title">Redaksia</p>
-                    <p class="site-footer-copy">Publikim i shpejte, i strukturuar dhe i pershtatur per cdo pajisje.</p>
+                    <p class="site-footer-copy">Publikim i shpejtë, i strukturuar dhe i përshtatur për çdo pajisje.</p>
                 </div>
             </div>
         </div>
