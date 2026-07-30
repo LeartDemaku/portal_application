@@ -8,6 +8,7 @@ using PortalApp.Models.ViewModels;
 
 namespace PortalApp.Controllers.Admin
 {
+    [Route("Admin/[controller]/[action]/{id?}")]
     [Authorize(Roles = "Drejtor,Admin,Administrator")]
     public class AdminUserController : Controller
     {

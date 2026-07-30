@@ -1,0 +1,27 @@
+@model List<Article>
+@{
+    ViewData["Title"] = "Globale";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="mb-0">Globale</h1>
+        <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary">Të gjitha</a>
+    </div>
+
+    <div class="row g-4">
+        @if (Model.Any())
+        {
+            @foreach (var article in Model)
+            {
+                <div class="col-md-6 col-lg-4">
+                    <partial name="~/Views/Home/Partials/_Article.cshtml" model="article" />
+                </div>
+            }
+        }
+        else
+        {
+            <div class="col-12 text-center text-muted py-5">Nuk ka artikuj në këtë kategori.</div>
+        }
+    </div>
+</div>

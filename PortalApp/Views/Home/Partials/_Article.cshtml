@@ -1,6 +1,6 @@
 @model PortalArticleCardViewModel
 
-<article class="story-card">
+<article class="story-card" onclick="if(event.target.tagName !== 'A') location.href='@Url.Action("Show", "Home", new { id = Model.Id })'">
     <a class="story-card-media" asp-controller="Home" asp-action="Show" asp-route-id="@Model.Id">
         <img src="@Model.CoverImageUrl" alt="@Model.Title" />
     </a>

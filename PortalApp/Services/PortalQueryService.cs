@@ -29,7 +29,6 @@ namespace PortalApp.Services
         {
             var categories = await _db.ArticleCategories
                 .AsNoTracking()
-                .Where(category => category.Articles.Any(article => article.ApprovedBy != null))
                 .OrderBy(category => category.Name)
                 .ToListAsync();
 
@@ -332,9 +331,18 @@ namespace PortalApp.Services
 
         private static string GetCoverImage(string? coverImage)
         {
-            return string.IsNullOrWhiteSpace(coverImage)
-                ? FallbackImage
-                : $"/images/articles/{coverImage}";
+            if (string.IsNullOrWhiteSpace(coverImage))
+            {
+                return FallbackImage;
+            }
+
+            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "articles", coverImage);
+            if (!File.Exists(filePath))
+            {
+                return FallbackImage;
+            }
+
+            return $"/images/articles/{coverImage}";
         }
     }
 }

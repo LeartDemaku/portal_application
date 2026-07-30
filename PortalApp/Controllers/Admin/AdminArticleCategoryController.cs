@@ -6,7 +6,8 @@ using PortalApp.Models;
 
 namespace PortalApp.Controllers.Admin
 {
-    [Authorize]
+    [Route("Admin/[controller]/[action]/{id?}")]
+    [Authorize(Roles = "Drejtor,Admin,Administrator,Redaktor")]
     public class AdminArticleCategoryController : Controller
     {
         private readonly ApplicationDbContext _db;
@@ -116,12 +117,14 @@ namespace PortalApp.Controllers.Admin
 
             if (hasArticles)
             {
+                TempData["ErrorMessage"] = "Kjo kategori përmban artikuj dhe nuk mund të fshihet.";
                 return RedirectToAction(nameof(Index));
             }
 
             _db.ArticleCategories.Remove(category);
             await _db.SaveChangesAsync();
 
+            TempData["SuccessMessage"] = "Kategoria u fshi me sukses.";
             return RedirectToAction(nameof(Index));
         }
     }

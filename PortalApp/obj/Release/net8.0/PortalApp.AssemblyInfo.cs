@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("PortalApp")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4c533b44fafff8775b1dfb7747c364720bffba9d")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+189521023f4b8f24d656595d1256002fc7be259c")]
 [assembly: System.Reflection.AssemblyProductAttribute("PortalApp")]
 [assembly: System.Reflection.AssemblyTitleAttribute("PortalApp")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

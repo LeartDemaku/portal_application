@@ -16,13 +16,17 @@
 {
     <section class="hero-grid compact">
         <article class="hero-card premium-hero compact">
-            <img class="premium-hero-img" src="@Model.FeaturedArticle.CoverImageUrl" alt="@Model.FeaturedArticle.Title" />
-            <div class="premium-hero-overlay"></div>
+            <a class="premium-hero-cover-link" asp-controller="Home" asp-action="Show" asp-route-id="@Model.FeaturedArticle.Id">
+                <img class="premium-hero-img" src="@Model.FeaturedArticle.CoverImageUrl" alt="@Model.FeaturedArticle.Title" />
+                <div class="premium-hero-overlay"></div>
+            </a>
             <div class="premium-hero-content">
                 <div class="premium-hero-meta">
                     <a class="premium-hero-category" asp-controller="Sections" asp-action="Show" asp-route-slug="@Model.FeaturedArticle.CategorySlug">@Model.FeaturedArticle.CategoryName</a>
                 </div>
-                <h2 class="premium-hero-title">@Model.FeaturedArticle.Title</h2>
+                <h2 class="premium-hero-title">
+                    <a asp-controller="Home" asp-action="Show" asp-route-id="@Model.FeaturedArticle.Id">@Model.FeaturedArticle.Title</a>
+                </h2>
                 <p class="premium-hero-summary">@Model.FeaturedArticle.Summary</p>
                 <div class="premium-hero-footer">
                     <div class="premium-hero-author">
@@ -34,7 +38,6 @@
                         <span>@Model.FeaturedArticle.ReadTimeMinutes min lexim</span>
                     </div>
                 </div>
-                <a class="premium-hero-link" asp-controller="Home" asp-action="Show" asp-route-id="@Model.FeaturedArticle.Id"></a>
             </div>
         </article>
         <div class="headline-stack">

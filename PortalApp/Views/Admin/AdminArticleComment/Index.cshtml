@@ -5,13 +5,16 @@
     ViewData["Title"] = "Komentet";
 }
 
-<div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2 class="mb-0">Komentet</h2>
+<div class="admin-card">
+    <div class="admin-toolbar">
+        <div>
+            <span class="eyebrow">Menaxhim</span>
+            <h2>Lista e komenteve</h2>
+        </div>
     </div>
 
     <div class="table-responsive">
-        <table class="table table-hover align-middle">
+        <table class="table admin-table align-middle">
             <thead>
                 <tr>
                     <th>Autori</th>
@@ -27,15 +30,17 @@
                     @foreach (var item in Model)
                     {
                         <tr>
-                            <td>@item.Name</td>
-                            <td>@item.Comment</td>
-                            <td>@item.Article.Title</td>
-                            <td>@item.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                            <td><strong>@item.Name</strong></td>
+                            <td>@(item.Comment.Length > 80 ? item.Comment[..80] + "..." : item.Comment)</td>
+                            <td>@item.Article?.Title</td>
+                            <td>@item.CreatedAt.ToString("dd.MM.yyyy HH:mm")</td>
                             <td class="text-end">
-                                <form asp-action="Delete" asp-controller="AdminArticleComment" asp-route-id="@item.Id" method="post" class="d-inline">
-                                    @Html.AntiForgeryToken()
-                                    <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('A dëshironi ta fshini komentin?');">Fshij</button>
-                                </form>
+                                <div class="table-actions">
+                                    <form asp-action="Delete" asp-controller="AdminArticleComment" asp-route-id="@item.Id" method="post">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="danger-button" onclick="return confirm('A dëshironi ta fshini komentin?');">Fshij</button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                     }
@@ -43,7 +48,12 @@
                 else
                 {
                     <tr>
-                        <td colspan="5" class="text-center text-muted py-4">Nuk ka komente për t'u shfaqur.</td>
+                        <td colspan="5">
+                            <div class="empty-state small">
+                                <h3>Nuk ka komente për shfaqje</h3>
+                                <p>Komentet e lexuesve do të shfaqen këtu.</p>
+                            </div>
+                        </td>
                     </tr>
                 }
             </tbody>

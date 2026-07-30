@@ -6,35 +6,38 @@
     ViewData["Title"] = "Rolet";
 }
 
-<div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2 class="mb-0">Rolet</h2>
-        <a asp-action="Create" asp-controller="AdminUserRole" class="btn btn-success">Krijo rol</a>
+<div class="admin-card">
+    <div class="admin-toolbar">
+        <div>
+            <span class="eyebrow">Menaxhim</span>
+            <h2>Lista e roleve</h2>
+        </div>
+        <a asp-action="Create" asp-controller="AdminUserRole" class="primary-button">Krijo rol</a>
     </div>
 
     <div class="table-responsive">
-        <table class="table table-hover align-middle">
+        <table class="table admin-table align-middle">
             <thead>
                 <tr>
-                    <th>#</th>
                     <th>Emri i rolit</th>
-                    <th class="text-end">Veprimi</th>
+                    <th class="text-end">Veprime</th>
                 </tr>
             </thead>
             <tbody>
                 @if (Model.Any())
                 {
-                    @foreach (var item in Model.Select((value, i) => new { value, i }))
+                    @foreach (var item in Model)
                     {
                         <tr>
-                            <td>@(item.i + 1)</td>
-                            <td>@item.value.Name</td>
+                            <td><strong>@item.Name</strong></td>
                             <td class="text-end">
-                                <a asp-action="Edit" asp-controller="AdminUserRole" asp-route-id="@item.value.Id" class="btn btn-outline-primary btn-sm">Edito</a>
-                                <form asp-action="Delete" asp-controller="AdminUserRole" asp-route-id="@item.value.Id" method="post" class="d-inline">
-                                    @Html.AntiForgeryToken()
-                                    <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('A dëshironi ta fshini rolin?');">Fshij</button>
-                                </form>
+                                <div class="table-actions">
+                                    <a asp-action="Edit" asp-controller="AdminUserRole" asp-route-id="@item.Id" class="secondary-button">Edito</a>
+                                    <form asp-action="Delete" asp-controller="AdminUserRole" asp-route-id="@item.Id" method="post">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="danger-button" onclick="return confirm('A dëshironi ta fshini rolin?');">Fshij</button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                     }
@@ -42,7 +45,12 @@
                 else
                 {
                     <tr>
-                        <td colspan="3" class="text-center text-muted py-4">Nuk ka role për t'u shfaqur.</td>
+                        <td colspan="2">
+                            <div class="empty-state small">
+                                <h3>Nuk ka role për shfaqje</h3>
+                                <p>Krijoni rolin e parë të sistemit.</p>
+                            </div>
+                        </td>
                     </tr>
                 }
             </tbody>

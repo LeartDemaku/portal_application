@@ -130,6 +130,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRWNvbm9teVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/Swisstech/OneDrive/Desktop/portal_application/PortalApp/Views/Global/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcR2xvYmFsXEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/Swisstech/OneDrive/Desktop/portal_application/PortalApp/Views/Health/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSGVhbHRoXEluZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
@@ -160,6 +164,10 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Users/Swisstech/OneDrive/Desktop/portal_application/PortalApp/Views/Home/Show.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxTaG93LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Swisstech/OneDrive/Desktop/portal_application/PortalApp/Views/Politics/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUG9saXRpY3NcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/Swisstech/OneDrive/Desktop/portal_application/PortalApp/Views/Sections/Show.cshtml]

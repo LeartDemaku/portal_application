@@ -9,10 +9,11 @@ using PortalApp.Models.ViewModels;
 
 namespace PortalApp.Controllers.Admin
 {
+    [Route("Admin/[controller]/[action]/{id?}")]
     [Authorize]
     public class AdminArticleController : Controller
     {
-        private static readonly string[] ElevatedRoles = ["Drejtor", "Admin", "Administrator"];
+        private static readonly string[] ElevatedRoles = ["Drejtor", "Admin", "Administrator", "Redaktor"];
 
         private readonly ApplicationDbContext _db;
         private readonly UserManager<ApplicationUser> _userManager;
@@ -99,7 +100,7 @@ namespace PortalApp.Controllers.Admin
                 CoverImage = await SaveImageAsync(data.CoverImage!),
                 CreatedAt = DateTime.Now,
                 CreatedBy = userId,
-                ApprovedBy = userId
+                ApprovedBy = isElevated && data.IsApproved ? userId : null
             };
 
             _db.Articles.Add(article);
@@ -145,8 +146,7 @@ namespace PortalApp.Controllers.Admin
                     .Select(x => x.ArticleTag.Title)
                     .Where(x => !string.IsNullOrWhiteSpace(x))
                     .Distinct(StringComparer.OrdinalIgnoreCase)
-                    .ToList(),
-                ArticleCategories = await _db.ArticleCategories.AsNoTracking().OrderBy(x => x.Name).ToListAsync()
+                    .ToList()
             });
         }
 
@@ -199,6 +199,10 @@ namespace PortalApp.Controllers.Admin
             if (isElevated)
             {
                 article.ApprovedBy = data.IsApproved ? _userManager.GetUserId(User) : null;
+            }
+            else
+            {
+                article.ApprovedBy = null;
             }
 
             if (data.CoverImage != null)
@@ -298,6 +302,16 @@ namespace PortalApp.Controllers.Admin
 
         private async Task SyncArticleTagsAsync(int articleId, IEnumerable<string>? rawTags)
         {
+            var existingJoinEntries = await _db.ArticleArticleTags
+                .Where(x => x.ArticleId == articleId)
+                .ToListAsync();
+
+            if (existingJoinEntries.Any())
+            {
+                _db.ArticleArticleTags.RemoveRange(existingJoinEntries);
+                await _db.SaveChangesAsync();
+            }
+
             var normalizedTags = rawTags?
                 .Where(x => !string.IsNullOrWhiteSpace(x))
                 .Select(x => x.Trim())
@@ -332,7 +346,8 @@ namespace PortalApp.Controllers.Admin
 
         private async Task<string> SaveImageAsync(IFormFile file)
         {
-            var uploadsPath = Path.Combine(_environment.WebRootPath, "images", "articles");
+            var webRoot = _environment.WebRootPath ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+            var uploadsPath = Path.Combine(webRoot, "images", "articles");
             Directory.CreateDirectory(uploadsPath);
 
             var fileName = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
@@ -351,7 +366,8 @@ namespace PortalApp.Controllers.Admin
                 return;
             }
 
-            var fullPath = Path.Combine(_environment.WebRootPath, "images", "articles", fileName);
+            var webRoot = _environment.WebRootPath ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+            var fullPath = Path.Combine(webRoot, "images", "articles", fileName);
 
             if (System.IO.File.Exists(fullPath))
             {

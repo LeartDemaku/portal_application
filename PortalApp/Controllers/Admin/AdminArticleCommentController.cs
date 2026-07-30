@@ -5,7 +5,8 @@ using PortalApp.Data;
 
 namespace PortalApp.Controllers.Admin
 {
-    [Authorize]
+    [Route("Admin/[controller]/[action]/{id?}")]
+    [Authorize(Roles = "Drejtor,Admin,Administrator,Redaktor")]
     public class AdminArticleCommentController : Controller
     {
         private readonly ApplicationDbContext _db;

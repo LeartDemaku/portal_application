@@ -15,8 +15,9 @@
     @await RenderSectionAsync("Styles", required: false)
 </head>
 <body class="admin-body">
+    <div class="admin-overlay" id="adminOverlay"></div>
     <div class="admin-shell">
-        <aside class="admin-sidebar">
+        <aside class="admin-sidebar" id="adminSidebar">
             <a class="admin-brand" asp-controller="AdminArticle" asp-action="Index">
                 <span class="portal-brand-mark">
                     <span class="brand-mark-text">ZY</span>
@@ -26,25 +27,49 @@
                     <small>Kontrolli editorial</small>
                 </span>
             </a>
+            @{
+                var adminPath = Context.Request.Path.Value ?? "";
+            }
             <nav class="admin-nav">
                 <a asp-controller="Home" asp-action="Index">Shiko portalin</a>
-                <a asp-controller="AdminArticle" asp-action="Index">Artikujt</a>
-                <a asp-controller="AdminArticleCategory" asp-action="Index">Kategorite</a>
-                <a asp-controller="AdminArticleTag" asp-action="Index">Tagjet</a>
-                <a asp-controller="AdminArticleComment" asp-action="Index">Komentet</a>
-                <a asp-controller="AdminUser" asp-action="Index">Perdoruesit</a>
-                <a asp-controller="AdminUserRole" asp-action="Index">Rolet</a>
+                <a href="/Admin/AdminArticle/Index" class="@(adminPath.Contains("AdminArticle", StringComparison.OrdinalIgnoreCase) && !adminPath.Contains("Category") && !adminPath.Contains("Tag") && !adminPath.Contains("Comment") ? "active" : null)">Artikujt</a>
+                <a href="/Admin/AdminArticleCategory/Index" class="@(adminPath.Contains("AdminArticleCategory", StringComparison.OrdinalIgnoreCase) ? "active" : null)">Kategoritë</a>
+                <a href="/Admin/AdminArticleTag/Index" class="@(adminPath.Contains("AdminArticleTag", StringComparison.OrdinalIgnoreCase) ? "active" : null)">Tagjet</a>
+                <a href="/Admin/AdminArticleComment/Index" class="@(adminPath.Contains("AdminArticleComment", StringComparison.OrdinalIgnoreCase) ? "active" : null)">Komentet</a>
+                <a href="/Admin/AdminUser/Index" class="@(adminPath.Contains("AdminUser", StringComparison.OrdinalIgnoreCase) && !adminPath.Contains("Role") ? "active" : null)">Përdoruesit</a>
+                <a href="/Admin/AdminUserRole/Index" class="@(adminPath.Contains("AdminUserRole", StringComparison.OrdinalIgnoreCase) ? "active" : null)">Rolet</a>
             </nav>
         </aside>
         <div class="admin-content">
             <header class="admin-topbar">
-                <div>
-                    <p class="admin-eyebrow">Panel editorial</p>
-                    <h1>@ViewData["Title"]</h1>
+                <div class="admin-topbar-left">
+                    <button class="admin-sidebar-toggle" id="adminSidebarToggle" type="button" aria-label="Hap menunë">
+                        <span class="toggler-bar"></span>
+                        <span class="toggler-bar"></span>
+                        <span class="toggler-bar"></span>
+                    </button>
+                    <div>
+                        <p class="admin-eyebrow">Panel editorial</p>
+                        <h1>@ViewData["Title"]</h1>
+                    </div>
                 </div>
                 <partial name="_LoginPartial" />
             </header>
             <main class="admin-main">
+                @if (TempData["SuccessMessage"] != null)
+                {
+                    <div class="alert alert-success alert-dismissible fade show mb-3" role="alert">
+                        @TempData["SuccessMessage"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Mbyll"></button>
+                    </div>
+                }
+                @if (TempData["ErrorMessage"] != null)
+                {
+                    <div class="alert alert-danger alert-dismissible fade show mb-3" role="alert">
+                        @TempData["ErrorMessage"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Mbyll"></button>
+                    </div>
+                }
                 @RenderBody()
             </main>
         </div>

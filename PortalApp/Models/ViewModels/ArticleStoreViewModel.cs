@@ -1,6 +1,3 @@
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using PortalApp.Models;
 using System.ComponentModel.DataAnnotations;
 
 namespace PortalApp.Models.ViewModels

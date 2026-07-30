@@ -16,7 +16,10 @@ namespace PortalApp.Services
             new("ekonomi", "Ekonomi", "Analiza per biznes, financa, tregje dhe zhvillime rajonale.", "#0f766e"),
             new("teknologji", "Teknologji", "Inovacion, produkte te reja dhe transformimi digjital.", "#1d4ed8"),
             new("sport", "Sport", "Lajmet kryesore, rezultatet dhe prapaskenat e gares.", "#ea580c"),
-            new("shendetesi", "Shendetesi", "Udhezime, kerkime dhe histori qe ndikojne te mireqenia.", "#be123c")
+            new("shendetesi", "Shendetesi", "Udhezime, kerkime dhe histori qe ndikojne te mireqenia.", "#be123c"),
+            new("globale", "Globale", "Lajme dhe zhvillime nga arena nderkombetare dhe ngjarjet boterore.", "#4f46e5"),
+            new("politike", "Politike", "Zhvillimet e fundit politike, vendimet qeveritare dhe analizat.", "#be185d"),
+            new("siguri", "Siguri", "Lajme nga bota e sigurise, krimit dhe rendit publik.", "#b45309")
         ];
 
         public static IReadOnlyList<PortalSectionDefinition> All => Sections;

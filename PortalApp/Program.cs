@@ -14,14 +14,16 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 });
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false)
-    .AddRoles<IdentityRole>()
-    .AddEntityFrameworkStores<ApplicationDbContext>();
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = false)
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddDefaultTokenProviders()
+    .AddDefaultUI();
 
-builder.Services.AddControllersWithViews().AddRazorOptions(options =>
-{
-    options.ViewLocationFormats.Add("/Views/Admin/{1}/{0}.cshtml");
-});
+builder.Services.AddControllersWithViews()
+    .AddRazorOptions(options =>
+    {
+        options.ViewLocationFormats.Add("/Views/Admin/{1}/{0}.cshtml");
+    });
 
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 builder.Services.AddScoped<IPortalQueryService, PortalQueryService>();
@@ -33,8 +35,8 @@ using (var scope = app.Services.CreateScope())
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
     var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-    var roles = new[] { "Drejtor", "Admin", "Administrator", "Gazetar", "Redaktor" };
 
+    var roles = new[] { "Drejtor", "Admin", "Administrator", "Gazetar", "Redaktor" };
     foreach (var role in roles)
     {
         if (!await roleManager.RoleExistsAsync(role))
@@ -43,38 +45,76 @@ using (var scope = app.Services.CreateScope())
         }
     }
 
-    var firstUser = await dbContext.Users.OrderBy(x => x.Email).FirstOrDefaultAsync();
-    if (firstUser != null)
+    var categoriesToSeed = new[] { "Sport", "Siguri", "Teknologji", "Ekonomi", "Shëndetësi", "Globale", "Politikë" };
+    foreach (var catName in categoriesToSeed)
     {
-        var hasAdminRole = await userManager.IsInRoleAsync(firstUser, "Admin");
-        if (!hasAdminRole)
+        if (!await dbContext.ArticleCategories.AnyAsync(x => x.Name == catName))
         {
-            await userManager.AddToRoleAsync(firstUser, "Admin");
+            dbContext.ArticleCategories.Add(new ArticleCategory
+            {
+                Name = catName,
+                CreatedAt = DateTime.Now
+            });
+        }
+    }
+    await dbContext.SaveChangesAsync();
+
+    var tagsToSeed = new[] { "Teknologji", "Sport", "Siguri", "Ekonomi", "Robotikë", "Shëndetësi", "Globale", "Politikë" };
+    foreach (var tagName in tagsToSeed)
+    {
+        if (!await dbContext.ArticleTags.AnyAsync(x => x.Title == tagName))
+        {
+            dbContext.ArticleTags.Add(new ArticleTag
+            {
+                Title = tagName,
+                CreatedAt = DateTime.Now
+            });
+        }
+    }
+    await dbContext.SaveChangesAsync();
+
+    var defaultUsers = new (string Email, string Role)[]
+    {
+        ("admin@portal.com", "Admin"),
+        ("drejtor@portal.com", "Drejtor"),
+        ("gazetar@portal.com", "Gazetar"),
+        ("redaktor@portal.com", "Redaktor")
+    };
+
+    foreach (var defaultUser in defaultUsers)
+    {
+        var existingUser = await userManager.FindByEmailAsync(defaultUser.Email);
+        if (existingUser == null)
+        {
+            var user = new ApplicationUser
+            {
+                FirstName = defaultUser.Role,
+                LastName = "Portal",
+                Email = defaultUser.Email,
+                UserName = defaultUser.Email,
+                EmailConfirmed = true
+            };
+            var result = await userManager.CreateAsync(user, "Password123!");
+            if (result.Succeeded)
+            {
+                await userManager.AddToRoleAsync(user, defaultUser.Role);
+            }
+        }
+        else
+        {
+            var hasRole = await userManager.IsInRoleAsync(existingUser, defaultUser.Role);
+            if (!hasRole)
+            {
+                await userManager.AddToRoleAsync(existingUser, defaultUser.Role);
+            }
         }
     }
 
-    var fallbackUserId = await dbContext.Users
-        .AsNoTracking()
-        .OrderBy(x => x.Email)
-        .Select(x => x.Id)
-        .FirstOrDefaultAsync();
-
-    if (!string.IsNullOrWhiteSpace(fallbackUserId))
+    var adminUser = await userManager.FindByEmailAsync("admin@portal.com");
+    if (adminUser != null)
     {
-        var unpublishedArticles = await dbContext.Articles
-            .Where(x => x.ApprovedBy == null)
-            .ToListAsync();
-
-        if (unpublishedArticles.Count > 0)
-        {
-            foreach (var article in unpublishedArticles)
-            {
-                article.CreatedBy ??= fallbackUserId;
-                article.ApprovedBy = article.CreatedBy ?? fallbackUserId;
-            }
-
-            await dbContext.SaveChangesAsync();
-        }
+        var token = await userManager.GeneratePasswordResetTokenAsync(adminUser);
+        await userManager.ResetPasswordAsync(adminUser, token, "Password123!");
     }
 }
 
@@ -97,15 +137,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
-    name: "admin",
-    pattern: "Admin/{controller=AdminArticle}/{action=Index}/{id?}");
-
-app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}"
-    );
-
-
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.MapRazorPages();
 

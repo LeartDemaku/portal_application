@@ -6,7 +6,8 @@ using PortalApp.Models;
 
 namespace PortalApp.Controllers.Admin
 {
-    [Authorize]
+    [Route("Admin/[controller]/[action]/{id?}")]
+    [Authorize(Roles = "Drejtor,Admin,Administrator,Redaktor")]
     public class AdminArticleTagController : Controller
     {
         private readonly ApplicationDbContext _db;

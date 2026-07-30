@@ -5,17 +5,19 @@
     ViewData["Title"] = "Kategoritë";
 }
 
-<div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2 class="mb-0">Kategoritë</h2>
-        <a asp-action="Create" asp-controller="AdminArticleCategory" class="btn btn-success">Shto kategori</a>
+<div class="admin-card">
+    <div class="admin-toolbar">
+        <div>
+            <span class="eyebrow">Menaxhim</span>
+            <h2>Lista e kategorive</h2>
+        </div>
+        <a asp-action="Create" asp-controller="AdminArticleCategory" class="primary-button">Shto kategori</a>
     </div>
 
     <div class="table-responsive">
-        <table class="table table-hover align-middle">
+        <table class="table admin-table align-middle">
             <thead>
                 <tr>
-                    <th>ID</th>
                     <th>Emri</th>
                     <th>Krijuar më</th>
                     <th class="text-end">Veprime</th>
@@ -27,15 +29,16 @@
                     @foreach (var item in Model)
                     {
                         <tr>
-                            <td>@item.Id</td>
-                            <td>@item.Name</td>
-                            <td>@item.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                            <td><strong>@item.Name</strong></td>
+                            <td>@item.CreatedAt.ToString("dd.MM.yyyy HH:mm")</td>
                             <td class="text-end">
-                                <a asp-action="Edit" asp-controller="AdminArticleCategory" asp-route-id="@item.Id" class="btn btn-outline-primary btn-sm">Edito</a>
-                                <form asp-action="Delete" asp-controller="AdminArticleCategory" asp-route-id="@item.Id" method="post" class="d-inline">
-                                    @Html.AntiForgeryToken()
-                                    <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('A dëshironi ta fshini kategorinë?');">Fshij</button>
-                                </form>
+                                <div class="table-actions">
+                                    <a asp-action="Edit" asp-controller="AdminArticleCategory" asp-route-id="@item.Id" class="secondary-button">Edito</a>
+                                    <form asp-action="Delete" asp-controller="AdminArticleCategory" asp-route-id="@item.Id" method="post">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="danger-button" onclick="return confirm('A dëshironi ta fshini kategorinë?');">Fshij</button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                     }
@@ -43,7 +46,12 @@
                 else
                 {
                     <tr>
-                        <td colspan="4" class="text-center text-muted py-4">Nuk ka kategori për t'u shfaqur.</td>
+                        <td colspan="3">
+                            <div class="empty-state small">
+                                <h3>Nuk ka kategori për shfaqje</h3>
+                                <p>Krijoni kategorinë e parë për të organizuar lajmet.</p>
+                            </div>
+                        </td>
                     </tr>
                 }
             </tbody>

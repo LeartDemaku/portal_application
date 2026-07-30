@@ -1,6 +1,6 @@
 @model PortalArticleCardViewModel
 
-<article class="mini-story">
+<article class="mini-story" onclick="if(event.target.tagName !== 'A') location.href='@Url.Action("Show", "Home", new { id = Model.Id })'">
     <div class="mini-story-copy">
         <a class="mini-story-category" asp-controller="Sections" asp-action="Show" asp-route-slug="@Model.CategorySlug">@Model.CategoryName</a>
         <h3 class="mini-story-title">

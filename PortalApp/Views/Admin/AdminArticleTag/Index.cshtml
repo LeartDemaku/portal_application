@@ -5,17 +5,19 @@
     ViewData["Title"] = "Tagjet";
 }
 
-<div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2 class="mb-0">Tagjet</h2>
-        <a asp-action="Create" asp-controller="AdminArticleTag" class="btn btn-success">Shto tag</a>
+<div class="admin-card">
+    <div class="admin-toolbar">
+        <div>
+            <span class="eyebrow">Menaxhim</span>
+            <h2>Lista e tageve</h2>
+        </div>
+        <a asp-action="Create" asp-controller="AdminArticleTag" class="primary-button">Shto tag</a>
     </div>
 
     <div class="table-responsive">
-        <table class="table table-hover align-middle">
+        <table class="table admin-table align-middle">
             <thead>
                 <tr>
-                    <th>ID</th>
                     <th>Titulli</th>
                     <th>Krijuar më</th>
                     <th class="text-end">Veprime</th>
@@ -27,14 +29,15 @@
                     @foreach (var tag in Model)
                     {
                         <tr>
-                            <td>@tag.Id</td>
-                            <td>@tag.Title</td>
-                            <td>@tag.CreatedAt.ToString("dd/MM/yyyy")</td>
+                            <td><strong>#@tag.Title</strong></td>
+                            <td>@tag.CreatedAt.ToString("dd.MM.yyyy")</td>
                             <td class="text-end">
-                                <form asp-action="Delete" asp-controller="AdminArticleTag" asp-route-id="@tag.Id" method="post" class="d-inline">
-                                    @Html.AntiForgeryToken()
-                                    <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('A dëshironi ta fshini tagun?');">Fshij</button>
-                                </form>
+                                <div class="table-actions">
+                                    <form asp-action="Delete" asp-controller="AdminArticleTag" asp-route-id="@tag.Id" method="post">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="danger-button" onclick="return confirm('A dëshironi ta fshini tagun?');">Fshij</button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                     }
@@ -42,7 +45,12 @@
                 else
                 {
                     <tr>
-                        <td colspan="4" class="text-center text-muted py-4">Nuk ka tagje për t'u shfaqur.</td>
+                        <td colspan="3">
+                            <div class="empty-state small">
+                                <h3>Nuk ka tagje për shfaqje</h3>
+                                <p>Krijoni tagun e parë për të etiketuar artikujt.</p>
+                            </div>
+                        </td>
                     </tr>
                 }
             </tbody>

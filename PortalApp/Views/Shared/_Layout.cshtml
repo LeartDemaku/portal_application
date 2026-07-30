@@ -31,7 +31,7 @@
             </div>
         </div>
         <nav class="navbar navbar-expand-lg portal-navbar" id="main-navbar">
-            <div class="container navbar-inner">
+            <div class="container">
                 <a class="navbar-brand portal-brand" asp-controller="Home" asp-action="Index">
                     <span class="portal-brand-mark">
                         <span class="brand-mark-text">ZY</span>
@@ -43,51 +43,37 @@
                     </span>
                 </a>
 
-                <button class="portal-toggler" id="navToggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Hap navigimin">
+                <button class="navbar-toggler portal-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#portalNavbarNav" aria-controls="portalNavbarNav" aria-expanded="false" aria-label="Hap menunë">
                     <span class="toggler-bar"></span>
                     <span class="toggler-bar"></span>
                     <span class="toggler-bar"></span>
                 </button>
 
-                <div class="offcanvas offcanvas-end portal-offcanvas" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
-                    <div class="offcanvas-header">
-                        <div class="offcanvas-brand">
-                            <span class="portal-brand-mark small-mark">
-                                <span class="brand-mark-text">ZY</span>
-                            </span>
-                            <span class="offcanvas-brand-name">ZëriYnë</span>
-                        </div>
-                        <button type="button" class="offcanvas-close-btn" data-bs-dismiss="offcanvas" aria-label="Mbyll">
-                            <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                                <path d="M1 1L17 17M17 1L1 17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                            </svg>
-                        </button>
-                    </div>
-                    <div class="offcanvas-body">
-                        <ul class="navbar-nav portal-nav-links">
+                <div class="collapse navbar-collapse" id="portalNavbarNav">
+                    <ul class="navbar-nav portal-nav-links me-auto">
+                        <li class="nav-item">
+                            <a class="nav-link @(currentPath == "/" ? "active" : null)" asp-controller="Home" asp-action="Index">Ballina</a>
+                        </li>
+                        @foreach (var navSection in sections)
+                        {
+                            var sectionPath = $"/kategori/{navSection.Slug}";
                             <li class="nav-item">
-                                <a class="nav-link @(currentPath == "/" ? "active" : null)" asp-controller="Home" asp-action="Index">Ballina</a>
+                                <a class="nav-link @(currentPath.StartsWith(sectionPath, StringComparison.OrdinalIgnoreCase) || currentPath.Equals($"/{navSection.Slug}", StringComparison.OrdinalIgnoreCase) ? "active" : null)" asp-controller="Sections" asp-action="Show" asp-route-slug="@navSection.Slug">@navSection.Title</a>
                             </li>
-                            @foreach (var navSection in sections)
-                            {
-                                var sectionPath = $"/kategori/{navSection.Slug}";
-                                <li class="nav-item">
-                                    <a class="nav-link @(currentPath.StartsWith(sectionPath, StringComparison.OrdinalIgnoreCase) || currentPath.Equals($"/{navSection.Slug}", StringComparison.OrdinalIgnoreCase) ? "active" : null)" asp-controller="Sections" asp-action="Show" asp-route-slug="@navSection.Slug">@navSection.Title</a>
-                                </li>
-                            }
-                        </ul>
-                        <div class="portal-actions">
-                            <form class="portal-search" asp-controller="Home" asp-action="Search" method="get">
-                                <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-                                    <circle cx="11" cy="11" r="8"/>
-                                    <path d="m21 21-4.35-4.35"/>
-                                </svg>
-                                <input type="search" name="q" value="@Context.Request.Query["q"]" placeholder="Kërko lajme..." aria-label="Kërko" />
-                                <button type="submit" aria-label="Kërko">Kërko</button>
-                            </form>
-                            <div class="portal-auth">
-                                <partial name="_LoginPartial" />
-                            </div>
+                        }
+                    </ul>
+
+                    <div class="portal-actions">
+                        <form class="portal-search" asp-controller="Home" asp-action="Search" method="get">
+                            <svg class="search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                                <circle cx="11" cy="11" r="8"/>
+                                <path d="m21 21-4.35-4.35"/>
+                            </svg>
+                            <input type="search" name="q" value="@Context.Request.Query["q"]" placeholder="Kërko..." aria-label="Kërko" />
+                            <button type="submit" aria-label="Kërko">Kërko</button>
+                        </form>
+                        <div class="portal-auth">
+                            <partial name="_LoginPartial" />
                         </div>
                     </div>
                 </div>
@@ -104,7 +90,7 @@
             <div class="site-footer-grid">
                 <div>
                     <p class="site-footer-title">ZëriYnë</p>
-                    <p class="site-footer-copy">Platformë editoriale me fokus të qartë në ekonomi, teknologji, sport dhe shëndetësi.</p>
+                    <p class="site-footer-copy">Platformë editoriale me fokus të qartë në ekonomi, teknologji, sport, shëndetësi, politikë dhe zhvillime globale.</p>
                 </div>
                 <div>
                     <p class="site-footer-title">Navigimi</p>
@@ -118,6 +104,9 @@
                     <p class="site-footer-title">Redaksia</p>
                     <p class="site-footer-copy">Publikim i shpejtë, i strukturuar dhe i përshtatur për çdo pajisje.</p>
                 </div>
+            </div>
+            <div class="site-footer-bottom">
+                <p>&copy; @DateTime.Now.Year ZëriYnë. Të gjitha të drejtat e rezervuara.</p>
             </div>
         </div>
     </footer>

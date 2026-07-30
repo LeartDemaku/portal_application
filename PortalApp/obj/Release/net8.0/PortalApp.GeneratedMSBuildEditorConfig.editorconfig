@@ -17,195 +17,203 @@ build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = PortalApp
 build_property.RootNamespace = PortalApp
-build_property.ProjectDir = C:\Users\Swisstech\OneDrive\Desktop\Konceptet e Avancuara në Ueb\portal_application\PortalApp\
+build_property.ProjectDir = C:\Users\Swisstech\OneDrive\Desktop\portal_application\PortalApp\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
 build_property.RazorLangVersion = 8.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
-build_property.MSBuildProjectDirectory = C:\Users\Swisstech\OneDrive\Desktop\Konceptet e Avancuara në Ueb\portal_application\PortalApp
+build_property.MSBuildProjectDirectory = C:\Users\Swisstech\OneDrive\Desktop\portal_application\PortalApp
 build_property._RazorSourceGeneratorDebug = 
 
-[C:/Users/Swisstech/OneDrive/Desktop/Konceptet e Avancuara në Ueb/portal_application/PortalApp/Areas/Identity/Pages/Account/ForgotPassword.cshtml]
+[C:/Users/Swisstech/OneDrive/Desktop/portal_application/PortalApp/Areas/Identity/Pages/Account/ForgotPassword.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcSWRlbnRpdHlcUGFnZXNcQWNjb3VudFxGb3Jnb3RQYXNzd29yZC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Swisstech/OneDrive/Desktop/Konceptet e Avancuara në Ueb/portal_application/PortalApp/Areas/Identity/Pages/Account/Login.cshtml]
+[C:/Users/Swisstech/OneDrive/Desktop/portal_application/PortalApp/Areas/Identity/Pages/Account/Login.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcSWRlbnRpdHlcUGFnZXNcQWNjb3VudFxMb2dpbi5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Swisstech/OneDrive/Desktop/Konceptet e Avancuara në Ueb/portal_application/PortalApp/Areas/Identity/Pages/Account/Logout.cshtml]
+[C:/Users/Swisstech/OneDrive/Desktop/portal_application/PortalApp/Areas/Identity/Pages/Account/Logout.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcSWRlbnRpdHlcUGFnZXNcQWNjb3VudFxMb2dvdXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Swisstech/OneDrive/Desktop/Konceptet e Avancuara në Ueb/portal_application/PortalApp/Areas/Identity/Pages/Account/Register.cshtml]
+[C:/Users/Swisstech/OneDrive/Desktop/portal_application/PortalApp/Areas/Identity/Pages/Account/Register.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcSWRlbnRpdHlcUGFnZXNcQWNjb3VudFxSZWdpc3Rlci5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Swisstech/OneDrive/Desktop/Konceptet e Avancuara në Ueb/portal_application/PortalApp/Areas/Identity/Pages/Account/ResetPassword.cshtml]
+[C:/Users/Swisstech/OneDrive/Desktop/portal_application/PortalApp/Areas/Identity/Pages/Account/ResetPassword.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcSWRlbnRpdHlcUGFnZXNcQWNjb3VudFxSZXNldFBhc3N3b3JkLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Swisstech/OneDrive/Desktop/Konceptet e Avancuara në Ueb/portal_application/PortalApp/Areas/Identity/Pages/Account/ResetPasswordConfirmation.cshtml]
+[C:/Users/Swisstech/OneDrive/Desktop/portal_application/PortalApp/Areas/Identity/Pages/Account/ResetPasswordConfirmation.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcSWRlbnRpdHlcUGFnZXNcQWNjb3VudFxSZXNldFBhc3N3b3JkQ29uZmlybWF0aW9uLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Swisstech/OneDrive/Desktop/Konceptet e Avancuara në Ueb/portal_application/PortalApp/Areas/Identity/Pages/Account/_ViewImports.cshtml]
+[C:/Users/Swisstech/OneDrive/Desktop/portal_application/PortalApp/Areas/Identity/Pages/Account/_ViewImports.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcSWRlbnRpdHlcUGFnZXNcQWNjb3VudFxfVmlld0ltcG9ydHMuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Swisstech/OneDrive/Desktop/Konceptet e Avancuara në Ueb/portal_application/PortalApp/Areas/Identity/Pages/_ValidationScriptsPartial.cshtml]
+[C:/Users/Swisstech/OneDrive/Desktop/portal_application/PortalApp/Areas/Identity/Pages/_ValidationScriptsPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcSWRlbnRpdHlcUGFnZXNcX1ZhbGlkYXRpb25TY3JpcHRzUGFydGlhbC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Swisstech/OneDrive/Desktop/Konceptet e Avancuara në Ueb/portal_application/PortalApp/Areas/Identity/Pages/_ViewImports.cshtml]
+[C:/Users/Swisstech/OneDrive/Desktop/portal_application/PortalApp/Areas/Identity/Pages/_ViewImports.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcSWRlbnRpdHlcUGFnZXNcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Swisstech/OneDrive/Desktop/Konceptet e Avancuara në Ueb/portal_application/PortalApp/Areas/Identity/Pages/_ViewStart.cshtml]
+[C:/Users/Swisstech/OneDrive/Desktop/portal_application/PortalApp/Areas/Identity/Pages/_ViewStart.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcSWRlbnRpdHlcUGFnZXNcX1ZpZXdTdGFydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Swisstech/OneDrive/Desktop/Konceptet e Avancuara në Ueb/portal_application/PortalApp/Views/Admin/AdminArticleCategory/Create.cshtml]
+[C:/Users/Swisstech/OneDrive/Desktop/portal_application/PortalApp/Views/Admin/AdminArticleCategory/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cQWRtaW5BcnRpY2xlQ2F0ZWdvcnlcQ3JlYXRlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Swisstech/OneDrive/Desktop/Konceptet e Avancuara në Ueb/portal_application/PortalApp/Views/Admin/AdminArticleCategory/Edit.cshtml]
+[C:/Users/Swisstech/OneDrive/Desktop/portal_application/PortalApp/Views/Admin/AdminArticleCategory/Edit.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cQWRtaW5BcnRpY2xlQ2F0ZWdvcnlcRWRpdC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Swisstech/OneDrive/Desktop/Konceptet e Avancuara në Ueb/portal_application/PortalApp/Views/Admin/AdminArticleCategory/Index.cshtml]
+[C:/Users/Swisstech/OneDrive/Desktop/portal_application/PortalApp/Views/Admin/AdminArticleCategory/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cQWRtaW5BcnRpY2xlQ2F0ZWdvcnlcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Swisstech/OneDrive/Desktop/Konceptet e Avancuara në Ueb/portal_application/PortalApp/Views/Admin/AdminArticleComment/Index.cshtml]
+[C:/Users/Swisstech/OneDrive/Desktop/portal_application/PortalApp/Views/Admin/AdminArticleComment/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cQWRtaW5BcnRpY2xlQ29tbWVudFxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Swisstech/OneDrive/Desktop/Konceptet e Avancuara në Ueb/portal_application/PortalApp/Views/Admin/AdminArticleTag/Create.cshtml]
+[C:/Users/Swisstech/OneDrive/Desktop/portal_application/PortalApp/Views/Admin/AdminArticleTag/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cQWRtaW5BcnRpY2xlVGFnXENyZWF0ZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Swisstech/OneDrive/Desktop/Konceptet e Avancuara në Ueb/portal_application/PortalApp/Views/Admin/AdminArticleTag/Index.cshtml]
+[C:/Users/Swisstech/OneDrive/Desktop/portal_application/PortalApp/Views/Admin/AdminArticleTag/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cQWRtaW5BcnRpY2xlVGFnXEluZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Swisstech/OneDrive/Desktop/Konceptet e Avancuara në Ueb/portal_application/PortalApp/Views/Admin/AdminArticle/Create.cshtml]
+[C:/Users/Swisstech/OneDrive/Desktop/portal_application/PortalApp/Views/Admin/AdminArticle/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cQWRtaW5BcnRpY2xlXENyZWF0ZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Swisstech/OneDrive/Desktop/Konceptet e Avancuara në Ueb/portal_application/PortalApp/Views/Admin/AdminArticle/Edit.cshtml]
+[C:/Users/Swisstech/OneDrive/Desktop/portal_application/PortalApp/Views/Admin/AdminArticle/Edit.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cQWRtaW5BcnRpY2xlXEVkaXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Swisstech/OneDrive/Desktop/Konceptet e Avancuara në Ueb/portal_application/PortalApp/Views/Admin/AdminArticle/Index.cshtml]
+[C:/Users/Swisstech/OneDrive/Desktop/portal_application/PortalApp/Views/Admin/AdminArticle/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cQWRtaW5BcnRpY2xlXEluZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Swisstech/OneDrive/Desktop/Konceptet e Avancuara në Ueb/portal_application/PortalApp/Views/Admin/AdminUserRole/Create.cshtml]
+[C:/Users/Swisstech/OneDrive/Desktop/portal_application/PortalApp/Views/Admin/AdminUserRole/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cQWRtaW5Vc2VyUm9sZVxDcmVhdGUuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Swisstech/OneDrive/Desktop/Konceptet e Avancuara në Ueb/portal_application/PortalApp/Views/Admin/AdminUserRole/Edit.cshtml]
+[C:/Users/Swisstech/OneDrive/Desktop/portal_application/PortalApp/Views/Admin/AdminUserRole/Edit.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cQWRtaW5Vc2VyUm9sZVxFZGl0LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Swisstech/OneDrive/Desktop/Konceptet e Avancuara në Ueb/portal_application/PortalApp/Views/Admin/AdminUserRole/Index.cshtml]
+[C:/Users/Swisstech/OneDrive/Desktop/portal_application/PortalApp/Views/Admin/AdminUserRole/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cQWRtaW5Vc2VyUm9sZVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Swisstech/OneDrive/Desktop/Konceptet e Avancuara në Ueb/portal_application/PortalApp/Views/Admin/AdminUser/Create.cshtml]
+[C:/Users/Swisstech/OneDrive/Desktop/portal_application/PortalApp/Views/Admin/AdminUser/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cQWRtaW5Vc2VyXENyZWF0ZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Swisstech/OneDrive/Desktop/Konceptet e Avancuara në Ueb/portal_application/PortalApp/Views/Admin/AdminUser/Edit.cshtml]
+[C:/Users/Swisstech/OneDrive/Desktop/portal_application/PortalApp/Views/Admin/AdminUser/Edit.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cQWRtaW5Vc2VyXEVkaXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Swisstech/OneDrive/Desktop/Konceptet e Avancuara në Ueb/portal_application/PortalApp/Views/Admin/AdminUser/Index.cshtml]
+[C:/Users/Swisstech/OneDrive/Desktop/portal_application/PortalApp/Views/Admin/AdminUser/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cQWRtaW5Vc2VyXEluZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Swisstech/OneDrive/Desktop/Konceptet e Avancuara në Ueb/portal_application/PortalApp/Views/Economy/Index.cshtml]
+[C:/Users/Swisstech/OneDrive/Desktop/portal_application/PortalApp/Views/Economy/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRWNvbm9teVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Swisstech/OneDrive/Desktop/Konceptet e Avancuara në Ueb/portal_application/PortalApp/Views/Health/Index.cshtml]
+[C:/Users/Swisstech/OneDrive/Desktop/portal_application/PortalApp/Views/Global/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcR2xvYmFsXEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Swisstech/OneDrive/Desktop/portal_application/PortalApp/Views/Health/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSGVhbHRoXEluZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Swisstech/OneDrive/Desktop/Konceptet e Avancuara në Ueb/portal_application/PortalApp/Views/Home/Index.cshtml]
+[C:/Users/Swisstech/OneDrive/Desktop/portal_application/PortalApp/Views/Home/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Swisstech/OneDrive/Desktop/Konceptet e Avancuara në Ueb/portal_application/PortalApp/Views/Home/Partials/_Article.cshtml]
+[C:/Users/Swisstech/OneDrive/Desktop/portal_application/PortalApp/Views/Home/Partials/_Article.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxQYXJ0aWFsc1xfQXJ0aWNsZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Swisstech/OneDrive/Desktop/Konceptet e Avancuara në Ueb/portal_application/PortalApp/Views/Home/Partials/_ArticleComment.cshtml]
+[C:/Users/Swisstech/OneDrive/Desktop/portal_application/PortalApp/Views/Home/Partials/_ArticleComment.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxQYXJ0aWFsc1xfQXJ0aWNsZUNvbW1lbnQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Swisstech/OneDrive/Desktop/Konceptet e Avancuara në Ueb/portal_application/PortalApp/Views/Home/Partials/_ArticleMini.cshtml]
+[C:/Users/Swisstech/OneDrive/Desktop/portal_application/PortalApp/Views/Home/Partials/_ArticleMini.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxQYXJ0aWFsc1xfQXJ0aWNsZU1pbmkuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Swisstech/OneDrive/Desktop/Konceptet e Avancuara në Ueb/portal_application/PortalApp/Views/Home/Privacy.cshtml]
+[C:/Users/Swisstech/OneDrive/Desktop/portal_application/PortalApp/Views/Home/Privacy.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxQcml2YWN5LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Swisstech/OneDrive/Desktop/Konceptet e Avancuara në Ueb/portal_application/PortalApp/Views/Home/Search.cshtml]
+[C:/Users/Swisstech/OneDrive/Desktop/portal_application/PortalApp/Views/Home/Search.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxTZWFyY2guY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Swisstech/OneDrive/Desktop/Konceptet e Avancuara në Ueb/portal_application/PortalApp/Views/Home/Show.cshtml]
+[C:/Users/Swisstech/OneDrive/Desktop/portal_application/PortalApp/Views/Home/Show.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxTaG93LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Swisstech/OneDrive/Desktop/Konceptet e Avancuara në Ueb/portal_application/PortalApp/Views/Sections/Show.cshtml]
+[C:/Users/Swisstech/OneDrive/Desktop/portal_application/PortalApp/Views/Politics/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUG9saXRpY3NcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Swisstech/OneDrive/Desktop/portal_application/PortalApp/Views/Sections/Show.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2VjdGlvbnNcU2hvdy5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Swisstech/OneDrive/Desktop/Konceptet e Avancuara në Ueb/portal_application/PortalApp/Views/Shared/Error.cshtml]
+[C:/Users/Swisstech/OneDrive/Desktop/portal_application/PortalApp/Views/Shared/Error.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXEVycm9yLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Swisstech/OneDrive/Desktop/Konceptet e Avancuara në Ueb/portal_application/PortalApp/Views/Shared/Partials/_PortalListing.cshtml]
+[C:/Users/Swisstech/OneDrive/Desktop/portal_application/PortalApp/Views/Shared/Partials/_PortalListing.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXFBhcnRpYWxzXF9Qb3J0YWxMaXN0aW5nLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Swisstech/OneDrive/Desktop/Konceptet e Avancuara në Ueb/portal_application/PortalApp/Views/Shared/_LoginPartial.cshtml]
+[C:/Users/Swisstech/OneDrive/Desktop/portal_application/PortalApp/Views/Shared/_LoginPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9Mb2dpblBhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Swisstech/OneDrive/Desktop/Konceptet e Avancuara në Ueb/portal_application/PortalApp/Views/Shared/_ValidationScriptsPartial.cshtml]
+[C:/Users/Swisstech/OneDrive/Desktop/portal_application/PortalApp/Views/Shared/_ValidationScriptsPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Swisstech/OneDrive/Desktop/Konceptet e Avancuara në Ueb/portal_application/PortalApp/Views/Sport/Index.cshtml]
+[C:/Users/Swisstech/OneDrive/Desktop/portal_application/PortalApp/Views/Sport/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU3BvcnRcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Swisstech/OneDrive/Desktop/Konceptet e Avancuara në Ueb/portal_application/PortalApp/Views/Tag/Show.cshtml]
+[C:/Users/Swisstech/OneDrive/Desktop/portal_application/PortalApp/Views/Tag/Show.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGFnXFNob3cuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Swisstech/OneDrive/Desktop/Konceptet e Avancuara në Ueb/portal_application/PortalApp/Views/Technology/Index.cshtml]
+[C:/Users/Swisstech/OneDrive/Desktop/portal_application/PortalApp/Views/Technology/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGVjaG5vbG9neVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Swisstech/OneDrive/Desktop/Konceptet e Avancuara në Ueb/portal_application/PortalApp/Views/_ViewImports.cshtml]
+[C:/Users/Swisstech/OneDrive/Desktop/portal_application/PortalApp/Views/_ViewImports.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Swisstech/OneDrive/Desktop/Konceptet e Avancuara në Ueb/portal_application/PortalApp/Views/_ViewStart.cshtml]
+[C:/Users/Swisstech/OneDrive/Desktop/portal_application/PortalApp/Views/_ViewStart.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdTdGFydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Swisstech/OneDrive/Desktop/Konceptet e Avancuara në Ueb/portal_application/PortalApp/Views/Shared/Admin/_Layout.cshtml]
+[C:/Users/Swisstech/OneDrive/Desktop/portal_application/PortalApp/Views/Shared/Admin/_Layout.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXEFkbWluXF9MYXlvdXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = b-g6213flozf
 
-[C:/Users/Swisstech/OneDrive/Desktop/Konceptet e Avancuara në Ueb/portal_application/PortalApp/Views/Shared/_Layout.cshtml]
+[C:/Users/Swisstech/OneDrive/Desktop/portal_application/PortalApp/Views/Shared/_Layout.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = b-922fddvrqz

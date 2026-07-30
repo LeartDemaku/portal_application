@@ -5,10 +5,16 @@
 <div class="account-actions">
 @if (SignInManager.IsSignedIn(User))
 {
-    <a class="account-link" asp-controller="AdminArticle" asp-action="Index">Admin</a>
-    <a class="account-link" asp-area="Identity" asp-page="/Account/Manage/Index">@User.Identity?.Name</a>
-    <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-        <button type="submit" class="account-button">Dil</button>
+    <div class="account-user-info">
+        <svg class="account-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+        </svg>
+        <span class="account-username">@User.Identity?.Name</span>
+    </div>
+    <a class="account-link" href="/Admin/AdminArticle/Index">Admin</a>
+    <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })" class="account-logout-form">
+        <button type="submit" class="account-button account-logout-btn">Dil</button>
     </form>
 }
 else
