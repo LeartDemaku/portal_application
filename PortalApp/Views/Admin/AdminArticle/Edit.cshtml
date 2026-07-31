@@ -25,14 +25,14 @@
         <div class="admin-form-grid">
             <div class="admin-form-main">
                 <div class="form-field">
-                    <label asp-for="Title"></label>
-                    <input asp-for="Title" />
+                    <label asp-for="Title">Titulli</label>
+                    <input asp-for="Title" placeholder="Shkruaj titullin e artikullit..." />
                     <span asp-validation-for="Title" class="text-danger"></span>
                 </div>
 
                 <div class="form-field">
-                    <label asp-for="Content"></label>
-                    <textarea asp-for="Content" rows="14"></textarea>
+                    <label asp-for="Content">Përmbajtja</label>
+                    <textarea asp-for="Content" rows="14" placeholder="Shkruaj përmbajtjen e artikullit këtu..."></textarea>
                     <span asp-validation-for="Content" class="text-danger"></span>
                 </div>
             </div>
