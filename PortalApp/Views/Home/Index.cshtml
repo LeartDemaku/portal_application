@@ -61,32 +61,59 @@
 
         @if (Model.Sections.Any())
         {
-            <section class="content-section">
+            <section class="content-section showcase-section">
                 <div class="section-heading">
                     <div>
-                        <span class="eyebrow">Kategorite</span>
-                        <h2>Faqe tematike me hyrje te unifikuar</h2>
+                        <span class="eyebrow">Kategoritë</span>
+                        <h2>Faqe tematike me hyrje të unifikuar</h2>
                     </div>
                 </div>
 
-                <div class="section-showcase">
+                <div class="section-showcase-grid">
                     @foreach (var sectionPreview in Model.Sections)
                     {
-                        <article class="section-panel" style="--section-accent:@(sectionPreview.AccentColor)">
-                            <div class="section-panel-head">
-                                <div>
-                                    <span class="section-dot"></span>
+                        <article class="section-card" style="--section-accent:@(sectionPreview.AccentColor)">
+                            <div class="section-card-head">
+                                <div class="section-card-title-group">
+                                    <span class="section-badge" style="background:@sectionPreview.AccentColor"></span>
                                     <h3>@sectionPreview.Title</h3>
                                 </div>
-                                <a asp-controller="Sections" asp-action="Show" asp-route-slug="@sectionPreview.Slug">Shiko kategorine</a>
+                                <a class="section-link" asp-controller="Sections" asp-action="Show" asp-route-slug="@sectionPreview.Slug">
+                                    Të gjitha
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                                </a>
                             </div>
-                            <p>@sectionPreview.Description</p>
-                            <div class="section-panel-grid">
-                                @foreach (var article in sectionPreview.Articles)
+                            <p class="section-card-desc">@sectionPreview.Description</p>
+
+                            @if (sectionPreview.Articles.Any())
+                            {
+                                var topArticle = sectionPreview.Articles.First();
+                                var subArticles = sectionPreview.Articles.Skip(1).Take(3).ToList();
+
+                                <div class="section-card-hero">
+                                    <a class="section-card-hero-media" asp-controller="Home" asp-action="Show" asp-route-id="@topArticle.Id">
+                                        <img src="@topArticle.CoverImageUrl" alt="@topArticle.Title" />
+                                    </a>
+                                    <div class="section-card-hero-body">
+                                        <h4 class="section-card-hero-title">
+                                            <a asp-controller="Home" asp-action="Show" asp-route-id="@topArticle.Id">@topArticle.Title</a>
+                                        </h4>
+                                        <span class="section-card-hero-meta">@topArticle.CreatedAt.ToString("dd.MM.yyyy") • @topArticle.ReadTimeMinutes min</span>
+                                    </div>
+                                </div>
+
+                                @if (subArticles.Any())
                                 {
-                                    <partial name="Partials/_ArticleMini" model="article" />
+                                    <ul class="section-card-list">
+                                        @foreach (var article in subArticles)
+                                        {
+                                            <li>
+                                                <a asp-controller="Home" asp-action="Show" asp-route-id="@article.Id">@article.Title</a>
+                                            </li>
+                                        }
+                                    </ul>
                                 }
-                            </div>
+                            }
                         </article>
                     }
                 </div>

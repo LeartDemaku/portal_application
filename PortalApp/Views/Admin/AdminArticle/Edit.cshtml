@@ -15,6 +15,7 @@
 @section Styles
 {
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet" />
 }
 
 <div class="admin-card">
@@ -32,13 +33,14 @@
 
                 <div class="form-field">
                     <label asp-for="Content">Përmbajtja</label>
-                    <textarea asp-for="Content" rows="14" placeholder="Shkruaj përmbajtjen e artikullit këtu..."></textarea>
+                    <div id="editor-container" style="min-height: 300px; background: #ffffff; color: #0f172a; border-radius: 0.75rem; font-size: 1rem;">@Html.Raw(Model?.Content)</div>
+                    <input type="hidden" asp-for="Content" id="ContentInput" />
                     <span asp-validation-for="Content" class="text-danger"></span>
                 </div>
             </div>
 
             <aside class="admin-form-side">
-                @if (!string.IsNullOrWhiteSpace(Model.CurrentCoverImage))
+                @if (!string.IsNullOrWhiteSpace(Model?.CurrentCoverImage))
                 {
                     <div class="image-preview-card">
                         <span class="eyebrow">Imazhi aktual</span>
@@ -63,13 +65,16 @@
                     <select asp-for="ArticleTags" class="select2" multiple>
                         @foreach (var tag in tags)
                         {
-                            var isSelected = Model.ArticleTags.Contains(tag.Title, StringComparer.OrdinalIgnoreCase);
+                            var isSelected = Model?.ArticleTags != null && Model.ArticleTags.Contains(tag.Title, StringComparer.OrdinalIgnoreCase);
                             <option value="@tag.Title" selected="@isSelected">@tag.Title</option>
                         }
 
-                        @foreach (var tag in Model.ArticleTags.Where(x => !tags.Any(t => t.Title.Equals(x, StringComparison.OrdinalIgnoreCase))))
+                        @if (Model?.ArticleTags != null)
                         {
-                            <option value="@tag" selected="selected">@tag</option>
+                            @foreach (var tag in Model.ArticleTags.Where(x => !tags.Any(t => t.Title.Equals(x, StringComparison.OrdinalIgnoreCase))))
+                            {
+                                <option value="@tag" selected="selected">@tag</option>
+                            }
                         }
                     </select>
                     <span asp-validation-for="ArticleTags" class="text-danger"></span>
@@ -118,12 +123,36 @@
 {
     <partial name="_ValidationScriptsPartial" />
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
     <script>
         $(function () {
             $('.select2').select2({
                 tags: true,
                 width: '100%',
                 placeholder: 'Zgjidh ose shkruaj tagjet'
+            });
+
+            var quill = new Quill('#editor-container', {
+                theme: 'snow',
+                placeholder: 'Shkruaj përmbajtjen e artikullit këtu...',
+                modules: {
+                    toolbar: [
+                        [{ 'header': [1, 2, 3, false] }],
+                        ['bold', 'italic', 'underline', 'strike'],
+                        [{ 'color': [] }, { 'background': [] }],
+                        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                        ['link'],
+                        ['clean']
+                    ]
+                }
+            });
+
+            $('form').on('submit', function () {
+                var html = quill.root.innerHTML;
+                if (html === '<p><br></p>') {
+                    html = '';
+                }
+                $('#ContentInput').val(html);
             });
         });
     </script>

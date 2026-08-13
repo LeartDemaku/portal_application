@@ -13,6 +13,7 @@
 @section Styles
 {
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet" />
 }
 
 <div class="admin-card">
@@ -30,7 +31,8 @@
 
                 <div class="form-field">
                     <label asp-for="Content">Përmbajtja</label>
-                    <textarea asp-for="Content" rows="14" placeholder="Shkruaj përmbajtjen e artikullit këtu..."></textarea>
+                    <div id="editor-container" style="min-height: 300px; background: #ffffff; color: #0f172a; border-radius: 0.75rem; font-size: 1rem;">@Html.Raw(Model?.Content)</div>
+                    <input type="hidden" asp-for="Content" id="ContentInput" />
                     <span asp-validation-for="Content" class="text-danger"></span>
                 </div>
             </div>
@@ -86,12 +88,36 @@
 {
     <partial name="_ValidationScriptsPartial" />
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
     <script>
         $(function () {
             $('.select2').select2({
                 tags: true,
                 width: '100%',
                 placeholder: 'Zgjidh ose shkruaj tagjet'
+            });
+
+            var quill = new Quill('#editor-container', {
+                theme: 'snow',
+                placeholder: 'Shkruaj përmbajtjen e artikullit këtu...',
+                modules: {
+                    toolbar: [
+                        [{ 'header': [1, 2, 3, false] }],
+                        ['bold', 'italic', 'underline', 'strike'],
+                        [{ 'color': [] }, { 'background': [] }],
+                        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                        ['link'],
+                        ['clean']
+                    ]
+                }
+            });
+
+            $('form').on('submit', function () {
+                var html = quill.root.innerHTML;
+                if (html === '<p><br></p>') {
+                    html = '';
+                }
+                $('#ContentInput').val(html);
             });
         });
     </script>

@@ -522,13 +522,11 @@ C:\Users\Swisstech\OneDrive\Desktop\portal_application\PortalApp\bin\Debug\net8.
 C:\Users\Swisstech\OneDrive\Desktop\portal_application\PortalApp\bin\Debug\net8.0\System.Composition.Runtime.dll
 C:\Users\Swisstech\OneDrive\Desktop\portal_application\PortalApp\bin\Debug\net8.0\System.Composition.TypedParts.dll
 C:\Users\Swisstech\OneDrive\Desktop\portal_application\PortalApp\bin\Debug\net8.0\System.Configuration.ConfigurationManager.dll
-C:\Users\Swisstech\OneDrive\Desktop\portal_application\PortalApp\bin\Debug\net8.0\System.Formats.Asn1.dll
 C:\Users\Swisstech\OneDrive\Desktop\portal_application\PortalApp\bin\Debug\net8.0\System.IdentityModel.Tokens.Jwt.dll
 C:\Users\Swisstech\OneDrive\Desktop\portal_application\PortalApp\bin\Debug\net8.0\System.Memory.Data.dll
 C:\Users\Swisstech\OneDrive\Desktop\portal_application\PortalApp\bin\Debug\net8.0\System.Reflection.MetadataLoadContext.dll
 C:\Users\Swisstech\OneDrive\Desktop\portal_application\PortalApp\bin\Debug\net8.0\System.Runtime.Caching.dll
 C:\Users\Swisstech\OneDrive\Desktop\portal_application\PortalApp\bin\Debug\net8.0\System.Security.Cryptography.ProtectedData.dll
-C:\Users\Swisstech\OneDrive\Desktop\portal_application\PortalApp\bin\Debug\net8.0\System.Text.Json.dll
 C:\Users\Swisstech\OneDrive\Desktop\portal_application\PortalApp\bin\Debug\net8.0\af\Humanizer.resources.dll
 C:\Users\Swisstech\OneDrive\Desktop\portal_application\PortalApp\bin\Debug\net8.0\ar\Humanizer.resources.dll
 C:\Users\Swisstech\OneDrive\Desktop\portal_application\PortalApp\bin\Debug\net8.0\az\Humanizer.resources.dll
@@ -707,11 +705,6 @@ C:\Users\Swisstech\OneDrive\Desktop\portal_application\PortalApp\obj\Debug\net8.
 C:\Users\Swisstech\OneDrive\Desktop\portal_application\PortalApp\obj\Debug\net8.0\PortalApp.sourcelink.json
 C:\Users\Swisstech\OneDrive\Desktop\portal_application\PortalApp\obj\Debug\net8.0\staticwebassets.build.json
 C:\Users\Swisstech\OneDrive\Desktop\portal_application\PortalApp\obj\Debug\net8.0\staticwebassets.development.json
-C:\Users\Swisstech\OneDrive\Desktop\portal_application\PortalApp\obj\Debug\net8.0\staticwebassets\msbuild.PortalApp.Microsoft.AspNetCore.StaticWebAssets.props
-C:\Users\Swisstech\OneDrive\Desktop\portal_application\PortalApp\obj\Debug\net8.0\staticwebassets\msbuild.build.PortalApp.props
-C:\Users\Swisstech\OneDrive\Desktop\portal_application\PortalApp\obj\Debug\net8.0\staticwebassets\msbuild.buildMultiTargeting.PortalApp.props
-C:\Users\Swisstech\OneDrive\Desktop\portal_application\PortalApp\obj\Debug\net8.0\staticwebassets\msbuild.buildTransitive.PortalApp.props
-C:\Users\Swisstech\OneDrive\Desktop\portal_application\PortalApp\obj\Debug\net8.0\staticwebassets.pack.json
 C:\Users\Swisstech\OneDrive\Desktop\portal_application\PortalApp\obj\Debug\net8.0\scopedcss\Views\Shared\Admin\_Layout.cshtml.rz.scp.css
 C:\Users\Swisstech\OneDrive\Desktop\portal_application\PortalApp\obj\Debug\net8.0\scopedcss\Views\Shared\_Layout.cshtml.rz.scp.css
 C:\Users\Swisstech\OneDrive\Desktop\portal_application\PortalApp\obj\Debug\net8.0\scopedcss\bundle\PortalApp.styles.css
@@ -722,3 +715,10 @@ C:\Users\Swisstech\OneDrive\Desktop\portal_application\PortalApp\obj\Debug\net8.
 C:\Users\Swisstech\OneDrive\Desktop\portal_application\PortalApp\obj\Debug\net8.0\PortalApp.pdb
 C:\Users\Swisstech\OneDrive\Desktop\portal_application\PortalApp\obj\Debug\net8.0\PortalApp.genruntimeconfig.cache
 C:\Users\Swisstech\OneDrive\Desktop\portal_application\PortalApp\obj\Debug\net8.0\ref\PortalApp.dll
+C:\Users\Swisstech\OneDrive\Desktop\portal_application\PortalApp\bin\Debug\net8.0\PortalApp.staticwebassets.endpoints.json
+C:\Users\Swisstech\OneDrive\Desktop\portal_application\PortalApp\obj\Debug\net8.0\rpswa.dswa.cache.json
+C:\Users\Swisstech\OneDrive\Desktop\portal_application\PortalApp\obj\Debug\net8.0\rjimswa.dswa.cache.json
+C:\Users\Swisstech\OneDrive\Desktop\portal_application\PortalApp\obj\Debug\net8.0\rjsmrazor.dswa.cache.json
+C:\Users\Swisstech\OneDrive\Desktop\portal_application\PortalApp\obj\Debug\net8.0\rjsmcshtml.dswa.cache.json
+C:\Users\Swisstech\OneDrive\Desktop\portal_application\PortalApp\obj\Debug\net8.0\staticwebassets.build.json.cache
+C:\Users\Swisstech\OneDrive\Desktop\portal_application\PortalApp\obj\Debug\net8.0\staticwebassets.build.endpoints.json

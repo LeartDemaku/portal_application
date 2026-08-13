@@ -23,9 +23,20 @@
         <div class="article-layout">
             <article class="article-body-card">
                 <div class="article-body">
-                    @foreach (var paragraph in Model.Paragraphs)
+                    @if (!string.IsNullOrWhiteSpace(Model.Content) && (Model.Content.Contains("<p>") || Model.Content.Contains("<br>") || Model.Content.Contains("<div>") || Model.Content.Contains("<h")))
                     {
-                        <p>@paragraph</p>
+                        @Html.Raw(Model.Content)
+                    }
+                    else if (Model.Paragraphs != null && Model.Paragraphs.Any())
+                    {
+                        @foreach (var paragraph in Model.Paragraphs)
+                        {
+                            <p>@paragraph</p>
+                        }
+                    }
+                    else
+                    {
+                        @Html.Raw(Model.Content)
                     }
                 </div>
 

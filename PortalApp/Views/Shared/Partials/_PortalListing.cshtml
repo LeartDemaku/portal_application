@@ -14,39 +14,66 @@
 
 @if (Model.FeaturedArticle != null)
 {
-    <section class="hero-grid compact">
-        <article class="hero-card premium-hero compact">
-            <a class="premium-hero-cover-link" asp-controller="Home" asp-action="Show" asp-route-id="@Model.FeaturedArticle.Id">
-                <img class="premium-hero-img" src="@Model.FeaturedArticle.CoverImageUrl" alt="@Model.FeaturedArticle.Title" />
-                <div class="premium-hero-overlay"></div>
-            </a>
-            <div class="premium-hero-content">
-                <div class="premium-hero-meta">
-                    <a class="premium-hero-category" asp-controller="Sections" asp-action="Show" asp-route-slug="@Model.FeaturedArticle.CategorySlug">@Model.FeaturedArticle.CategoryName</a>
-                </div>
-                <h2 class="premium-hero-title">
-                    <a asp-controller="Home" asp-action="Show" asp-route-id="@Model.FeaturedArticle.Id">@Model.FeaturedArticle.Title</a>
-                </h2>
-                <p class="premium-hero-summary">@Model.FeaturedArticle.Summary</p>
-                <div class="premium-hero-footer">
-                    <div class="premium-hero-author">
-                        <span>@Model.FeaturedArticle.AuthorName</span>
+    @if (Model.HeadlineArticles.Any())
+    {
+        <section class="hero-grid compact">
+            <article class="hero-card premium-hero compact">
+                <a class="premium-hero-cover-link" asp-controller="Home" asp-action="Show" asp-route-id="@Model.FeaturedArticle.Id">
+                    <img class="premium-hero-img" src="@Model.FeaturedArticle.CoverImageUrl" alt="@Model.FeaturedArticle.Title" />
+                    <div class="premium-hero-overlay"></div>
+                </a>
+                <div class="premium-hero-content">
+                    <div class="premium-hero-meta">
+                        <a class="premium-hero-category" asp-controller="Sections" asp-action="Show" asp-route-slug="@Model.FeaturedArticle.CategorySlug">@Model.FeaturedArticle.CategoryName</a>
                     </div>
-                    <div class="premium-hero-details">
+                    <h2 class="premium-hero-title">
+                        <a asp-controller="Home" asp-action="Show" asp-route-id="@Model.FeaturedArticle.Id">@Model.FeaturedArticle.Title</a>
+                    </h2>
+                    <p class="premium-hero-summary">@Model.FeaturedArticle.Summary</p>
+                    <div class="premium-hero-footer">
+                        <div class="premium-hero-author">
+                            <span>@Model.FeaturedArticle.AuthorName</span>
+                        </div>
+                        <div class="premium-hero-details">
+                            <span>@Model.FeaturedArticle.CreatedAt.ToString("dd.MM.yyyy")</span>
+                            <span class="dot-separator">•</span>
+                            <span>@Model.FeaturedArticle.ReadTimeMinutes min lexim</span>
+                        </div>
+                    </div>
+                </div>
+            </article>
+            <div class="headline-stack">
+                @foreach (var article in Model.HeadlineArticles)
+                {
+                    <partial name="~/Views/Home/Partials/_ArticleMini.cshtml" model="article" />
+                }
+            </div>
+        </section>
+    }
+    else
+    {
+        <section class="single-featured-section">
+            <article class="featured-horizontal-card">
+                <a class="featured-horizontal-media" asp-controller="Home" asp-action="Show" asp-route-id="@Model.FeaturedArticle.Id">
+                    <img src="@Model.FeaturedArticle.CoverImageUrl" alt="@Model.FeaturedArticle.Title" />
+                </a>
+                <div class="featured-horizontal-body">
+                    <div class="story-card-meta">
+                        <a class="premium-hero-category" asp-controller="Sections" asp-action="Show" asp-route-slug="@Model.FeaturedArticle.CategorySlug">@Model.FeaturedArticle.CategoryName</a>
                         <span>@Model.FeaturedArticle.CreatedAt.ToString("dd.MM.yyyy")</span>
-                        <span class="dot-separator">•</span>
+                    </div>
+                    <h2 class="featured-horizontal-title">
+                        <a asp-controller="Home" asp-action="Show" asp-route-id="@Model.FeaturedArticle.Id">@Model.FeaturedArticle.Title</a>
+                    </h2>
+                    <p class="featured-horizontal-summary">@Model.FeaturedArticle.Summary</p>
+                    <div class="story-card-footer">
+                        <span>@Model.FeaturedArticle.AuthorName</span>
                         <span>@Model.FeaturedArticle.ReadTimeMinutes min lexim</span>
                     </div>
                 </div>
-            </div>
-        </article>
-        <div class="headline-stack">
-            @foreach (var article in Model.HeadlineArticles)
-            {
-                <partial name="~/Views/Home/Partials/_ArticleMini.cshtml" model="article" />
-            }
-        </div>
-    </section>
+            </article>
+        </section>
+    }
 }
 
 @if (Model.Articles.Any())

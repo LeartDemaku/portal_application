@@ -76,8 +76,8 @@ namespace PortalApp.Services
             return new PortalHomeViewModel
             {
                 FeaturedArticle = ordered.Select(MapCard).FirstOrDefault(),
-                HeadlineArticles = ordered.Skip(1).Take(4).Select(MapCard).ToList(),
-                LatestArticles = ordered.Skip(5).Take(12).Select(MapCard).ToList(),
+                HeadlineArticles = ordered.Skip(1).Take(3).Select(MapCard).ToList(),
+                LatestArticles = ordered.Skip(4).Take(12).Select(MapCard).ToList(),
                 Sections = sections
             };
         }
@@ -204,6 +204,7 @@ namespace PortalApp.Services
             {
                 Id = article.Id,
                 Title = article.Title,
+                Content = article.Content,
                 CoverImageUrl = GetCoverImage(article.CoverImage),
                 CategoryName = section.Name,
                 CategorySlug = section.Slug,
@@ -275,7 +276,8 @@ namespace PortalApp.Services
 
         private static string BuildSummary(string content)
         {
-            var clean = string.Join(" ", content
+            var textOnly = System.Text.RegularExpressions.Regex.Replace(content, "<.*?>", string.Empty);
+            var clean = string.Join(" ", textOnly
                 .Replace("\r", " ", StringComparison.Ordinal)
                 .Replace("\n", " ", StringComparison.Ordinal)
                 .Split(' ', StringSplitOptions.RemoveEmptyEntries));
@@ -290,6 +292,11 @@ namespace PortalApp.Services
 
         private static List<string> SplitParagraphs(string content)
         {
+            if (string.IsNullOrWhiteSpace(content))
+            {
+                return new List<string>();
+            }
+
             var paragraphs = content
                 .Split(["\r\n\r\n", "\n\n"], StringSplitOptions.RemoveEmptyEntries)
                 .Select(x => x.Trim())
@@ -301,26 +308,18 @@ namespace PortalApp.Services
                 return paragraphs;
             }
 
-            var sentences = content
-                .Split('.', StringSplitOptions.RemoveEmptyEntries)
+            var lines = content
+                .Split(["\r\n", "\n"], StringSplitOptions.RemoveEmptyEntries)
                 .Select(x => x.Trim())
                 .Where(x => !string.IsNullOrWhiteSpace(x))
                 .ToList();
 
-            if (sentences.Count == 0)
+            if (lines.Count > 0)
             {
-                return new List<string>();
+                return lines;
             }
 
-            var result = new List<string>();
-
-            for (var index = 0; index < sentences.Count; index += 2)
-            {
-                var chunk = string.Join(". ", sentences.Skip(index).Take(2)).Trim();
-                result.Add(chunk.EndsWith('.') ? chunk : $"{chunk}.");
-            }
-
-            return result;
+            return new List<string> { content.Trim() };
         }
 
         private static int EstimateReadTime(string content)
