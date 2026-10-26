@@ -3,24 +3,69 @@
 @{
     Layout = "~/Views/Shared/Admin/_Layout.cshtml";
     ViewData["Title"] = "Krijo tag";
+    ViewData["Subtitle"] = "Shto një etiketë të re për të lidhur artikujt me temat që lexuesit kërkojnë më shumë.";
 }
 
-<div class="admin-card" style="max-width:600px;">
-    <form asp-action="Create" asp-controller="AdminArticleTag" method="post" class="admin-form">
-        @Html.AntiForgeryToken()
-        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<a asp-action="Index" asp-controller="AdminArticleTag" class="admin-page-back">
+    <svg class="admin-icon" aria-hidden="true"><use href="#i-arrow-left"></use></svg>
+    Kthehu te tagjet
+</a>
 
-        <div class="form-field">
-            <label asp-for="Title">Emri i tagut</label>
-            <input asp-for="Title" />
-            <span asp-validation-for="Title" class="text-danger"></span>
+<div class="admin-form-layout admin-form-layout--narrow">
+    <section class="admin-form-card">
+        <div class="admin-form-card-head">
+            <span class="admin-form-card-icon admin-form-card-icon--cyan">
+                <svg class="admin-icon" aria-hidden="true"><use href="#i-tag"></use></svg>
+            </span>
+            <div class="admin-form-card-title">
+                <h2>Detajet e tagut</h2>
+                <p>Etiketa përdoret në kërkim, në kartelat e artikujve dhe në faqet tematike.</p>
+            </div>
         </div>
+        <form asp-action="Create" asp-controller="AdminArticleTag" method="post" class="admin-form" data-admin-form>
+            @Html.AntiForgeryToken()
+            <div class="admin-form-card-body">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-field">
+                    <label asp-for="Title">
+                        <span>Emri i tagut</span>
+                        <span class="field-optional">I detyrueshëm</span>
+                    </label>
+                    <input asp-for="Title" placeholder="P.sh. Robotikë, Zgjedhje, Inovacion" autocomplete="off" />
+                    <span asp-validation-for="Title" class="text-danger"></span>
+                    <span class="field-hint">Shkruaj pa simbolin #; ai shtohet automatikisht në pamje.</span>
+                </div>
+                <div class="admin-section-divider">Sugjerime të shpejta</div>
+                <div class="admin-suggestion-list">
+                    <button type="button" class="admin-suggestion" data-fill-target="Title" data-fill-value="Teknologji">Teknologji</button>
+                    <button type="button" class="admin-suggestion" data-fill-target="Title" data-fill-value="Ekonomi">Ekonomi</button>
+                    <button type="button" class="admin-suggestion" data-fill-target="Title" data-fill-value="Sport">Sport</button>
+                    <button type="button" class="admin-suggestion" data-fill-target="Title" data-fill-value="Kulturë">Kulturë</button>
+                    <button type="button" class="admin-suggestion" data-fill-target="Title" data-fill-value="Inovacion">Inovacion</button>
+                </div>
+            </div>
+            <div class="admin-form-card-foot">
+                <a asp-action="Index" asp-controller="AdminArticleTag" class="admin-btn admin-btn--ghost">Anulo</a>
+                <button type="submit" class="admin-btn admin-btn--primary">
+                    <svg class="admin-icon" aria-hidden="true"><use href="#i-check"></use></svg>
+                    Ruaj tagun
+                </button>
+            </div>
+        </form>
+    </section>
 
-        <div class="admin-form-actions">
-            <button type="submit" class="primary-button">Ruaj tagun</button>
-            <a asp-action="Index" asp-controller="AdminArticleTag" class="secondary-button">Anulo</a>
+    <aside class="admin-editor-side">
+        <div class="admin-tip-card">
+            <span class="admin-tip-icon"><svg class="admin-icon" aria-hidden="true"><use href="#i-sparkles"></use></svg></span>
+            <h3>Etiketa që kërkohen</h3>
+            <p>Tagjet më të mira janë të shkurtra, specifike dhe përshkruajnë temën pa përsëritur kategorinë.</p>
+            <ul class="admin-tip-list">
+                <li><svg class="admin-icon" aria-hidden="true"><use href="#i-check"></use></svg>Përdor 1–3 fjalë për tag.</li>
+                <li><svg class="admin-icon" aria-hidden="true"><use href="#i-check"></use></svg>Shmang sinonimet e tepërta.</li>
+                <li><svg class="admin-icon" aria-hidden="true"><use href="#i-check"></use></svg>Mos e përsërit emrin e kategorisë.</li>
+            </ul>
         </div>
-    </form>
+    </aside>
 </div>
 
 @section Scripts {

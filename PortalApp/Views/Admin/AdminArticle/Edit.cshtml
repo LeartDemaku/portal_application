@@ -5,6 +5,7 @@
 @{
     Layout = "~/Views/Shared/Admin/_Layout.cshtml";
     ViewData["Title"] = "Edito artikullin";
+    ViewData["Subtitle"] = "Përditëso përmbajtjen, organizimin dhe statusin e publikimit të artikullit.";
     var categories = ViewBag.ArticleCategories as List<ArticleCategory> ?? new List<ArticleCategory>();
     var tags = ViewBag.ArticleTags as List<ArticleTag> ?? new List<ArticleTag>();
     var users = ViewBag.Users as List<ApplicationUser> ?? new List<ApplicationUser>();
@@ -18,106 +19,190 @@
     <link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet" />
 }
 
-<div class="admin-card">
-    <form asp-action="Edit" asp-route-id="@Context.Request.RouteValues["id"]" method="post" enctype="multipart/form-data" class="admin-form">
-        @Html.AntiForgeryToken()
-        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<a asp-action="Index" asp-controller="AdminArticle" class="admin-page-back">
+    <svg class="admin-icon" aria-hidden="true"><use href="#i-arrow-left"></use></svg>
+    Kthehu te artikujt
+</a>
 
-        <div class="admin-form-grid">
-            <div class="admin-form-main">
-                <div class="form-field">
-                    <label asp-for="Title">Titulli</label>
-                    <input asp-for="Title" placeholder="Shkruaj titullin e artikullit..." />
-                    <span asp-validation-for="Title" class="text-danger"></span>
-                </div>
+<form asp-action="Edit" asp-route-id="@Context.Request.RouteValues["id"]" method="post" enctype="multipart/form-data" class="admin-form" data-admin-form>
+    @Html.AntiForgeryToken()
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-                <div class="form-field">
-                    <label asp-for="Content">Përmbajtja</label>
-                    <div id="editor-container" style="min-height: 300px; background: #ffffff; color: #0f172a; border-radius: 0.75rem; font-size: 1rem;">@Html.Raw(Model?.Content)</div>
-                    <input type="hidden" asp-for="Content" id="ContentInput" />
-                    <span asp-validation-for="Content" class="text-danger"></span>
-                </div>
-            </div>
-
-            <aside class="admin-form-side">
-                @if (!string.IsNullOrWhiteSpace(Model?.CurrentCoverImage))
-                {
-                    <div class="image-preview-card">
-                        <span class="eyebrow">Imazhi aktual</span>
-                        <img src="~/images/articles/@Model.CurrentCoverImage" alt="Imazhi aktual" />
+    <div class="admin-editor-layout">
+        <div class="admin-editor-main">
+            <section class="admin-form-card">
+                <div class="admin-form-card-head">
+                    <span class="admin-form-card-icon">
+                        <svg class="admin-icon" aria-hidden="true"><use href="#i-articles"></use></svg>
+                    </span>
+                    <div class="admin-form-card-title">
+                        <h2>Përmbajtja editoriale</h2>
+                        <p>Rishiko titullin dhe përditëso tekstin me formatimin ekzistues.</p>
                     </div>
-                }
-
-                <div class="form-field">
-                    <label asp-for="ArticleCategoryId">Kategoria</label>
-                    <select asp-for="ArticleCategoryId">
-                        <option value="0">Zgjidh kategorine</option>
-                        @foreach (var category in categories)
-                        {
-                            <option value="@category.Id">@category.Name</option>
-                        }
-                    </select>
-                    <span asp-validation-for="ArticleCategoryId" class="text-danger"></span>
                 </div>
+                <div class="admin-form-card-body">
+                    <div class="form-field form-field--title">
+                        <label asp-for="Title">
+                            <span>Titulli i artikullit</span>
+                            <span class="field-optional">I detyrueshëm</span>
+                        </label>
+                        <input asp-for="Title" placeholder="Shkruaj titullin e artikullit..." autocomplete="off" />
+                        <span asp-validation-for="Title" class="text-danger"></span>
+                    </div>
 
-                <div class="form-field">
-                    <label asp-for="ArticleTags">Tagjet</label>
-                    <select asp-for="ArticleTags" class="select2" multiple>
-                        @foreach (var tag in tags)
-                        {
-                            var isSelected = Model?.ArticleTags != null && Model.ArticleTags.Contains(tag.Title, StringComparer.OrdinalIgnoreCase);
-                            <option value="@tag.Title" selected="@isSelected">@tag.Title</option>
-                        }
-
-                        @if (Model?.ArticleTags != null)
-                        {
-                            @foreach (var tag in Model.ArticleTags.Where(x => !tags.Any(t => t.Title.Equals(x, StringComparison.OrdinalIgnoreCase))))
-                            {
-                                <option value="@tag" selected="selected">@tag</option>
-                            }
-                        }
-                    </select>
-                    <span asp-validation-for="ArticleTags" class="text-danger"></span>
-                </div>
-
-                @if (canManageCreator)
-                {
                     <div class="form-field">
-                        <label asp-for="CreatedBy">Autori</label>
-                        <select asp-for="CreatedBy">
-                            <option value="">Zgjidh autorin</option>
-                            @foreach (var user in users)
+                        <label asp-for="Content">
+                            <span>Përmbajtja</span>
+                            <span class="field-optional">Editor i pasur</span>
+                        </label>
+                        <div class="admin-editor">
+                            <div id="editor-container">@Html.Raw(Model?.Content)</div>
+                        </div>
+                        <input type="hidden" asp-for="Content" id="ContentInput" />
+                        <span asp-validation-for="Content" class="text-danger"></span>
+                        <div class="admin-editor-meta">
+                            <span class="admin-editor-stats" data-editor-stats>0 fjalë · 0 min lexim</span>
+                            <span>Formatimi ruhet automatikisht me artikullin</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <aside class="admin-editor-side">
+            <section class="admin-side-card">
+                <div class="admin-side-card-head">
+                    <svg class="admin-icon" aria-hidden="true"><use href="#i-circle-check"></use></svg>
+                    <h3>Publikimi dhe organizimi</h3>
+                </div>
+                <div class="admin-side-card-body">
+                    <div class="form-field">
+                        <label asp-for="ArticleCategoryId">Kategoria</label>
+                        <select asp-for="ArticleCategoryId">
+                            <option value="0">Zgjidh kategorinë</option>
+                            @foreach (var category in categories)
                             {
-                                var fullName = string.Join(" ", new[] { user.FirstName, user.LastName }.Where(x => !string.IsNullOrWhiteSpace(x)));
-                                <option value="@user.Id">@((string.IsNullOrWhiteSpace(fullName) ? user.Email : fullName))</option>
+                                <option value="@category.Id">@category.Name</option>
                             }
                         </select>
-                        <span asp-validation-for="CreatedBy" class="text-danger"></span>
+                        <span asp-validation-for="ArticleCategoryId" class="text-danger"></span>
                     </div>
-                }
 
-                @if (canApprove)
-                {
-                    <label class="toggle-field">
-                        <input asp-for="IsApproved" />
-                        <span>Artikulli eshte i publikuar</span>
-                    </label>
-                }
+                    <div class="form-field">
+                        <label asp-for="ArticleTags">Tagjet</label>
+                        <select asp-for="ArticleTags" class="select2" multiple>
+                            @foreach (var tag in tags)
+                            {
+                                var isSelected = Model?.ArticleTags != null && Model.ArticleTags.Contains(tag.Title, StringComparer.OrdinalIgnoreCase);
+                                <option value="@tag.Title" selected="@isSelected">@tag.Title</option>
+                            }
 
-                <div class="form-field">
-                    <label asp-for="CoverImage">Nderro imazhin</label>
-                    <input asp-for="CoverImage" type="file" accept="image/*" />
-                    <span asp-validation-for="CoverImage" class="text-danger"></span>
+                            @if (Model?.ArticleTags != null)
+                            {
+                                @foreach (var tag in Model.ArticleTags.Where(x => !tags.Any(t => t.Title.Equals(x, StringComparison.OrdinalIgnoreCase))))
+                                {
+                                    <option value="@tag" selected="selected">@tag</option>
+                                }
+                            }
+                        </select>
+                        <span asp-validation-for="ArticleTags" class="text-danger"></span>
+                        <span class="field-hint">Ndrysho ose shto tagje të reja për këtë artikull.</span>
+                    </div>
+
+                    @if (canManageCreator)
+                    {
+                        <div class="form-field">
+                            <label asp-for="CreatedBy">Autori</label>
+                            <select asp-for="CreatedBy">
+                                <option value="">Zgjidh autorin</option>
+                                @foreach (var user in users)
+                                {
+                                    var fullName = string.Join(" ", new[] { user.FirstName, user.LastName }.Where(x => !string.IsNullOrWhiteSpace(x)));
+                                    <option value="@user.Id">@((string.IsNullOrWhiteSpace(fullName) ? user.Email : fullName))</option>
+                                }
+                            </select>
+                            <span asp-validation-for="CreatedBy" class="text-danger"></span>
+                        </div>
+                    }
+
+                    @if (canApprove)
+                    {
+                        <label class="admin-toggle-field">
+                            <input asp-for="IsApproved" />
+                            <span class="admin-toggle-copy">
+                                <strong>Artikulli është i publikuar</strong>
+                                <small>Çaktivizo për ta kthyer në draft dhe për ta hequr nga portali.</small>
+                            </span>
+                        </label>
+                    }
+                    else
+                    {
+                        <div class="admin-side-note">
+                            <svg class="admin-icon" aria-hidden="true"><use href="#i-info"></use></svg>
+                            <span>Statusi i publikimit menaxhohet nga një redaktor ose administrator.</span>
+                        </div>
+                    }
                 </div>
+            </section>
 
-                <div class="admin-form-actions">
-                    <button type="submit" class="primary-button">Ruaj ndryshimet</button>
-                    <a asp-action="Index" asp-controller="AdminArticle" class="secondary-button">Anulo</a>
+            <section class="admin-side-card">
+                <div class="admin-side-card-head">
+                    <svg class="admin-icon" aria-hidden="true"><use href="#i-image"></use></svg>
+                    <h3>Kopertina e artikullit</h3>
                 </div>
-            </aside>
+                <div class="admin-side-card-body">
+                    <div class="admin-cover-field">
+                        <div class="admin-cover-preview">
+                            <span class="admin-cover-badge">Kopertina aktuale</span>
+                            @if (!string.IsNullOrWhiteSpace(Model?.CurrentCoverImage))
+                            {
+                                <img src="~/images/articles/@Model.CurrentCoverImage" alt="Kopertina aktuale" />
+                            }
+                            else
+                            {
+                                <div class="admin-cover-placeholder">
+                                    <svg class="admin-icon" aria-hidden="true"><use href="#i-image"></use></svg>
+                                    <span>Pa imazh aktual</span>
+                                </div>
+                            }
+                            <img id="coverPreview" alt="Parapamje e kopertinës së re" hidden />
+                        </div>
+                        <label class="admin-upload">
+                            <input asp-for="CoverImage" type="file" accept="image/*" data-image-input data-image-preview="#coverPreview" data-upload-name="#coverUploadName" />
+                            <span class="admin-upload-icon"><svg class="admin-icon" aria-hidden="true"><use href="#i-image"></use></svg></span>
+                            <span class="admin-upload-copy">
+                                <strong id="coverUploadName">Zgjidh një imazh të ri</strong>
+                                <small>JPG, PNG ose WEBP</small>
+                            </span>
+                        </label>
+                        <span asp-validation-for="CoverImage" class="text-danger"></span>
+                        <span class="field-hint">Lëre bosh për të mbajtur kopertinën aktuale.</span>
+                    </div>
+                </div>
+            </section>
+
+            <div class="admin-tip-card">
+                <span class="admin-tip-icon"><svg class="admin-icon" aria-hidden="true"><use href="#i-sparkles"></use></svg></span>
+                <h3>Rishikim i shpejtë</h3>
+                <p>Kontrollo titullin, kategorinë dhe kopertinën para se të ruash ndryshimet.</p>
+            </div>
+        </aside>
+    </div>
+
+    <div class="admin-form-footer">
+        <div class="admin-form-footer-copy">
+            <strong>Ruaj ndryshimet?</strong>
+            <small>Përditësimi do të pasqyrohet menjëherë në portal.</small>
         </div>
-    </form>
-</div>
+        <div class="admin-form-footer-actions">
+            <a asp-action="Index" asp-controller="AdminArticle" class="admin-btn admin-btn--ghost">Anulo</a>
+            <button type="submit" class="admin-btn admin-btn--primary">
+                <svg class="admin-icon" aria-hidden="true"><use href="#i-check"></use></svg>
+                Ruaj ndryshimet
+            </button>
+        </div>
+    </div>
+</form>
 
 @section Scripts
 {
@@ -140,7 +225,7 @@
                         [{ 'header': [1, 2, 3, false] }],
                         ['bold', 'italic', 'underline', 'strike'],
                         [{ 'color': [] }, { 'background': [] }],
-                        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                        [{ 'list': 'ordered' }, { 'list': 'bullet' }],
                         ['link'],
                         ['clean']
                     ]

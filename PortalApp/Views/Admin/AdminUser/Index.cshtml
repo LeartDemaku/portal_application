@@ -1,69 +1,178 @@
-@using Microsoft.AspNetCore.Identity
 @model List<ApplicationUserViewModel>
 
 @{
     Layout = "~/Views/Shared/Admin/_Layout.cshtml";
     ViewData["Title"] = "Përdoruesit";
+    ViewData["Subtitle"] = "Menaxho ekipin editorial, rolet e aksesit dhe llogaritë e redaksisë në një vend.";
+    var users = Model ?? new List<ApplicationUserViewModel>();
+    var total = users.Count;
+    var adminRoles = new[] { "Drejtor", "Admin", "Administrator" };
+    var leaders = users.Count(x => x.Roles.Any(role => adminRoles.Contains(role, StringComparer.OrdinalIgnoreCase)));
+    var editors = users.Count(x => x.Roles.Any(role => role.Equals("Redaktor", StringComparison.OrdinalIgnoreCase)));
+    var journalists = users.Count(x => x.Roles.Any(role => role.Equals("Gazetar", StringComparison.OrdinalIgnoreCase)));
 }
 
-<div class="admin-card">
-    <div class="admin-toolbar">
-        <div>
-            <span class="eyebrow">Menaxhim</span>
-            <h2>Lista e përdoruesve</h2>
+<div class="admin-stat-grid">
+    <article class="admin-stat-card admin-stat-card--blue">
+        <div class="admin-stat-top">
+            <span class="admin-stat-icon"><svg class="admin-icon" aria-hidden="true"><use href="#i-users"></use></svg></span>
+            <span class="admin-stat-badge">Ekipi</span>
         </div>
-        <a asp-action="Create" asp-controller="AdminUser" class="primary-button">Krijo përdorues</a>
+        <p class="admin-stat-value">@total</p>
+        <p class="admin-stat-label">Përdorues total</p>
+        <p class="admin-stat-meta">Llogari aktive në redaksi</p>
+    </article>
+    <article class="admin-stat-card admin-stat-card--violet">
+        <div class="admin-stat-top">
+            <span class="admin-stat-icon"><svg class="admin-icon" aria-hidden="true"><use href="#i-shield"></use></svg></span>
+            <span class="admin-stat-badge">Udhëheqje</span>
+        </div>
+        <p class="admin-stat-value">@leaders</p>
+        <p class="admin-stat-label">Administratorë</p>
+        <p class="admin-stat-meta">Drejtor, admin ose administrator</p>
+    </article>
+    <article class="admin-stat-card admin-stat-card--green">
+        <div class="admin-stat-top">
+            <span class="admin-stat-icon"><svg class="admin-icon" aria-hidden="true"><use href="#i-edit"></use></svg></span>
+            <span class="admin-stat-badge">Redaksi</span>
+        </div>
+        <p class="admin-stat-value">@editors</p>
+        <p class="admin-stat-label">Redaktorë</p>
+        <p class="admin-stat-meta">Përgjegjës për rishikimin e përmbajtjes</p>
+    </article>
+    <article class="admin-stat-card admin-stat-card--amber">
+        <div class="admin-stat-top">
+            <span class="admin-stat-icon"><svg class="admin-icon" aria-hidden="true"><use href="#i-articles"></use></svg></span>
+            <span class="admin-stat-badge">Terren</span>
+        </div>
+        <p class="admin-stat-value">@journalists</p>
+        <p class="admin-stat-label">Gazetarë</p>
+        <p class="admin-stat-meta">Autorë që kontribuojnë me artikuj</p>
+    </article>
+</div>
+
+<section class="admin-panel">
+    <div class="admin-toolbar">
+        <div class="admin-toolbar-title">
+            <h2>Ekipi editorial</h2>
+            <p>Kontrollo aksesin dhe mbaj të qartë përgjegjësitë e secilit anëtar.</p>
+        </div>
+        <div class="admin-toolbar-actions">
+            <label class="admin-search">
+                <svg class="admin-icon" aria-hidden="true"><use href="#i-search"></use></svg>
+                <input type="search" placeholder="Kërko përdorues..." aria-label="Kërko përdorues" data-admin-search="#usersTable" data-result-count="#usersCount" />
+            </label>
+            <a asp-action="Create" asp-controller="AdminUser" class="admin-btn admin-btn--primary">
+                <svg class="admin-icon" aria-hidden="true"><use href="#i-plus"></use></svg>
+                Krijo përdorues
+            </a>
+        </div>
     </div>
 
-    <div class="table-responsive">
-        <table class="table admin-table align-middle">
+    <div class="admin-filter-bar">
+        <span class="admin-result-count" id="usersCount">@total nga @total</span>
+    </div>
+
+    <div class="admin-table-wrap">
+        <table class="admin-table" id="usersTable">
             <thead>
                 <tr>
-                    <th>Emri</th>
+                    <th>Anëtari</th>
                     <th>Email</th>
                     <th>Roli</th>
                     <th class="text-end">Veprime</th>
                 </tr>
             </thead>
             <tbody>
-                @if (Model.Any())
+                @foreach (var item in users)
                 {
-                    @foreach (var item in Model)
+                    var fullName = string.Concat(item.FirstName, " ", item.LastName).Trim();
+                    var displayName = string.IsNullOrWhiteSpace(fullName) ? item.Email : fullName;
+                    var initials = new string(displayName.Split(new[] { ' ', '.', '@' }, StringSplitOptions.RemoveEmptyEntries).Take(2).Select(x => x[0]).ToArray()).ToUpperInvariant();
+                    if (string.IsNullOrWhiteSpace(initials))
                     {
-                        <tr>
-                            <td>
-                                <div class="table-title-cell">
-                                    <strong>@(string.Concat(item.FirstName, " ", item.LastName).Trim())</strong>
-                                </div>
-                            </td>
-                            <td>@item.Email</td>
-                            <td>
-                                <span class="status-pill live">@(item.Roles.FirstOrDefault() ?? "-")</span>
-                            </td>
-                            <td class="text-end">
-                                <div class="table-actions">
-                                    <a asp-action="Edit" asp-controller="AdminUser" asp-route-id="@item.Id" class="secondary-button">Edito</a>
-                                    <form asp-action="Delete" asp-controller="AdminUser" asp-route-id="@item.Id" method="post">
-                                        @Html.AntiForgeryToken()
-                                        <button type="submit" class="danger-button" onclick="return confirm('A dëshironi ta fshini përdoruesin?');">Fshij</button>
-                                    </form>
-                                </div>
-                            </td>
-                        </tr>
+                        initials = "US";
                     }
-                }
-                else
-                {
+                    var role = item.Roles.FirstOrDefault();
+                    var avatarTone = role != null && role.Equals("Redaktor", StringComparison.OrdinalIgnoreCase)
+                        ? "admin-avatar-sm--emerald"
+                        : role != null && role.Equals("Gazetar", StringComparison.OrdinalIgnoreCase)
+                            ? "admin-avatar-sm--amber"
+                            : role != null && (role.Equals("Drejtor", StringComparison.OrdinalIgnoreCase) || role.Equals("Admin", StringComparison.OrdinalIgnoreCase) || role.Equals("Administrator", StringComparison.OrdinalIgnoreCase))
+                                ? "admin-avatar-sm--violet"
+                                : "";
                     <tr>
-                        <td colspan="4">
-                            <div class="empty-state small">
-                                <h3>Nuk ka përdorues për shfaqje</h3>
-                                <p>Krijoni përdoruesin e parë të sistemit.</p>
+                        <td data-label="">
+                            <div class="admin-cell">
+                                <span class="admin-avatar-sm @avatarTone">@initials</span>
+                                <span class="admin-cell-copy">
+                                    <strong>@displayName</strong>
+                                    <small>Anëtar i redaksisë</small>
+                                </span>
+                            </div>
+                        </td>
+                        <td data-label="Email">
+                            <span class="admin-cell">
+                                <svg class="admin-icon" aria-hidden="true" style="color: var(--a-primary-2);"><use href="#i-mail"></use></svg>
+                                <span>@item.Email</span>
+                            </span>
+                        </td>
+                        <td data-label="Roli">
+                            @if (!string.IsNullOrWhiteSpace(role))
+                            {
+                                <span class="admin-badge admin-badge--role">
+                                    <svg class="admin-icon" aria-hidden="true" style="width: 0.72rem; height: 0.72rem;"><use href="#i-shield"></use></svg>
+                                    @role
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="admin-badge admin-badge--neutral">Pa rol</span>
+                            }
+                        </td>
+                        <td data-label="Veprime" class="text-end">
+                            <div class="admin-row-actions">
+                                <a asp-action="Edit" asp-controller="AdminUser" asp-route-id="@item.Id" class="admin-btn admin-btn--soft admin-btn--sm">
+                                    <svg class="admin-icon" aria-hidden="true"><use href="#i-edit"></use></svg>
+                                    Edito
+                                </a>
+                                <form asp-action="Delete" asp-controller="AdminUser" asp-route-id="@item.Id" method="post">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="admin-btn admin-btn--danger admin-btn--sm" onclick="return confirm('A dëshironi ta fshini përdoruesin?');">
+                                        <svg class="admin-icon" aria-hidden="true"><use href="#i-trash"></use></svg>
+                                        Fshij
+                                    </button>
+                                </form>
                             </div>
                         </td>
                     </tr>
                 }
+                @if (total == 0)
+                {
+                    <tr class="admin-empty-row">
+                        <td colspan="4" class="admin-table-empty-cell">
+                            <div class="admin-empty">
+                                <span class="admin-empty-icon"><svg class="admin-icon" aria-hidden="true"><use href="#i-users"></use></svg></span>
+                                <h3>Nuk ka përdorues për shfaqje</h3>
+                                <p>Krijo përdoruesin e parë për të ndërtuar ekipin editorial.</p>
+                                <a asp-action="Create" asp-controller="AdminUser" class="admin-btn admin-btn--primary">
+                                    <svg class="admin-icon" aria-hidden="true"><use href="#i-plus"></use></svg>
+                                    Krijo përdorues
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+                <tr class="admin-search-empty admin-empty-row" data-search-empty>
+                    <td colspan="4" class="admin-table-empty-cell">
+                        <div class="admin-empty">
+                            <span class="admin-empty-icon"><svg class="admin-icon" aria-hidden="true"><use href="#i-search"></use></svg></span>
+                            <h3>Nuk u gjet asnjë përdorues</h3>
+                            <p>Provo një emër, email ose rol tjetër.</p>
+                        </div>
+                    </td>
+                </tr>
             </tbody>
         </table>
     </div>
-</div>
+</section>

@@ -3,24 +3,71 @@
 @{
     Layout = "~/Views/Shared/Admin/_Layout.cshtml";
     ViewData["Title"] = "Krijo kategori";
+    ViewData["Subtitle"] = "Shto një seksion të ri që e ndihmon lexuesin të navigojë më shpejt në portal.";
 }
 
-<div class="admin-card" style="max-width:600px;">
-    <form asp-action="Create" asp-controller="AdminArticleCategory" method="post" class="admin-form">
-        @Html.AntiForgeryToken()
-        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<a asp-action="Index" asp-controller="AdminArticleCategory" class="admin-page-back">
+    <svg class="admin-icon" aria-hidden="true"><use href="#i-arrow-left"></use></svg>
+    Kthehu te kategoritë
+</a>
 
-        <div class="form-field">
-            <label asp-for="Name">Emri i kategorisë</label>
-            <input asp-for="Name" placeholder="Shkruaj emrin e kategorisë..." />
-            <span asp-validation-for="Name" class="text-danger"></span>
+<div class="admin-form-layout admin-form-layout--narrow">
+    <section class="admin-form-card">
+        <div class="admin-form-card-head">
+            <span class="admin-form-card-icon admin-form-card-icon--amber">
+                <svg class="admin-icon" aria-hidden="true"><use href="#i-folder"></use></svg>
+            </span>
+            <div class="admin-form-card-title">
+                <h2>Detajet e kategorisë</h2>
+                <p>Emri do të shfaqet në navigim, filtra dhe faqet e seksionit.</p>
+            </div>
         </div>
+        <form asp-action="Create" asp-controller="AdminArticleCategory" method="post" class="admin-form" data-admin-form>
+            @Html.AntiForgeryToken()
+            <div class="admin-form-card-body">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-field">
+                    <label asp-for="Name">
+                        <span>Emri i kategorisë</span>
+                        <span class="field-optional">I detyrueshëm</span>
+                    </label>
+                    <input asp-for="Name" placeholder="P.sh. Ekonomi, Teknologji, Sport" autocomplete="off" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                    <span class="field-hint">Përdor një emër të shkurtër, të qartë dhe të njohur për lexuesin.</span>
+                </div>
+                <div class="admin-section-divider">Pamja në portal</div>
+                <div class="admin-profile-preview">
+                    <span class="admin-thumb admin-thumb--amber">
+                        <svg class="admin-icon" aria-hidden="true"><use href="#i-folder"></use></svg>
+                    </span>
+                    <span class="admin-profile-preview-copy">
+                        <strong>Seksion i ri editorial</strong>
+                        <small>Do të shfaqet automatikisht në strukturën e portalit.</small>
+                    </span>
+                </div>
+            </div>
+            <div class="admin-form-card-foot">
+                <a asp-action="Index" asp-controller="AdminArticleCategory" class="admin-btn admin-btn--ghost">Anulo</a>
+                <button type="submit" class="admin-btn admin-btn--primary">
+                    <svg class="admin-icon" aria-hidden="true"><use href="#i-check"></use></svg>
+                    Ruaj kategorinë
+                </button>
+            </div>
+        </form>
+    </section>
 
-        <div class="admin-form-actions">
-            <button type="submit" class="primary-button">Ruaj kategorinë</button>
-            <a asp-action="Index" asp-controller="AdminArticleCategory" class="secondary-button">Anulo</a>
+    <aside class="admin-editor-side">
+        <div class="admin-tip-card">
+            <span class="admin-tip-icon"><svg class="admin-icon" aria-hidden="true"><use href="#i-sparkles"></use></svg></span>
+            <h3>Kategori që funksionon</h3>
+            <p>Një strukturë e thjeshtë e bën portalin më të lexueshëm dhe më të shpejtë për t'u eksploruar.</p>
+            <ul class="admin-tip-list">
+                <li><svg class="admin-icon" aria-hidden="true"><use href="#i-check"></use></svg>Mbaj emrin nën 20 karaktere.</li>
+                <li><svg class="admin-icon" aria-hidden="true"><use href="#i-check"></use></svg>Shmang emrat e përgjithshëm ose të dyfishtë.</li>
+                <li><svg class="admin-icon" aria-hidden="true"><use href="#i-check"></use></svg>Përdor të njëjtin stil si kategoritë ekzistuese.</li>
+            </ul>
         </div>
-    </form>
+    </aside>
 </div>
 
 @section Scripts {

@@ -3,21 +3,77 @@
 @{
     Layout = "~/Views/Shared/Admin/_Layout.cshtml";
     ViewData["Title"] = "Komentet";
+    ViewData["Subtitle"] = "Ndjek bisedat e lexuesve, mbro cilësinë e diskutimit dhe menaxho komentet me një klik.";
+    var comments = Model?.ToList() ?? new List<PortalApp.Models.ArticleComment>();
+    var total = comments.Count;
+    var authors = comments.Select(x => x.Name.Trim().ToLowerInvariant()).Distinct().Count();
+    var articlesWithComments = comments.Select(x => x.ArticleId).Distinct().Count();
+    var weekAgo = DateTime.Now.AddDays(-7);
+    var thisWeek = comments.Count(x => x.CreatedAt >= weekAgo);
 }
 
-<div class="admin-card">
+<div class="admin-stat-grid">
+    <article class="admin-stat-card admin-stat-card--blue">
+        <div class="admin-stat-top">
+            <span class="admin-stat-icon"><svg class="admin-icon" aria-hidden="true"><use href="#i-comment"></use></svg></span>
+            <span class="admin-stat-badge">Biseda</span>
+        </div>
+        <p class="admin-stat-value">@total</p>
+        <p class="admin-stat-label">Komente totale</p>
+        <p class="admin-stat-meta">Zërat e lexuesve në të gjithë portalin</p>
+    </article>
+    <article class="admin-stat-card admin-stat-card--violet">
+        <div class="admin-stat-top">
+            <span class="admin-stat-icon"><svg class="admin-icon" aria-hidden="true"><use href="#i-users"></use></svg></span>
+            <span class="admin-stat-badge">Lexues</span>
+        </div>
+        <p class="admin-stat-value">@authors</p>
+        <p class="admin-stat-label">Autorë unikë</p>
+        <p class="admin-stat-meta">Lexues që kanë marrë pjesë në diskutim</p>
+    </article>
+    <article class="admin-stat-card admin-stat-card--green">
+        <div class="admin-stat-top">
+            <span class="admin-stat-icon"><svg class="admin-icon" aria-hidden="true"><use href="#i-articles"></use></svg></span>
+            <span class="admin-stat-badge">Të komentuar</span>
+        </div>
+        <p class="admin-stat-value">@articlesWithComments</p>
+        <p class="admin-stat-label">Artikuj me komente</p>
+        <p class="admin-stat-meta">Përmbajtje që ka nxitur reagime</p>
+    </article>
+    <article class="admin-stat-card admin-stat-card--amber">
+        <div class="admin-stat-top">
+            <span class="admin-stat-icon"><svg class="admin-icon" aria-hidden="true"><use href="#i-clock"></use></svg></span>
+            <span class="admin-stat-badge">7 ditë</span>
+        </div>
+        <p class="admin-stat-value">@thisWeek</p>
+        <p class="admin-stat-label">Komente të fundit</p>
+        <p class="admin-stat-meta">Aktivitet gjatë javës së fundit</p>
+    </article>
+</div>
+
+<section class="admin-panel">
     <div class="admin-toolbar">
-        <div>
-            <span class="eyebrow">Menaxhim</span>
-            <h2>Lista e komenteve</h2>
+        <div class="admin-toolbar-title">
+            <h2>Rrjedha e komenteve</h2>
+            <p>Lexo diskutimet më të fundit dhe hiq përmbajtjen që nuk përputhet me standardet.</p>
+        </div>
+        <div class="admin-toolbar-actions">
+            <label class="admin-search">
+                <svg class="admin-icon" aria-hidden="true"><use href="#i-search"></use></svg>
+                <input type="search" placeholder="Kërko komente..." aria-label="Kërko komente" data-admin-search="#commentsTable" data-result-count="#commentsCount" />
+            </label>
         </div>
     </div>
 
-    <div class="table-responsive">
-        <table class="table admin-table align-middle">
+    <div class="admin-filter-bar">
+        <span class="admin-result-count" id="commentsCount">@total nga @total</span>
+    </div>
+
+    <div class="admin-table-wrap">
+        <table class="admin-table" id="commentsTable">
             <thead>
                 <tr>
-                    <th>Autori</th>
+                    <th>Lexuesi</th>
                     <th>Komenti</th>
                     <th>Artikulli</th>
                     <th>Data</th>
@@ -25,38 +81,82 @@
                 </tr>
             </thead>
             <tbody>
-                @if (Model.Any())
+                @foreach (var item in comments)
                 {
-                    @foreach (var item in Model)
+                    var initials = new string(item.Name.Split(new[] { ' ', '.' }, StringSplitOptions.RemoveEmptyEntries).Take(2).Select(x => x[0]).ToArray()).ToUpperInvariant();
+                    if (string.IsNullOrWhiteSpace(initials))
                     {
-                        <tr>
-                            <td><strong>@item.Name</strong></td>
-                            <td>@(item.Comment.Length > 80 ? item.Comment[..80] + "..." : item.Comment)</td>
-                            <td>@item.Article?.Title</td>
-                            <td>@item.CreatedAt.ToString("dd.MM.yyyy HH:mm")</td>
-                            <td class="text-end">
-                                <div class="table-actions">
-                                    <form asp-action="Delete" asp-controller="AdminArticleComment" asp-route-id="@item.Id" method="post">
-                                        @Html.AntiForgeryToken()
-                                        <button type="submit" class="danger-button" onclick="return confirm('A dëshironi ta fshini komentin?');">Fshij</button>
-                                    </form>
-                                </div>
-                            </td>
-                        </tr>
+                        initials = "LX";
                     }
-                }
-                else
-                {
+                    var excerpt = item.Comment.Length > 95 ? item.Comment.Substring(0, 95) + "..." : item.Comment;
                     <tr>
-                        <td colspan="5">
-                            <div class="empty-state small">
-                                <h3>Nuk ka komente për shfaqje</h3>
-                                <p>Komentet e lexuesve do të shfaqen këtu.</p>
+                        <td data-label="">
+                            <div class="admin-cell">
+                                <span class="admin-avatar-sm admin-avatar-sm--violet">@initials</span>
+                                <span class="admin-cell-copy">
+                                    <strong>@item.Name</strong>
+                                    <small>@item.Email</small>
+                                </span>
+                            </div>
+                        </td>
+                        <td data-label="Komenti">
+                            <div class="admin-cell">
+                                <span class="admin-thumb admin-thumb--amber">
+                                    <svg class="admin-icon" aria-hidden="true"><use href="#i-quote"></use></svg>
+                                </span>
+                                <span class="admin-cell-copy">
+                                    <strong title="@item.Comment">@excerpt</strong>
+                                    <small>Koment i lexuesit · ID #@item.Id</small>
+                                </span>
+                            </div>
+                        </td>
+                        <td data-label="Artikulli">
+                            <span class="admin-category-chip">
+                                <svg class="admin-icon" aria-hidden="true"><use href="#i-articles"></use></svg>
+                                @(item.Article?.Title ?? "Artikull i fshirë")
+                            </span>
+                        </td>
+                        <td data-label="Data">
+                            <span class="admin-date">
+                                @item.CreatedAt.ToString("dd.MM.yyyy")
+                                <small>@item.CreatedAt.ToString("HH:mm")</small>
+                            </span>
+                        </td>
+                        <td data-label="Veprime" class="text-end">
+                            <div class="admin-row-actions">
+                                <form asp-action="Delete" asp-controller="AdminArticleComment" asp-route-id="@item.Id" method="post">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="admin-btn admin-btn--danger admin-btn--sm" onclick="return confirm('A dëshironi ta fshini komentin?');">
+                                        <svg class="admin-icon" aria-hidden="true"><use href="#i-trash"></use></svg>
+                                        Fshij
+                                    </button>
+                                </form>
                             </div>
                         </td>
                     </tr>
                 }
+                @if (total == 0)
+                {
+                    <tr class="admin-empty-row">
+                        <td colspan="5" class="admin-table-empty-cell">
+                            <div class="admin-empty">
+                                <span class="admin-empty-icon"><svg class="admin-icon" aria-hidden="true"><use href="#i-comment"></use></svg></span>
+                                <h3>Nuk ka komente për shfaqje</h3>
+                                <p>Komentet e lexuesve do të shfaqen këtu sapo të publikohen.</p>
+                            </div>
+                        </td>
+                    </tr>
+                }
+                <tr class="admin-search-empty admin-empty-row" data-search-empty>
+                    <td colspan="5" class="admin-table-empty-cell">
+                        <div class="admin-empty">
+                            <span class="admin-empty-icon"><svg class="admin-icon" aria-hidden="true"><use href="#i-search"></use></svg></span>
+                            <h3>Nuk u gjet asnjë koment</h3>
+                            <p>Provo një emër, email ose term tjetër kërkimi.</p>
+                        </div>
+                    </td>
+                </tr>
             </tbody>
         </table>
     </div>
-</div>
+</section>

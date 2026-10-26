@@ -5,40 +5,70 @@
 @{
     Layout = "~/Views/Shared/Admin/_Layout.cshtml";
     ViewData["Title"] = "Krijo përdorues";
+    ViewData["Subtitle"] = "Shto një anëtar të ri në ekip dhe cakto nivelin e duhur të aksesit.";
     var roles = ViewBag.Roles as List<IdentityRole> ?? new List<IdentityRole>();
 }
 
-<div class="admin-card" style="max-width:700px;">
-    <form asp-action="Create" asp-controller="AdminUser" method="post" class="admin-form">
-        @Html.AntiForgeryToken()
-        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<a asp-action="Index" asp-controller="AdminUser" class="admin-page-back">
+    <svg class="admin-icon" aria-hidden="true"><use href="#i-arrow-left"></use></svg>
+    Kthehu te përdoruesit
+</a>
 
-        <div class="admin-form-grid">
-            <div class="admin-form-main">
-                <div class="form-field">
-                    <label asp-for="FirstName">Emri</label>
-                    <input asp-for="FirstName" />
-                    <span asp-validation-for="FirstName" class="text-danger"></span>
+<form asp-action="Create" asp-controller="AdminUser" method="post" class="admin-form" data-admin-form>
+    @Html.AntiForgeryToken()
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="admin-form-layout">
+        <section class="admin-form-card">
+            <div class="admin-form-card-head">
+                <span class="admin-form-card-icon admin-form-card-icon--violet">
+                    <svg class="admin-icon" aria-hidden="true"><use href="#i-user"></use></svg>
+                </span>
+                <div class="admin-form-card-title">
+                    <h2>Profili i përdoruesit</h2>
+                    <p>Plotëso të dhënat personale, kredencialet dhe rolin e aksesit.</p>
+                </div>
+            </div>
+            <div class="admin-form-card-body">
+                <div class="admin-section-divider">Të dhënat personale</div>
+                <div class="admin-field-grid">
+                    <div class="form-field">
+                        <label asp-for="FirstName">Emri</label>
+                        <input asp-for="FirstName" placeholder="Emri i anëtarit" autocomplete="given-name" />
+                        <span asp-validation-for="FirstName" class="text-danger"></span>
+                    </div>
+                    <div class="form-field">
+                        <label asp-for="LastName">Mbiemri</label>
+                        <input asp-for="LastName" placeholder="Mbiemri i anëtarit" autocomplete="family-name" />
+                        <span asp-validation-for="LastName" class="text-danger"></span>
+                    </div>
                 </div>
 
+                <div class="admin-section-divider">Kredencialet e hyrjes</div>
                 <div class="form-field">
-                    <label asp-for="LastName">Mbiemri</label>
-                    <input asp-for="LastName" />
-                    <span asp-validation-for="LastName" class="text-danger"></span>
-                </div>
-
-                <div class="form-field">
-                    <label asp-for="Email">Email</label>
-                    <input asp-for="Email" type="email" />
+                    <label asp-for="Email">
+                        <span>Email</span>
+                        <span class="field-optional">Përdoret për hyrje</span>
+                    </label>
+                    <input asp-for="Email" type="email" placeholder="emri@zeriyne.al" autocomplete="email" />
                     <span asp-validation-for="Email" class="text-danger"></span>
                 </div>
-
                 <div class="form-field">
-                    <label asp-for="Password">Fjalëkalimi</label>
-                    <input asp-for="Password" type="password" />
+                    <label asp-for="Password">
+                        <span>Fjalëkalimi</span>
+                        <span class="field-optional">I detyrueshëm</span>
+                    </label>
+                    <div class="admin-input-wrap">
+                        <input asp-for="Password" type="password" placeholder="Krijo një fjalëkalim të sigurt" autocomplete="new-password" />
+                        <button type="button" class="admin-input-action" data-password-toggle="#Password" aria-label="Shfaq fjalëkalimin" aria-pressed="false">
+                            <svg class="admin-icon" aria-hidden="true"><use href="#i-eye"></use></svg>
+                        </button>
+                    </div>
                     <span asp-validation-for="Password" class="text-danger"></span>
+                    <span class="field-hint">Përdor të paktën 8 karaktere, me shkronja, numra dhe simbole.</span>
                 </div>
 
+                <div class="admin-section-divider">Roli dhe aksesi</div>
                 <div class="form-field">
                     <label asp-for="RoleId">Roli</label>
                     <select asp-for="RoleId">
@@ -49,16 +79,56 @@
                         }
                     </select>
                     <span asp-validation-for="RoleId" class="text-danger"></span>
-                </div>
-
-                <div class="admin-form-actions">
-                    <button type="submit" class="primary-button">Ruaj përdoruesin</button>
-                    <a asp-action="Index" asp-controller="AdminUser" class="secondary-button">Anulo</a>
+                    <span class="field-hint">Roli përcakton cilat pjesë të panelit mund të hapë përdoruesi.</span>
                 </div>
             </div>
+        </section>
+
+        <aside class="admin-editor-side">
+            <div class="admin-side-card">
+                <div class="admin-side-card-head">
+                    <svg class="admin-icon" aria-hidden="true"><use href="#i-shield"></use></svg>
+                    <h3>Udhëzues aksesi</h3>
+                </div>
+                <div class="admin-side-card-body">
+                    <div class="admin-info-list">
+                        <div class="admin-info-item">
+                            <svg class="admin-icon" aria-hidden="true"><use href="#i-users"></use></svg>
+                            <span>Jepni rolin minimal të nevojshëm për detyrën e përdoruesit.</span>
+                        </div>
+                        <div class="admin-info-item">
+                            <svg class="admin-icon" aria-hidden="true"><use href="#i-lock"></use></svg>
+                            <span>Fjalëkalimi duhet të jetë unik dhe i vështirë për t'u hamendësuar.</span>
+                        </div>
+                        <div class="admin-info-item">
+                            <svg class="admin-icon" aria-hidden="true"><use href="#i-edit"></use></svg>
+                            <span>Roli mund të ndryshohet më vonë nga faqja e redaktimit.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="admin-tip-card">
+                <span class="admin-tip-icon"><svg class="admin-icon" aria-hidden="true"><use href="#i-sparkles"></use></svg></span>
+                <h3>Llogari e gatshme</h3>
+                <p>Pasi të ruash përdoruesin, ai mund të hyjë menjëherë me emailin dhe fjalëkalimin e caktuar.</p>
+            </div>
+        </aside>
+    </div>
+
+    <div class="admin-form-footer">
+        <div class="admin-form-footer-copy">
+            <strong>Shto anëtarin në ekip</strong>
+            <small>Llogaria do të aktivizohet menjëherë pas ruajtjes.</small>
         </div>
-    </form>
-</div>
+        <div class="admin-form-footer-actions">
+            <a asp-action="Index" asp-controller="AdminUser" class="admin-btn admin-btn--ghost">Anulo</a>
+            <button type="submit" class="admin-btn admin-btn--primary">
+                <svg class="admin-icon" aria-hidden="true"><use href="#i-check"></use></svg>
+                Ruaj përdoruesin
+            </button>
+        </div>
+    </div>
+</form>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

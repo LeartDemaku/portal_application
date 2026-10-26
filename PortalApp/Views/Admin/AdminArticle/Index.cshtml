@@ -3,22 +3,87 @@
 @{
     Layout = "~/Views/Shared/Admin/_Layout.cshtml";
     ViewData["Title"] = "Artikujt";
+    ViewData["Subtitle"] = "Menaxho bibliotekën editoriale, ndiq statusin e publikimit dhe kalo shpejt në redaktim.";
+    var articles = Model ?? new List<PortalApp.Models.Article>();
+    var total = articles.Count;
+    var published = articles.Count(x => !string.IsNullOrWhiteSpace(x.ApprovedBy));
+    var drafts = total - published;
+    var activeCategories = articles.Where(x => x.ArticleCategory != null).Select(x => x.ArticleCategoryId).Distinct().Count();
+    var liveRate = total > 0 ? (int)Math.Round(published * 100.0 / total) : 0;
+    var latest = articles.OrderByDescending(x => x.CreatedAt).FirstOrDefault();
 }
 
-<div class="admin-card">
-    <div class="admin-toolbar">
-        <div>
-            <span class="eyebrow">Menaxhim</span>
-            <h2>Lista e artikujve</h2>
+<div class="admin-stat-grid">
+    <article class="admin-stat-card admin-stat-card--blue">
+        <div class="admin-stat-top">
+            <span class="admin-stat-icon"><svg class="admin-icon" aria-hidden="true"><use href="#i-articles"></use></svg></span>
+            <span class="admin-stat-badge"><svg class="admin-icon" aria-hidden="true"><use href="#i-trend"></use></svg>Biblioteka</span>
         </div>
-        <a asp-action="Create" asp-controller="AdminArticle" class="primary-button">Shto artikull</a>
+        <p class="admin-stat-value">@total</p>
+        <p class="admin-stat-label">Artikuj total</p>
+        <p class="admin-stat-meta">@(latest != null ? $"Artikulli më i fundit: {latest.CreatedAt:dd.MM.yyyy}" : "Nuk ka artikuj të regjistruar")</p>
+    </article>
+    <article class="admin-stat-card admin-stat-card--green">
+        <div class="admin-stat-top">
+            <span class="admin-stat-icon"><svg class="admin-icon" aria-hidden="true"><use href="#i-circle-check"></use></svg></span>
+            <span class="admin-stat-badge">@liveRate%</span>
+        </div>
+        <p class="admin-stat-value">@published</p>
+        <p class="admin-stat-label">Artikuj të publikuar</p>
+        <p class="admin-stat-meta">Përmbajtje live për lexuesit e portalit</p>
+    </article>
+    <article class="admin-stat-card admin-stat-card--amber">
+        <div class="admin-stat-top">
+            <span class="admin-stat-icon"><svg class="admin-icon" aria-hidden="true"><use href="#i-edit"></use></svg></span>
+            <span class="admin-stat-badge">Në pritje</span>
+        </div>
+        <p class="admin-stat-value">@drafts</p>
+        <p class="admin-stat-label">Draft në përpunim</p>
+        <p class="admin-stat-meta">Artikuj që presin rishikim ose publikim</p>
+    </article>
+    <article class="admin-stat-card admin-stat-card--violet">
+        <div class="admin-stat-top">
+            <span class="admin-stat-icon"><svg class="admin-icon" aria-hidden="true"><use href="#i-folder"></use></svg></span>
+            <span class="admin-stat-badge">Aktive</span>
+        </div>
+        <p class="admin-stat-value">@activeCategories</p>
+        <p class="admin-stat-label">Kategori me përmbajtje</p>
+        <p class="admin-stat-meta">Struktura aktuale e bibliotekës editoriale</p>
+    </article>
+</div>
+
+<section class="admin-panel">
+    <div class="admin-toolbar">
+        <div class="admin-toolbar-title">
+            <h2>Biblioteka editoriale</h2>
+            <p>Kërko, filtro dhe menaxho çdo artikull të portalit.</p>
+        </div>
+        <div class="admin-toolbar-actions">
+            <label class="admin-search">
+                <svg class="admin-icon" aria-hidden="true"><use href="#i-search"></use></svg>
+                <input type="search" placeholder="Kërko artikuj..." aria-label="Kërko artikuj" data-admin-search="#articlesTable" data-result-count="#articlesCount" />
+            </label>
+            <a asp-action="Create" asp-controller="AdminArticle" class="admin-btn admin-btn--primary">
+                <svg class="admin-icon" aria-hidden="true"><use href="#i-plus"></use></svg>
+                Shto artikull
+            </a>
+        </div>
     </div>
 
-    <div class="table-responsive">
-        <table class="table admin-table align-middle">
+    <div class="admin-filter-bar">
+        <div class="admin-filter-list" role="group" aria-label="Filtro artikujt sipas statusit">
+            <button type="button" class="admin-filter active" data-admin-filter="#articlesTable" data-value="all" aria-pressed="true">Të gjithë <span>@total</span></button>
+            <button type="button" class="admin-filter" data-admin-filter="#articlesTable" data-value="live" aria-pressed="false">Publikuar <span>@published</span></button>
+            <button type="button" class="admin-filter" data-admin-filter="#articlesTable" data-value="draft" aria-pressed="false">Draft <span>@drafts</span></button>
+        </div>
+        <span class="admin-result-count" id="articlesCount">@total nga @total</span>
+    </div>
+
+    <div class="admin-table-wrap">
+        <table class="admin-table" id="articlesTable">
             <thead>
                 <tr>
-                    <th>Titulli</th>
+                    <th>Artikulli</th>
                     <th>Kategoria</th>
                     <th>Autori</th>
                     <th>Statusi</th>
@@ -27,52 +92,105 @@
                 </tr>
             </thead>
             <tbody>
-                @if (Model.Any())
+                @foreach (var article in articles)
                 {
-                    @foreach (var article in Model)
+                    var isPublished = !string.IsNullOrWhiteSpace(article.ApprovedBy);
+                    var author = article.CreatedByUser == null
+                        ? string.Empty
+                        : string.Join(" ", new[] { article.CreatedByUser.FirstName, article.CreatedByUser.LastName }.Where(x => !string.IsNullOrWhiteSpace(x)));
+                    var authorLabel = string.IsNullOrWhiteSpace(author) ? "Pa autor" : author;
+                    var authorInitials = new string(authorLabel.Split(new[] { ' ', '.' }, StringSplitOptions.RemoveEmptyEntries).Take(2).Select(x => x[0]).ToArray()).ToUpperInvariant();
+                    if (string.IsNullOrWhiteSpace(authorInitials))
                     {
-                        var author = article.CreatedByUser == null
-                            ? "Pa autor"
-                            : string.Join(" ", new[] { article.CreatedByUser.FirstName, article.CreatedByUser.LastName }.Where(x => !string.IsNullOrWhiteSpace(x)));
-                        <tr>
-                            <td>
-                                <div class="table-title-cell">
-                                    <strong>@article.Title</strong>
-                                    <small>@(string.IsNullOrWhiteSpace(author) ? "Pa autor" : author)</small>
-                                </div>
-                            </td>
-                            <td>@article.ArticleCategory?.Name</td>
-                            <td>@(string.IsNullOrWhiteSpace(author) ? "Pa autor" : author)</td>
-                            <td>
-                                <span class="status-pill @(string.IsNullOrWhiteSpace(article.ApprovedBy) ? "draft" : "live")">
-                                    @(string.IsNullOrWhiteSpace(article.ApprovedBy) ? "Draft" : "Publikuar")
-                                </span>
-                            </td>
-                            <td>@article.CreatedAt.ToString("dd.MM.yyyy HH:mm")</td>
-                            <td class="text-end">
-                                <div class="table-actions">
-                                    <a asp-action="Edit" asp-controller="AdminArticle" asp-route-id="@article.Id" class="secondary-button">Edito</a>
-                                    <form asp-action="Delete" asp-controller="AdminArticle" asp-route-id="@article.Id" method="post">
-                                        @Html.AntiForgeryToken()
-                                        <button type="submit" class="danger-button" onclick="return confirm('A deshironi ta fshini artikullin?');">Fshij</button>
-                                    </form>
-                                </div>
-                            </td>
-                        </tr>
+                        authorInitials = "PA";
                     }
-                }
-                else
-                {
-                    <tr>
-                        <td colspan="6">
-                            <div class="empty-state small">
-                                <h3>Nuk ka artikuj per shfaqje</h3>
-                                <p>Krijoni artikullin e pare per te nisur publikimin.</p>
+                    var avatarTone = article.Id % 3 == 0 ? "admin-avatar-sm--violet" : article.Id % 3 == 1 ? "admin-avatar-sm--emerald" : "";
+                    <tr data-status="@(isPublished ? "live" : "draft")">
+                        <td data-label="">
+                            <div class="admin-cell">
+                                <span class="admin-thumb">
+                                    @if (!string.IsNullOrWhiteSpace(article.CoverImage))
+                                    {
+                                        <img src="~/images/articles/@article.CoverImage" alt="@article.Title" loading="lazy" />
+                                    }
+                                    else
+                                    {
+                                        <svg class="admin-icon" aria-hidden="true"><use href="#i-articles"></use></svg>
+                                    }
+                                </span>
+                                <span class="admin-cell-copy">
+                                    <strong title="@article.Title">@article.Title</strong>
+                                    <small>ID #@article.Id · @(string.IsNullOrWhiteSpace(article.ArticleCategory?.Name) ? "Pa kategori" : article.ArticleCategory.Name)</small>
+                                </span>
+                            </div>
+                        </td>
+                        <td data-label="Kategoria">
+                            <span class="admin-category-chip">
+                                <svg class="admin-icon" aria-hidden="true"><use href="#i-folder"></use></svg>
+                                @(article.ArticleCategory?.Name ?? "Pa kategori")
+                            </span>
+                        </td>
+                        <td data-label="Autori">
+                            <div class="admin-cell">
+                                <span class="admin-avatar-sm @avatarTone">@authorInitials</span>
+                                <span class="admin-cell-copy">
+                                    <strong>@authorLabel</strong>
+                                    <small>Autor editorial</small>
+                                </span>
+                            </div>
+                        </td>
+                        <td data-label="Statusi">
+                            <span class="admin-badge @(isPublished ? "admin-badge--live" : "admin-badge--draft")">@(isPublished ? "Publikuar" : "Draft")</span>
+                        </td>
+                        <td data-label="Data">
+                            <span class="admin-date">
+                                @article.CreatedAt.ToString("dd.MM.yyyy")
+                                <small>@article.CreatedAt.ToString("HH:mm")</small>
+                            </span>
+                        </td>
+                        <td data-label="Veprime" class="text-end">
+                            <div class="admin-row-actions">
+                                <a asp-action="Edit" asp-controller="AdminArticle" asp-route-id="@article.Id" class="admin-btn admin-btn--soft admin-btn--sm">
+                                    <svg class="admin-icon" aria-hidden="true"><use href="#i-edit"></use></svg>
+                                    Edito
+                                </a>
+                                <form asp-action="Delete" asp-controller="AdminArticle" asp-route-id="@article.Id" method="post">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="admin-btn admin-btn--danger admin-btn--sm" onclick="return confirm('A dëshironi ta fshini artikullin?');">
+                                        <svg class="admin-icon" aria-hidden="true"><use href="#i-trash"></use></svg>
+                                        Fshij
+                                    </button>
+                                </form>
                             </div>
                         </td>
                     </tr>
                 }
+                @if (total == 0)
+                {
+                    <tr class="admin-empty-row">
+                        <td colspan="6" class="admin-table-empty-cell">
+                            <div class="admin-empty">
+                                <span class="admin-empty-icon"><svg class="admin-icon" aria-hidden="true"><use href="#i-articles"></use></svg></span>
+                                <h3>Biblioteka është ende bosh</h3>
+                                <p>Krijo artikullin e parë për të nisur publikimin dhe për të ndërtuar rrjedhën editoriale.</p>
+                                <a asp-action="Create" asp-controller="AdminArticle" class="admin-btn admin-btn--primary">
+                                    <svg class="admin-icon" aria-hidden="true"><use href="#i-plus"></use></svg>
+                                    Krijo artikull
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+                <tr class="admin-search-empty admin-empty-row" data-search-empty>
+                    <td colspan="6" class="admin-table-empty-cell">
+                        <div class="admin-empty">
+                            <span class="admin-empty-icon"><svg class="admin-icon" aria-hidden="true"><use href="#i-search"></use></svg></span>
+                            <h3>Nuk u gjet asnjë artikull</h3>
+                            <p>Provo një term tjetër kërkimi ose ndrysho filtrin e statusit.</p>
+                        </div>
+                    </td>
+                </tr>
             </tbody>
         </table>
     </div>
-</div>
+</section>

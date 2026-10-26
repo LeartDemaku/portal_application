@@ -3,57 +3,134 @@
 @{
     Layout = "~/Views/Shared/Admin/_Layout.cshtml";
     ViewData["Title"] = "Tagjet";
+    ViewData["Subtitle"] = "Ndërto një sistem etiketash të pastër për të lidhur artikujt me temat më të kërkuara.";
+    var tags = Model?.ToList() ?? new List<PortalApp.Models.ArticleTag>();
+    var total = tags.Count;
+    var thisMonth = tags.Count(x => x.CreatedAt.Month == DateTime.Now.Month && x.CreatedAt.Year == DateTime.Now.Year);
+    var oldest = tags.OrderBy(x => x.CreatedAt).FirstOrDefault();
 }
 
-<div class="admin-card">
-    <div class="admin-toolbar">
-        <div>
-            <span class="eyebrow">Menaxhim</span>
-            <h2>Lista e tageve</h2>
+<div class="admin-stat-grid admin-stat-grid--3">
+    <article class="admin-stat-card admin-stat-card--cyan">
+        <div class="admin-stat-top">
+            <span class="admin-stat-icon"><svg class="admin-icon" aria-hidden="true"><use href="#i-tag"></use></svg></span>
+            <span class="admin-stat-badge">Fjalë kyçe</span>
         </div>
-        <a asp-action="Create" asp-controller="AdminArticleTag" class="primary-button">Shto tag</a>
+        <p class="admin-stat-value">@total</p>
+        <p class="admin-stat-label">Tagje totale</p>
+        <p class="admin-stat-meta">Tema që lidhin artikujt me lexuesin</p>
+    </article>
+    <article class="admin-stat-card admin-stat-card--green">
+        <div class="admin-stat-top">
+            <span class="admin-stat-icon"><svg class="admin-icon" aria-hidden="true"><use href="#i-plus"></use></svg></span>
+            <span class="admin-stat-badge">Këtë muaj</span>
+        </div>
+        <p class="admin-stat-value">@thisMonth</p>
+        <p class="admin-stat-label">Tagje të reja</p>
+        <p class="admin-stat-meta">Shtuar gjatë muajit aktual</p>
+    </article>
+    <article class="admin-stat-card admin-stat-card--violet">
+        <div class="admin-stat-top">
+            <span class="admin-stat-icon"><svg class="admin-icon" aria-hidden="true"><use href="#i-clock"></use></svg></span>
+            <span class="admin-stat-badge">Arkivi</span>
+        </div>
+        <p class="admin-stat-value">@(oldest != null ? oldest.CreatedAt.ToString("dd.MM.yy") : "—")</p>
+        <p class="admin-stat-label">Tagu më i vjetër</p>
+        <p class="admin-stat-meta">Pika e nisjes së sistemit të etiketave</p>
+    </article>
+</div>
+
+<section class="admin-panel">
+    <div class="admin-toolbar">
+        <div class="admin-toolbar-title">
+            <h2>Sistemi i etiketave</h2>
+            <p>Etiketa të shkurtra dhe të qarta përmirësojnë kërkimin dhe navigimin.</p>
+        </div>
+        <div class="admin-toolbar-actions">
+            <label class="admin-search">
+                <svg class="admin-icon" aria-hidden="true"><use href="#i-search"></use></svg>
+                <input type="search" placeholder="Kërko tag..." aria-label="Kërko tag" data-admin-search="#tagsTable" data-result-count="#tagsCount" />
+            </label>
+            <a asp-action="Create" asp-controller="AdminArticleTag" class="admin-btn admin-btn--primary">
+                <svg class="admin-icon" aria-hidden="true"><use href="#i-plus"></use></svg>
+                Shto tag
+            </a>
+        </div>
     </div>
 
-    <div class="table-responsive">
-        <table class="table admin-table align-middle">
+    <div class="admin-filter-bar">
+        <span class="admin-result-count" id="tagsCount">@total nga @total</span>
+    </div>
+
+    <div class="admin-table-wrap">
+        <table class="admin-table" id="tagsTable">
             <thead>
                 <tr>
-                    <th>Titulli</th>
+                    <th>Etiketa</th>
                     <th>Krijuar më</th>
                     <th class="text-end">Veprime</th>
                 </tr>
             </thead>
             <tbody>
-                @if (Model.Any())
-                {
-                    @foreach (var tag in Model)
-                    {
-                        <tr>
-                            <td><strong>#@tag.Title</strong></td>
-                            <td>@tag.CreatedAt.ToString("dd.MM.yyyy")</td>
-                            <td class="text-end">
-                                <div class="table-actions">
-                                    <form asp-action="Delete" asp-controller="AdminArticleTag" asp-route-id="@tag.Id" method="post">
-                                        @Html.AntiForgeryToken()
-                                        <button type="submit" class="danger-button" onclick="return confirm('A dëshironi ta fshini tagun?');">Fshij</button>
-                                    </form>
-                                </div>
-                            </td>
-                        </tr>
-                    }
-                }
-                else
+                @foreach (var tag in tags)
                 {
                     <tr>
-                        <td colspan="3">
-                            <div class="empty-state small">
-                                <h3>Nuk ka tagje për shfaqje</h3>
-                                <p>Krijoni tagun e parë për të etiketuar artikujt.</p>
+                        <td data-label="">
+                            <div class="admin-cell">
+                                <span class="admin-thumb admin-thumb--emerald">
+                                    <svg class="admin-icon" aria-hidden="true"><use href="#i-tag"></use></svg>
+                                </span>
+                                <span class="admin-cell-copy">
+                                    <strong>#@tag.Title</strong>
+                                    <small>Etiketë tematike · ID #@tag.Id</small>
+                                </span>
+                            </div>
+                        </td>
+                        <td data-label="Krijuar më">
+                            <span class="admin-date">
+                                @tag.CreatedAt.ToString("dd.MM.yyyy")
+                                <small>@tag.CreatedAt.ToString("HH:mm")</small>
+                            </span>
+                        </td>
+                        <td data-label="Veprime" class="text-end">
+                            <div class="admin-row-actions">
+                                <form asp-action="Delete" asp-controller="AdminArticleTag" asp-route-id="@tag.Id" method="post">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="admin-btn admin-btn--danger admin-btn--sm" onclick="return confirm('A dëshironi ta fshini tagun?');">
+                                        <svg class="admin-icon" aria-hidden="true"><use href="#i-trash"></use></svg>
+                                        Fshij
+                                    </button>
+                                </form>
                             </div>
                         </td>
                     </tr>
                 }
+                @if (total == 0)
+                {
+                    <tr class="admin-empty-row">
+                        <td colspan="3" class="admin-table-empty-cell">
+                            <div class="admin-empty">
+                                <span class="admin-empty-icon"><svg class="admin-icon" aria-hidden="true"><use href="#i-tag"></use></svg></span>
+                                <h3>Nuk ka tagje për shfaqje</h3>
+                                <p>Krijo tagun e parë për të lidhur artikujt me temat kryesore.</p>
+                                <a asp-action="Create" asp-controller="AdminArticleTag" class="admin-btn admin-btn--primary">
+                                    <svg class="admin-icon" aria-hidden="true"><use href="#i-plus"></use></svg>
+                                    Krijo tag
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+                <tr class="admin-search-empty admin-empty-row" data-search-empty>
+                    <td colspan="3" class="admin-table-empty-cell">
+                        <div class="admin-empty">
+                            <span class="admin-empty-icon"><svg class="admin-icon" aria-hidden="true"><use href="#i-search"></use></svg></span>
+                            <h3>Nuk u gjet asnjë tag</h3>
+                            <p>Provo një term tjetër kërkimi.</p>
+                        </div>
+                    </td>
+                </tr>
             </tbody>
         </table>
     </div>
-</div>
+</section>

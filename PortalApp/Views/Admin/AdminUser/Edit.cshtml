@@ -5,42 +5,73 @@
 @{
     Layout = "~/Views/Shared/Admin/_Layout.cshtml";
     ViewData["Title"] = "Edito përdoruesin";
+    ViewData["Subtitle"] = "Përditëso të dhënat e llogarisë, ndrysho rolin ose rivendos fjalëkalimin.";
     var roles = ViewBag.Roles as List<IdentityRole> ?? new List<IdentityRole>();
     var userId = ViewBag.UserId as string ?? string.Empty;
     var currentRoleId = ViewBag.CurrentRoleId as string ?? Model.RoleId;
+    var currentRole = roles.FirstOrDefault(role => role.Id == currentRoleId);
 }
 
-<div class="admin-card" style="max-width:700px;">
-    <form asp-action="Edit" asp-controller="AdminUser" asp-route-id="@userId" method="post" class="admin-form">
-        @Html.AntiForgeryToken()
-        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<a asp-action="Index" asp-controller="AdminUser" class="admin-page-back">
+    <svg class="admin-icon" aria-hidden="true"><use href="#i-arrow-left"></use></svg>
+    Kthehu te përdoruesit
+</a>
 
-        <div class="admin-form-grid">
-            <div class="admin-form-main">
-                <div class="form-field">
-                    <label asp-for="FirstName">Emri</label>
-                    <input asp-for="FirstName" />
-                    <span asp-validation-for="FirstName" class="text-danger"></span>
+<form asp-action="Edit" asp-controller="AdminUser" asp-route-id="@userId" method="post" class="admin-form" data-admin-form>
+    @Html.AntiForgeryToken()
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="admin-form-layout">
+        <section class="admin-form-card">
+            <div class="admin-form-card-head">
+                <span class="admin-form-card-icon admin-form-card-icon--violet">
+                    <svg class="admin-icon" aria-hidden="true"><use href="#i-user"></use></svg>
+                </span>
+                <div class="admin-form-card-title">
+                    <h2>Profili i përdoruesit</h2>
+                    <p>Ndryshimet në email dhe rol hyjnë në fuqi sapo të ruhen.</p>
+                </div>
+            </div>
+            <div class="admin-form-card-body">
+                <div class="admin-section-divider">Të dhënat personale</div>
+                <div class="admin-field-grid">
+                    <div class="form-field">
+                        <label asp-for="FirstName">Emri</label>
+                        <input asp-for="FirstName" autocomplete="given-name" />
+                        <span asp-validation-for="FirstName" class="text-danger"></span>
+                    </div>
+                    <div class="form-field">
+                        <label asp-for="LastName">Mbiemri</label>
+                        <input asp-for="LastName" autocomplete="family-name" />
+                        <span asp-validation-for="LastName" class="text-danger"></span>
+                    </div>
                 </div>
 
+                <div class="admin-section-divider">Kredencialet e hyrjes</div>
                 <div class="form-field">
-                    <label asp-for="LastName">Mbiemri</label>
-                    <input asp-for="LastName" />
-                    <span asp-validation-for="LastName" class="text-danger"></span>
-                </div>
-
-                <div class="form-field">
-                    <label asp-for="Email">Email</label>
-                    <input asp-for="Email" type="email" />
+                    <label asp-for="Email">
+                        <span>Email</span>
+                        <span class="field-optional">Përdoret për hyrje</span>
+                    </label>
+                    <input asp-for="Email" type="email" autocomplete="email" />
                     <span asp-validation-for="Email" class="text-danger"></span>
                 </div>
-
                 <div class="form-field">
-                    <label asp-for="Password">Fjalëkalimi i ri (opsional)</label>
-                    <input asp-for="Password" type="password" />
+                    <label asp-for="Password">
+                        <span>Fjalëkalimi i ri</span>
+                        <span class="field-optional">Opsionale</span>
+                    </label>
+                    <div class="admin-input-wrap">
+                        <input asp-for="Password" type="password" placeholder="Lëre bosh për të mos e ndryshuar" autocomplete="new-password" />
+                        <button type="button" class="admin-input-action" data-password-toggle="#Password" aria-label="Shfaq fjalëkalimin" aria-pressed="false">
+                            <svg class="admin-icon" aria-hidden="true"><use href="#i-eye"></use></svg>
+                        </button>
+                    </div>
                     <span asp-validation-for="Password" class="text-danger"></span>
+                    <span class="field-hint">Plotëso vetëm nëse dëshiron të rivendosësh fjalëkalimin.</span>
                 </div>
 
+                <div class="admin-section-divider">Roli dhe aksesi</div>
                 <div class="form-field">
                     <label asp-for="RoleId">Roli</label>
                     <select asp-for="RoleId">
@@ -51,16 +82,61 @@
                         }
                     </select>
                     <span asp-validation-for="RoleId" class="text-danger"></span>
-                </div>
-
-                <div class="admin-form-actions">
-                    <button type="submit" class="primary-button">Ruaj ndryshimet</button>
-                    <a asp-action="Index" asp-controller="AdminUser" class="secondary-button">Anulo</a>
+                    <span class="field-hint">Ndryshimi i rolit zëvendëson rolin aktual të përdoruesit.</span>
                 </div>
             </div>
+        </section>
+
+        <aside class="admin-editor-side">
+            <div class="admin-side-card">
+                <div class="admin-side-card-head">
+                    <svg class="admin-icon" aria-hidden="true"><use href="#i-info"></use></svg>
+                    <h3>Informacion i llogarisë</h3>
+                </div>
+                <div class="admin-side-card-body">
+                    <div class="admin-profile-preview">
+                        <span class="admin-avatar-sm admin-avatar-sm--violet">
+                            @(string.IsNullOrWhiteSpace(Model.FirstName) ? "US" : Model.FirstName.Substring(0, 1).ToUpperInvariant())
+                        </span>
+                        <span class="admin-profile-preview-copy">
+                            <strong>@string.Concat(Model.FirstName, " ", Model.LastName).Trim()</strong>
+                            <small>@Model.Email</small>
+                        </span>
+                    </div>
+                    <div class="admin-info-list">
+                        <div class="admin-info-item">
+                            <svg class="admin-icon" aria-hidden="true"><use href="#i-shield"></use></svg>
+                            <span>Roli aktual: @(currentRole?.Name ?? "Pa rol")</span>
+                        </div>
+                        <div class="admin-info-item">
+                            <svg class="admin-icon" aria-hidden="true"><use href="#i-key"></use></svg>
+                            <span>Llogaria mund të hyjë në panel sipas lejeve të rolit.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="admin-tip-card">
+                <span class="admin-tip-icon"><svg class="admin-icon" aria-hidden="true"><use href="#i-sparkles"></use></svg></span>
+                <h3>Ndryshim i sigurt</h3>
+                <p>Nëse fjalëkalimi lihet bosh, ai aktual mbetet i pandryshuar. Emaili i ri bëhet edhe emri i hyrjes.</p>
+            </div>
+        </aside>
+    </div>
+
+    <div class="admin-form-footer">
+        <div class="admin-form-footer-copy">
+            <strong>Ruaj ndryshimet e llogarisë</strong>
+            <small>Përditësimet zbatohen menjëherë pas ruajtjes.</small>
         </div>
-    </form>
-</div>
+        <div class="admin-form-footer-actions">
+            <a asp-action="Index" asp-controller="AdminUser" class="admin-btn admin-btn--ghost">Anulo</a>
+            <button type="submit" class="admin-btn admin-btn--primary">
+                <svg class="admin-icon" aria-hidden="true"><use href="#i-check"></use></svg>
+                Ruaj ndryshimet
+            </button>
+        </div>
+    </div>
+</form>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

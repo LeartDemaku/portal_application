@@ -4,25 +4,89 @@
 @{
     Layout = "~/Views/Shared/Admin/_Layout.cshtml";
     ViewData["Title"] = "Edito rolin";
+    ViewData["Subtitle"] = "Përditëso emrin e rolit dhe mbaj të qartë nivelin e aksesit në panel.";
     var roleId = ViewBag.RoleId as string ?? string.Empty;
 }
 
-<div class="admin-card" style="max-width:600px;">
-    <form asp-action="Edit" asp-controller="AdminUserRole" asp-route-id="@roleId" method="post" class="admin-form">
-        @Html.AntiForgeryToken()
-        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<a asp-action="Index" asp-controller="AdminUserRole" class="admin-page-back">
+    <svg class="admin-icon" aria-hidden="true"><use href="#i-arrow-left"></use></svg>
+    Kthehu te rolet
+</a>
 
-        <div class="form-field">
-            <label asp-for="RoleName">Emri i rolit</label>
-            <input asp-for="RoleName" />
-            <span asp-validation-for="RoleName" class="text-danger"></span>
+<div class="admin-form-layout admin-form-layout--narrow">
+    <section class="admin-form-card">
+        <div class="admin-form-card-head">
+            <span class="admin-form-card-icon admin-form-card-icon--violet">
+                <svg class="admin-icon" aria-hidden="true"><use href="#i-shield"></use></svg>
+            </span>
+            <div class="admin-form-card-title">
+                <h2>Përditëso rolin</h2>
+                <p>Emri i ri do të shfaqet për të gjithë përdoruesit që kanë këtë rol.</p>
+            </div>
         </div>
+        <form asp-action="Edit" asp-controller="AdminUserRole" asp-route-id="@roleId" method="post" class="admin-form" data-admin-form>
+            @Html.AntiForgeryToken()
+            <div class="admin-form-card-body">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-field">
+                    <label asp-for="RoleName">
+                        <span>Emri i rolit</span>
+                        <span class="field-optional">I detyrueshëm</span>
+                    </label>
+                    <input asp-for="RoleName" autocomplete="off" />
+                    <span asp-validation-for="RoleName" class="text-danger"></span>
+                    <span class="field-hint">Ndryshimi i emrit nuk i heq lejet ekzistuese të rolit.</span>
+                </div>
+                <div class="admin-section-divider">Pamja e rolit</div>
+                <div class="admin-profile-preview">
+                    <span class="admin-role-icon">
+                        <svg class="admin-icon" aria-hidden="true"><use href="#i-shield"></use></svg>
+                    </span>
+                    <span class="admin-profile-preview-copy">
+                        <strong>@Model.RoleName</strong>
+                        <small>Rol aksesi i panelit editorial</small>
+                    </span>
+                </div>
+            </div>
+            <div class="admin-form-card-foot">
+                <a asp-action="Index" asp-controller="AdminUserRole" class="admin-btn admin-btn--ghost">Anulo</a>
+                <button type="submit" class="admin-btn admin-btn--primary">
+                    <svg class="admin-icon" aria-hidden="true"><use href="#i-check"></use></svg>
+                    Ruaj ndryshimet
+                </button>
+            </div>
+        </form>
+    </section>
 
-        <div class="admin-form-actions">
-            <button type="submit" class="primary-button">Ruaj ndryshimet</button>
-            <a asp-action="Index" asp-controller="AdminUserRole" class="secondary-button">Anulo</a>
+    <aside class="admin-editor-side">
+        <div class="admin-side-card">
+            <div class="admin-side-card-head">
+                <svg class="admin-icon" aria-hidden="true"><use href="#i-info"></use></svg>
+                <h3>Informacion i rolit</h3>
+            </div>
+            <div class="admin-side-card-body">
+                <div class="admin-info-list">
+                    <div class="admin-info-item">
+                        <svg class="admin-icon" aria-hidden="true"><use href="#i-key"></use></svg>
+                        <span>Identifikuesi i rolit: @(roleId.Length > 8 ? roleId.Substring(0, 8) : roleId)</span>
+                    </div>
+                    <div class="admin-info-item">
+                        <svg class="admin-icon" aria-hidden="true"><use href="#i-users"></use></svg>
+                        <span>Rolet në përdorim nuk mund të fshihen.</span>
+                    </div>
+                    <div class="admin-info-item">
+                        <svg class="admin-icon" aria-hidden="true"><use href="#i-shield"></use></svg>
+                        <span>Ndryshimi i emrit ruan të gjitha lejet aktuale.</span>
+                    </div>
+                </div>
+            </div>
         </div>
-    </form>
+        <div class="admin-tip-card">
+            <span class="admin-tip-icon"><svg class="admin-icon" aria-hidden="true"><use href="#i-sparkles"></use></svg></span>
+            <h3>Emër i qëndrueshëm</h3>
+            <p>Përdor një emër që përshkruan përgjegjësinë kryesore dhe mbetet i kuptueshëm për të gjithë ekipin.</p>
+        </div>
+    </aside>
 </div>
 
 @section Scripts {

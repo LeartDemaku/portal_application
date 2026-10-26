@@ -1,82 +1,382 @@
 @using Microsoft.AspNetCore.Identity
-@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+@{
+    var adminPath = Context.Request.Path.Value ?? "";
+    var currentUser = await UserManager.GetUserAsync(User);
+    var displayName = currentUser != null && (!string.IsNullOrWhiteSpace(currentUser.FirstName) || !string.IsNullOrWhiteSpace(currentUser.LastName))
+        ? string.Join(" ", new[] { currentUser.FirstName, currentUser.LastName }.Where(x => !string.IsNullOrWhiteSpace(x)))
+        : (User.Identity?.Name ?? "Administrator");
+    var nameParts = displayName.Split(new[] { ' ', '.', '@', '_', '-' }, StringSplitOptions.RemoveEmptyEntries);
+    var initials = new string(nameParts.Take(2).Select(part => part[0]).ToArray()).ToUpperInvariant();
+    if (string.IsNullOrWhiteSpace(initials))
+    {
+        initials = "AD";
+    }
+    var userRoles = currentUser != null ? await UserManager.GetRolesAsync(currentUser) : new List<string>();
+    var roleLabel = userRoles.FirstOrDefault() ?? "Redaksi";
+    var pageTitle = ViewData["Title"] as string ?? "Panel editorial";
+    var pageSubtitle = ViewData["Subtitle"] as string ?? "Menaxho përmbajtjen, autorët dhe rrjedhën e publikimit në një hapësirë të vetme.";
+    var isArticleSection = adminPath.Contains("AdminArticle", StringComparison.OrdinalIgnoreCase) && !adminPath.Contains("Category", StringComparison.OrdinalIgnoreCase) && !adminPath.Contains("Tag", StringComparison.OrdinalIgnoreCase) && !adminPath.Contains("Comment", StringComparison.OrdinalIgnoreCase);
+    var isCategorySection = adminPath.Contains("AdminArticleCategory", StringComparison.OrdinalIgnoreCase);
+    var isTagSection = adminPath.Contains("AdminArticleTag", StringComparison.OrdinalIgnoreCase);
+    var isCommentSection = adminPath.Contains("AdminArticleComment", StringComparison.OrdinalIgnoreCase);
+    var isUserSection = adminPath.Contains("AdminUser", StringComparison.OrdinalIgnoreCase) && !adminPath.Contains("Role", StringComparison.OrdinalIgnoreCase);
+    var isRoleSection = adminPath.Contains("AdminUserRole", StringComparison.OrdinalIgnoreCase);
+}
 <!DOCTYPE html>
-<html lang="sq">
+<html lang="sq" data-admin-theme="light">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f4f7fc" />
     <title>@ViewData["Title"] - ZëriYnë Admin</title>
+    <script>
+        (function () {
+            try {
+                var stored = localStorage.getItem("zy-admin-theme");
+                document.documentElement.setAttribute("data-admin-theme", stored === "dark" ? "dark" : "light");
+            } catch (error) {
+                document.documentElement.setAttribute("data-admin-theme", "light");
+            }
+        })();
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/PortalApp.styles.css" asp-append-version="true" />
     @await RenderSectionAsync("Styles", required: false)
+    <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
 </head>
 <body class="admin-body">
+    <svg class="admin-svg-sprite" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <symbol id="i-articles" viewBox="0 0 24 24">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <path d="M14 2v6h6"></path>
+            <path d="M16 13H8"></path>
+            <path d="M16 17H8"></path>
+            <path d="M10 9H8"></path>
+        </symbol>
+        <symbol id="i-folder" viewBox="0 0 24 24">
+            <path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.7-.9L9.2 3.9A2 2 0 0 0 7.5 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"></path>
+        </symbol>
+        <symbol id="i-tag" viewBox="0 0 24 24">
+            <path d="M20.6 13.4 12.4 21.6a2 2 0 0 1-2.8 0L2.4 14.4a2 2 0 0 1-.6-1.4V4a2 2 0 0 1 2-2h9a2 2 0 0 1 1.4.6l6.4 6.4a2 2 0 0 1 0 2.8Z"></path>
+            <circle cx="7.5" cy="7.5" r="1.3"></circle>
+        </symbol>
+        <symbol id="i-comment" viewBox="0 0 24 24">
+            <path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"></path>
+            <path d="M8 9h8"></path>
+            <path d="M8 13h5"></path>
+        </symbol>
+        <symbol id="i-users" viewBox="0 0 24 24">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+            <circle cx="9" cy="7" r="4"></circle>
+            <path d="M22 21v-2a4 4 0 0 0-3-3.9"></path>
+            <path d="M16 3.1a4 4 0 0 1 0 7.8"></path>
+        </symbol>
+        <symbol id="i-shield" viewBox="0 0 24 24">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"></path>
+            <path d="m9 12 2 2 4-4"></path>
+        </symbol>
+        <symbol id="i-external" viewBox="0 0 24 24">
+            <path d="M15 3h6v6"></path>
+            <path d="M10 14 21 3"></path>
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+        </symbol>
+        <symbol id="i-search" viewBox="0 0 24 24">
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="m21 21-4.35-4.35"></path>
+        </symbol>
+        <symbol id="i-plus" viewBox="0 0 24 24">
+            <path d="M12 5v14"></path>
+            <path d="M5 12h14"></path>
+        </symbol>
+        <symbol id="i-edit" viewBox="0 0 24 24">
+            <path d="M12 20h9"></path>
+            <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"></path>
+        </symbol>
+        <symbol id="i-trash" viewBox="0 0 24 24">
+            <path d="M3 6h18"></path>
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path>
+            <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+            <path d="M10 11v6"></path>
+            <path d="M14 11v6"></path>
+        </symbol>
+        <symbol id="i-close" viewBox="0 0 24 24">
+            <path d="M18 6 6 18"></path>
+            <path d="m6 6 12 12"></path>
+        </symbol>
+        <symbol id="i-sun" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="4"></circle>
+            <path d="M12 2v2"></path>
+            <path d="M12 20v2"></path>
+            <path d="m4.9 4.9 1.4 1.4"></path>
+            <path d="m17.7 17.7 1.4 1.4"></path>
+            <path d="M2 12h2"></path>
+            <path d="M20 12h2"></path>
+            <path d="m6.3 17.7-1.4 1.4"></path>
+            <path d="m19.1 4.9-1.4 1.4"></path>
+        </symbol>
+        <symbol id="i-moon" viewBox="0 0 24 24">
+            <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path>
+        </symbol>
+        <symbol id="i-logout" viewBox="0 0 24 24">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <path d="m16 17 5-5-5-5"></path>
+            <path d="M21 12H9"></path>
+        </symbol>
+        <symbol id="i-chevron-right" viewBox="0 0 24 24">
+            <path d="m9 18 6-6-6-6"></path>
+        </symbol>
+        <symbol id="i-calendar" viewBox="0 0 24 24">
+            <path d="M8 2v4"></path>
+            <path d="M16 2v4"></path>
+            <rect x="3" y="4" width="18" height="18" rx="2"></rect>
+            <path d="M3 10h18"></path>
+        </symbol>
+        <symbol id="i-image" viewBox="0 0 24 24">
+            <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+            <circle cx="9" cy="9" r="2"></circle>
+            <path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"></path>
+        </symbol>
+        <symbol id="i-arrow-left" viewBox="0 0 24 24">
+            <path d="M19 12H5"></path>
+            <path d="m12 19-7-7 7-7"></path>
+        </symbol>
+        <symbol id="i-check" viewBox="0 0 24 24">
+            <path d="M20 6 9 17l-5-5"></path>
+        </symbol>
+        <symbol id="i-sparkles" viewBox="0 0 24 24">
+            <path d="m12 3 1.9 4.6L18.5 9l-4.6 1.9L12 15.5l-1.9-4.6L5.5 9l4.6-1.4Z"></path>
+            <path d="M19 15v4"></path>
+            <path d="M17 17h4"></path>
+        </symbol>
+        <symbol id="i-eye" viewBox="0 0 24 24">
+            <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"></path>
+            <circle cx="12" cy="12" r="3"></circle>
+        </symbol>
+        <symbol id="i-alert" viewBox="0 0 24 24">
+            <path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"></path>
+            <path d="M12 9v4"></path>
+            <path d="M12 17h.01"></path>
+        </symbol>
+        <symbol id="i-info" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M12 16v-4"></path>
+            <path d="M12 8h.01"></path>
+        </symbol>
+        <symbol id="i-lock" viewBox="0 0 24 24">
+            <rect x="3" y="11" width="18" height="11" rx="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+        </symbol>
+        <symbol id="i-mail" viewBox="0 0 24 24">
+            <rect x="2" y="4" width="20" height="16" rx="2"></rect>
+            <path d="m22 7-10 6L2 7"></path>
+        </symbol>
+        <symbol id="i-user" viewBox="0 0 24 24">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+        </symbol>
+        <symbol id="i-newspaper" viewBox="0 0 24 24">
+            <path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-4 0V6"></path>
+            <path d="M18 14h-8"></path>
+            <path d="M15 18h-5"></path>
+            <path d="M10 6h8v4h-8Z"></path>
+        </symbol>
+        <symbol id="i-clock" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M12 6v6l4 2"></path>
+        </symbol>
+        <symbol id="i-trend" viewBox="0 0 24 24">
+            <path d="m3 17 6-6 4 4 8-8"></path>
+            <path d="M14 7h7v7"></path>
+        </symbol>
+        <symbol id="i-quote" viewBox="0 0 24 24">
+            <path d="M10 11H6a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-5a4 4 0 0 0-4-4"></path>
+            <path d="M20 11h-4a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-5a4 4 0 0 0-4-4"></path>
+        </symbol>
+        <symbol id="i-key" viewBox="0 0 24 24">
+            <circle cx="7.5" cy="15.5" r="5.5"></circle>
+            <path d="m21 2-9.6 9.6"></path>
+            <path d="m15.5 7.5 3 3L22 7l-3-3"></path>
+        </symbol>
+        <symbol id="i-circle-check" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="m9 12 2 2 4-4"></path>
+        </symbol>
+        <symbol id="i-x-circle" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="m15 9-6 6"></path>
+            <path d="m9 9 6 6"></path>
+        </symbol>
+    </svg>
+
     <div class="admin-overlay" id="adminOverlay"></div>
     <div class="admin-shell">
         <aside class="admin-sidebar" id="adminSidebar">
-            <a class="admin-brand" asp-controller="AdminArticle" asp-action="Index">
-                <span class="portal-brand-mark">
-                    <span class="brand-mark-text">ZY</span>
-                </span>
-                <span>
-                    <strong>ZëriYnë Admin</strong>
-                    <small>Kontrolli editorial</small>
-                </span>
-            </a>
-            @{
-                var adminPath = Context.Request.Path.Value ?? "";
-            }
-            <nav class="admin-nav">
-                <a asp-controller="Home" asp-action="Index">Shiko portalin</a>
-                <a href="/Admin/AdminArticle/Index" class="@(adminPath.Contains("AdminArticle", StringComparison.OrdinalIgnoreCase) && !adminPath.Contains("Category") && !adminPath.Contains("Tag") && !adminPath.Contains("Comment") ? "active" : null)">Artikujt</a>
-                <a href="/Admin/AdminArticleCategory/Index" class="@(adminPath.Contains("AdminArticleCategory", StringComparison.OrdinalIgnoreCase) ? "active" : null)">Kategoritë</a>
-                <a href="/Admin/AdminArticleTag/Index" class="@(adminPath.Contains("AdminArticleTag", StringComparison.OrdinalIgnoreCase) ? "active" : null)">Tagjet</a>
-                <a href="/Admin/AdminArticleComment/Index" class="@(adminPath.Contains("AdminArticleComment", StringComparison.OrdinalIgnoreCase) ? "active" : null)">Komentet</a>
-                <a href="/Admin/AdminUser/Index" class="@(adminPath.Contains("AdminUser", StringComparison.OrdinalIgnoreCase) && !adminPath.Contains("Role") ? "active" : null)">Përdoruesit</a>
-                <a href="/Admin/AdminUserRole/Index" class="@(adminPath.Contains("AdminUserRole", StringComparison.OrdinalIgnoreCase) ? "active" : null)">Rolet</a>
+            <div class="admin-brand-row">
+                <a class="admin-brand" asp-controller="AdminArticle" asp-action="Index">
+                    <span class="admin-brand-mark"><span>ZY</span></span>
+                    <span class="admin-brand-copy">
+                        <strong>ZëriYnë</strong>
+                        <small>Newsroom control</small>
+                    </span>
+                </a>
+                <button class="admin-sidebar-close" id="adminSidebarClose" type="button" aria-label="Mbyll menunë">
+                    <svg class="admin-icon" aria-hidden="true"><use href="#i-close"></use></svg>
+                </button>
+            </div>
+
+            <nav class="admin-nav" aria-label="Navigimi i panelit">
+                <p class="admin-nav-label">Përmbajtja</p>
+                <a href="/Admin/AdminArticle/Index" class="@(isArticleSection ? "active" : null)" aria-current="@(isArticleSection ? "page" : null)">
+                    <span class="admin-nav-icon"><svg class="admin-icon" aria-hidden="true"><use href="#i-articles"></use></svg></span>
+                    <span>Artikujt</span>
+                    <svg class="admin-icon admin-nav-arrow" aria-hidden="true"><use href="#i-chevron-right"></use></svg>
+                </a>
+                <a href="/Admin/AdminArticleCategory/Index" class="@(isCategorySection ? "active" : null)" aria-current="@(isCategorySection ? "page" : null)">
+                    <span class="admin-nav-icon"><svg class="admin-icon" aria-hidden="true"><use href="#i-folder"></use></svg></span>
+                    <span>Kategoritë</span>
+                    <svg class="admin-icon admin-nav-arrow" aria-hidden="true"><use href="#i-chevron-right"></use></svg>
+                </a>
+                <a href="/Admin/AdminArticleTag/Index" class="@(isTagSection ? "active" : null)" aria-current="@(isTagSection ? "page" : null)">
+                    <span class="admin-nav-icon"><svg class="admin-icon" aria-hidden="true"><use href="#i-tag"></use></svg></span>
+                    <span>Tagjet</span>
+                    <svg class="admin-icon admin-nav-arrow" aria-hidden="true"><use href="#i-chevron-right"></use></svg>
+                </a>
+                <a href="/Admin/AdminArticleComment/Index" class="@(isCommentSection ? "active" : null)" aria-current="@(isCommentSection ? "page" : null)">
+                    <span class="admin-nav-icon"><svg class="admin-icon" aria-hidden="true"><use href="#i-comment"></use></svg></span>
+                    <span>Komentet</span>
+                    <svg class="admin-icon admin-nav-arrow" aria-hidden="true"><use href="#i-chevron-right"></use></svg>
+                </a>
+
+                <p class="admin-nav-label">Sistemi</p>
+                <a href="/Admin/AdminUser/Index" class="@(isUserSection ? "active" : null)" aria-current="@(isUserSection ? "page" : null)">
+                    <span class="admin-nav-icon"><svg class="admin-icon" aria-hidden="true"><use href="#i-users"></use></svg></span>
+                    <span>Përdoruesit</span>
+                    <svg class="admin-icon admin-nav-arrow" aria-hidden="true"><use href="#i-chevron-right"></use></svg>
+                </a>
+                <a href="/Admin/AdminUserRole/Index" class="@(isRoleSection ? "active" : null)" aria-current="@(isRoleSection ? "page" : null)">
+                    <span class="admin-nav-icon"><svg class="admin-icon" aria-hidden="true"><use href="#i-shield"></use></svg></span>
+                    <span>Rolet</span>
+                    <svg class="admin-icon admin-nav-arrow" aria-hidden="true"><use href="#i-chevron-right"></use></svg>
+                </a>
             </nav>
+
+            <div class="admin-sidebar-bottom">
+                <a class="admin-sidebar-cta" asp-controller="Home" asp-action="Index">
+                    <span class="admin-portal-icon"><svg class="admin-icon" aria-hidden="true"><use href="#i-external"></use></svg></span>
+                    <span>
+                        <strong>Shiko portalin</strong>
+                        <small>Hap pamjen publike</small>
+                    </span>
+                    <svg class="admin-icon admin-nav-arrow" aria-hidden="true"><use href="#i-chevron-right"></use></svg>
+                </a>
+                <div class="admin-sidebar-status">
+                    <span class="admin-status-dot"></span>
+                    <div>
+                        <strong>Sistemi aktiv</strong>
+                        <small>Redaksia online</small>
+                    </div>
+                </div>
+            </div>
         </aside>
+
         <div class="admin-content">
             <header class="admin-topbar">
                 <div class="admin-topbar-left">
-                    <button class="admin-sidebar-toggle" id="adminSidebarToggle" type="button" aria-label="Hap menunë">
+                    <button class="admin-sidebar-toggle" id="adminSidebarToggle" type="button" aria-label="Hap menunë" aria-controls="adminSidebar" aria-expanded="false">
                         <span class="toggler-bar"></span>
                         <span class="toggler-bar"></span>
                         <span class="toggler-bar"></span>
                     </button>
-                    <div>
-                        <p class="admin-eyebrow">Panel editorial</p>
-                        <h1>@ViewData["Title"]</h1>
+                    <div class="admin-title-block">
+                        <p class="admin-breadcrumb">
+                            <span>ZëriYnë</span>
+                            <svg class="admin-icon" aria-hidden="true"><use href="#i-chevron-right"></use></svg>
+                            <span>Administrimi</span>
+                            <svg class="admin-icon" aria-hidden="true"><use href="#i-chevron-right"></use></svg>
+                            <strong>@pageTitle</strong>
+                        </p>
+                        <h1>@pageTitle</h1>
+                        <p class="admin-subtitle">@pageSubtitle</p>
                     </div>
                 </div>
-                <partial name="_LoginPartial" />
+                <div class="admin-topbar-actions">
+                    <span class="admin-date-chip">
+                        <svg class="admin-icon" aria-hidden="true"><use href="#i-calendar"></use></svg>
+                        @DateTime.Now.ToString("dd MMM yyyy")
+                    </span>
+                    <button class="admin-icon-button admin-theme-toggle" type="button" data-theme-toggle aria-label="Aktivizo temën e errët" aria-pressed="false">
+                        <svg class="admin-icon icon-sun" aria-hidden="true"><use href="#i-sun"></use></svg>
+                        <svg class="admin-icon icon-moon" aria-hidden="true"><use href="#i-moon"></use></svg>
+                    </button>
+                    <a class="admin-btn admin-btn--ghost admin-topbar-portal" asp-controller="Home" asp-action="Index" aria-label="Shiko portalin">
+                        <svg class="admin-icon" aria-hidden="true"><use href="#i-external"></use></svg>
+                        <span>Shiko portalin</span>
+                    </a>
+                    @if (User.Identity?.IsAuthenticated == true)
+                    {
+                        <div class="admin-user">
+                            <span class="admin-avatar">@initials</span>
+                            <span class="admin-user-copy">
+                                <strong>@displayName</strong>
+                                <small>@roleLabel</small>
+                            </span>
+                            <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })" class="admin-logout-form">
+                                <button type="submit" class="admin-icon-button" aria-label="Dil" title="Dil">
+                                    <svg class="admin-icon" aria-hidden="true"><use href="#i-logout"></use></svg>
+                                </button>
+                            </form>
+                        </div>
+                    }
+                    else
+                    {
+                        <a class="admin-btn admin-btn--primary" asp-area="Identity" asp-page="/Account/Login">Hyr</a>
+                    }
+                </div>
             </header>
+
             <main class="admin-main">
                 @if (TempData["SuccessMessage"] != null)
                 {
-                    <div class="alert alert-success alert-dismissible fade show mb-3" role="alert">
-                        @TempData["SuccessMessage"]
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Mbyll"></button>
+                    <div class="admin-alert admin-alert--success" role="status">
+                        <span class="admin-alert-icon"><svg class="admin-icon" aria-hidden="true"><use href="#i-circle-check"></use></svg></span>
+                        <div class="admin-alert-copy">
+                            <strong>Sukses</strong>
+                            <p>@TempData["SuccessMessage"]</p>
+                        </div>
+                        <button type="button" class="admin-alert-close" data-admin-alert-close aria-label="Mbyll">
+                            <svg class="admin-icon" aria-hidden="true"><use href="#i-close"></use></svg>
+                        </button>
                     </div>
                 }
                 @if (TempData["ErrorMessage"] != null)
                 {
-                    <div class="alert alert-danger alert-dismissible fade show mb-3" role="alert">
-                        @TempData["ErrorMessage"]
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Mbyll"></button>
+                    <div class="admin-alert admin-alert--danger" role="alert">
+                        <span class="admin-alert-icon"><svg class="admin-icon" aria-hidden="true"><use href="#i-alert"></use></svg></span>
+                        <div class="admin-alert-copy">
+                            <strong>Ndodhi një problem</strong>
+                            <p>@TempData["ErrorMessage"]</p>
+                        </div>
+                        <button type="button" class="admin-alert-close" data-admin-alert-close aria-label="Mbyll">
+                            <svg class="admin-icon" aria-hidden="true"><use href="#i-close"></use></svg>
+                        </button>
                     </div>
                 }
                 @RenderBody()
+                <footer class="admin-footer">
+                    <span>&copy; @DateTime.Now.Year <strong>ZëriYnë</strong> · Të gjitha të drejtat e rezervuara</span>
+                    <span>Newsroom control center</span>
+                </footer>
             </main>
         </div>
     </div>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
+    <script src="~/js/admin.js" asp-append-version="true"></script>
 </body>
 </html>

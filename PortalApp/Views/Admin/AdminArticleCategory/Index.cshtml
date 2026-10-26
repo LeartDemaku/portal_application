@@ -3,58 +3,152 @@
 @{
     Layout = "~/Views/Shared/Admin/_Layout.cshtml";
     ViewData["Title"] = "Kategoritë";
+    ViewData["Subtitle"] = "Organizo përmbajtjen në kategori të qarta dhe mbaj strukturën e portalit të pastër.";
+    var categories = Model?.ToList() ?? new List<PortalApp.Models.ArticleCategory>();
+    var total = categories.Count;
+    var thisMonth = categories.Count(x => x.CreatedAt.Month == DateTime.Now.Month && x.CreatedAt.Year == DateTime.Now.Year);
+    var updated = categories.Count(x => x.UpdatedAt.HasValue);
 }
 
-<div class="admin-card">
-    <div class="admin-toolbar">
-        <div>
-            <span class="eyebrow">Menaxhim</span>
-            <h2>Lista e kategorive</h2>
+<div class="admin-stat-grid admin-stat-grid--3">
+    <article class="admin-stat-card admin-stat-card--blue">
+        <div class="admin-stat-top">
+            <span class="admin-stat-icon"><svg class="admin-icon" aria-hidden="true"><use href="#i-folder"></use></svg></span>
+            <span class="admin-stat-badge">Struktura</span>
         </div>
-        <a asp-action="Create" asp-controller="AdminArticleCategory" class="primary-button">Shto kategori</a>
+        <p class="admin-stat-value">@total</p>
+        <p class="admin-stat-label">Kategori totale</p>
+        <p class="admin-stat-meta">Ndarjet kryesore të përmbajtjes në portal</p>
+    </article>
+    <article class="admin-stat-card admin-stat-card--green">
+        <div class="admin-stat-top">
+            <span class="admin-stat-icon"><svg class="admin-icon" aria-hidden="true"><use href="#i-plus"></use></svg></span>
+            <span class="admin-stat-badge">Këtë muaj</span>
+        </div>
+        <p class="admin-stat-value">@thisMonth</p>
+        <p class="admin-stat-label">Kategori të reja</p>
+        <p class="admin-stat-meta">Shtuar gjatë muajit aktual</p>
+    </article>
+    <article class="admin-stat-card admin-stat-card--violet">
+        <div class="admin-stat-top">
+            <span class="admin-stat-icon"><svg class="admin-icon" aria-hidden="true"><use href="#i-edit"></use></svg></span>
+            <span class="admin-stat-badge">Të përditësuara</span>
+        </div>
+        <p class="admin-stat-value">@updated</p>
+        <p class="admin-stat-label">Kategori të rishikuara</p>
+        <p class="admin-stat-meta">Kanë marrë të paktën një përditësim</p>
+    </article>
+</div>
+
+<section class="admin-panel">
+    <div class="admin-toolbar">
+        <div class="admin-toolbar-title">
+            <h2>Struktura e kategorive</h2>
+            <p>Emërtime të qarta ndihmojnë lexuesin të gjejë lajmet më shpejt.</p>
+        </div>
+        <div class="admin-toolbar-actions">
+            <label class="admin-search">
+                <svg class="admin-icon" aria-hidden="true"><use href="#i-search"></use></svg>
+                <input type="search" placeholder="Kërko kategori..." aria-label="Kërko kategori" data-admin-search="#categoriesTable" data-result-count="#categoriesCount" />
+            </label>
+            <a asp-action="Create" asp-controller="AdminArticleCategory" class="admin-btn admin-btn--primary">
+                <svg class="admin-icon" aria-hidden="true"><use href="#i-plus"></use></svg>
+                Shto kategori
+            </a>
+        </div>
     </div>
 
-    <div class="table-responsive">
-        <table class="table admin-table align-middle">
+    <div class="admin-filter-bar">
+        <span class="admin-result-count" id="categoriesCount">@total nga @total</span>
+    </div>
+
+    <div class="admin-table-wrap">
+        <table class="admin-table" id="categoriesTable">
             <thead>
                 <tr>
-                    <th>Emri</th>
+                    <th>Kategoria</th>
                     <th>Krijuar më</th>
+                    <th>Përditësuar më</th>
                     <th class="text-end">Veprime</th>
                 </tr>
             </thead>
             <tbody>
-                @if (Model.Any())
-                {
-                    @foreach (var item in Model)
-                    {
-                        <tr>
-                            <td><strong>@item.Name</strong></td>
-                            <td>@item.CreatedAt.ToString("dd.MM.yyyy HH:mm")</td>
-                            <td class="text-end">
-                                <div class="table-actions">
-                                    <a asp-action="Edit" asp-controller="AdminArticleCategory" asp-route-id="@item.Id" class="secondary-button">Edito</a>
-                                    <form asp-action="Delete" asp-controller="AdminArticleCategory" asp-route-id="@item.Id" method="post">
-                                        @Html.AntiForgeryToken()
-                                        <button type="submit" class="danger-button" onclick="return confirm('A dëshironi ta fshini kategorinë?');">Fshij</button>
-                                    </form>
-                                </div>
-                            </td>
-                        </tr>
-                    }
-                }
-                else
+                @foreach (var item in categories)
                 {
                     <tr>
-                        <td colspan="3">
-                            <div class="empty-state small">
-                                <h3>Nuk ka kategori për shfaqje</h3>
-                                <p>Krijoni kategorinë e parë për të organizuar lajmet.</p>
+                        <td data-label="">
+                            <div class="admin-cell">
+                                <span class="admin-thumb admin-thumb--amber">
+                                    <svg class="admin-icon" aria-hidden="true"><use href="#i-folder"></use></svg>
+                                </span>
+                                <span class="admin-cell-copy">
+                                    <strong>@item.Name</strong>
+                                    <small>ID #@item.Id · Kategori editoriale</small>
+                                </span>
+                            </div>
+                        </td>
+                        <td data-label="Krijuar më">
+                            <span class="admin-date">
+                                @item.CreatedAt.ToString("dd.MM.yyyy")
+                                <small>@item.CreatedAt.ToString("HH:mm")</small>
+                            </span>
+                        </td>
+                        <td data-label="Përditësuar më">
+                            @if (item.UpdatedAt.HasValue)
+                            {
+                                <span class="admin-date">
+                                    @item.UpdatedAt.Value.ToString("dd.MM.yyyy")
+                                    <small>@item.UpdatedAt.Value.ToString("HH:mm")</small>
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="admin-badge admin-badge--neutral">Pa përditësim</span>
+                            }
+                        </td>
+                        <td data-label="Veprime" class="text-end">
+                            <div class="admin-row-actions">
+                                <a asp-action="Edit" asp-controller="AdminArticleCategory" asp-route-id="@item.Id" class="admin-btn admin-btn--soft admin-btn--sm">
+                                    <svg class="admin-icon" aria-hidden="true"><use href="#i-edit"></use></svg>
+                                    Edito
+                                </a>
+                                <form asp-action="Delete" asp-controller="AdminArticleCategory" asp-route-id="@item.Id" method="post">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="admin-btn admin-btn--danger admin-btn--sm" onclick="return confirm('A dëshironi ta fshini kategorinë?');">
+                                        <svg class="admin-icon" aria-hidden="true"><use href="#i-trash"></use></svg>
+                                        Fshij
+                                    </button>
+                                </form>
                             </div>
                         </td>
                     </tr>
                 }
+                @if (total == 0)
+                {
+                    <tr class="admin-empty-row">
+                        <td colspan="4" class="admin-table-empty-cell">
+                            <div class="admin-empty">
+                                <span class="admin-empty-icon"><svg class="admin-icon" aria-hidden="true"><use href="#i-folder"></use></svg></span>
+                                <h3>Nuk ka kategori për shfaqje</h3>
+                                <p>Krijo kategorinë e parë për të organizuar lajmet sipas seksioneve.</p>
+                                <a asp-action="Create" asp-controller="AdminArticleCategory" class="admin-btn admin-btn--primary">
+                                    <svg class="admin-icon" aria-hidden="true"><use href="#i-plus"></use></svg>
+                                    Krijo kategori
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+                <tr class="admin-search-empty admin-empty-row" data-search-empty>
+                    <td colspan="4" class="admin-table-empty-cell">
+                        <div class="admin-empty">
+                            <span class="admin-empty-icon"><svg class="admin-icon" aria-hidden="true"><use href="#i-search"></use></svg></span>
+                            <h3>Nuk u gjet asnjë kategori</h3>
+                            <p>Provo një emërtim tjetër për kërkimin.</p>
+                        </div>
+                    </td>
+                </tr>
             </tbody>
         </table>
     </div>
-</div>
+</section>

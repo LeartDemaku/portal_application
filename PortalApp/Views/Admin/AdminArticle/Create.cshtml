@@ -5,6 +5,7 @@
 @{
     Layout = "~/Views/Shared/Admin/_Layout.cshtml";
     ViewData["Title"] = "Shto artikull";
+    ViewData["Subtitle"] = "Ndërto një artikull të plotë me titull, përmbajtje, kategori, tagje dhe kopertinë.";
     var categories = ViewBag.ArticleCategories as List<ArticleCategory> ?? new List<ArticleCategory>();
     var tags = ViewBag.ArticleTags as List<ArticleTag> ?? new List<ArticleTag>();
     var canApprove = ViewBag.CanApprove is true;
@@ -16,73 +17,158 @@
     <link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet" />
 }
 
-<div class="admin-card">
-    <form asp-action="Create" asp-controller="AdminArticle" method="post" enctype="multipart/form-data" class="admin-form">
-        @Html.AntiForgeryToken()
-        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<a asp-action="Index" asp-controller="AdminArticle" class="admin-page-back">
+    <svg class="admin-icon" aria-hidden="true"><use href="#i-arrow-left"></use></svg>
+    Kthehu te artikujt
+</a>
 
-        <div class="admin-form-grid">
-            <div class="admin-form-main">
-                <div class="form-field">
-                    <label asp-for="Title">Titulli</label>
-                    <input asp-for="Title" placeholder="Shkruaj titullin e artikullit..." />
-                    <span asp-validation-for="Title" class="text-danger"></span>
+<form asp-action="Create" asp-controller="AdminArticle" method="post" enctype="multipart/form-data" class="admin-form" data-admin-form>
+    @Html.AntiForgeryToken()
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="admin-editor-layout">
+        <div class="admin-editor-main">
+            <section class="admin-form-card">
+                <div class="admin-form-card-head">
+                    <span class="admin-form-card-icon">
+                        <svg class="admin-icon" aria-hidden="true"><use href="#i-articles"></use></svg>
+                    </span>
+                    <div class="admin-form-card-title">
+                        <h2>Përmbajtja editoriale</h2>
+                        <p>Shkruaj titullin dhe ndërto artikullin me formatimin e zgjedhur.</p>
+                    </div>
                 </div>
+                <div class="admin-form-card-body">
+                    <div class="form-field form-field--title">
+                        <label asp-for="Title">
+                            <span>Titulli i artikullit</span>
+                            <span class="field-optional">I detyrueshëm</span>
+                        </label>
+                        <input asp-for="Title" placeholder="Shkruaj titullin e artikullit..." autocomplete="off" />
+                        <span asp-validation-for="Title" class="text-danger"></span>
+                    </div>
 
-                <div class="form-field">
-                    <label asp-for="Content">Përmbajtja</label>
-                    <div id="editor-container" style="min-height: 300px; background: #ffffff; color: #0f172a; border-radius: 0.75rem; font-size: 1rem;">@Html.Raw(Model?.Content)</div>
-                    <input type="hidden" asp-for="Content" id="ContentInput" />
-                    <span asp-validation-for="Content" class="text-danger"></span>
+                    <div class="form-field">
+                        <label asp-for="Content">
+                            <span>Përmbajtja</span>
+                            <span class="field-optional">Editor i pasur</span>
+                        </label>
+                        <div class="admin-editor">
+                            <div id="editor-container">@Html.Raw(Model?.Content)</div>
+                        </div>
+                        <input type="hidden" asp-for="Content" id="ContentInput" />
+                        <span asp-validation-for="Content" class="text-danger"></span>
+                        <div class="admin-editor-meta">
+                            <span class="admin-editor-stats" data-editor-stats>0 fjalë · 0 min lexim</span>
+                            <span>Formatimi ruhet automatikisht me artikullin</span>
+                        </div>
+                    </div>
                 </div>
-            </div>
-
-            <aside class="admin-form-side">
-                <div class="form-field">
-                    <label asp-for="ArticleCategoryId">Kategoria</label>
-                    <select asp-for="ArticleCategoryId">
-                        <option value="0">Zgjidh kategorine</option>
-                        @foreach (var category in categories)
-                        {
-                            <option value="@category.Id">@category.Name</option>
-                        }
-                    </select>
-                    <span asp-validation-for="ArticleCategoryId" class="text-danger"></span>
-                </div>
-
-                <div class="form-field">
-                    <label asp-for="ArticleTags">Tagjet</label>
-                    <select asp-for="ArticleTags" class="select2" multiple>
-                        @foreach (var tag in tags)
-                        {
-                            <option value="@tag.Title">@tag.Title</option>
-                        }
-                    </select>
-                    <span asp-validation-for="ArticleTags" class="text-danger"></span>
-                </div>
-
-                <div class="form-field">
-                    <label asp-for="CoverImage">Imazhi i kopertines</label>
-                    <input asp-for="CoverImage" type="file" accept="image/*" />
-                    <span asp-validation-for="CoverImage" class="text-danger"></span>
-                </div>
-
-                @if (canApprove)
-                {
-                    <label class="toggle-field">
-                        <input asp-for="IsApproved" />
-                        <span>Publikoje menjehere</span>
-                    </label>
-                }
-
-                <div class="admin-form-actions">
-                    <button type="submit" class="primary-button">Ruaj artikullin</button>
-                    <a asp-action="Index" asp-controller="AdminArticle" class="secondary-button">Anulo</a>
-                </div>
-            </aside>
+            </section>
         </div>
-    </form>
-</div>
+
+        <aside class="admin-editor-side">
+            <section class="admin-side-card">
+                <div class="admin-side-card-head">
+                    <svg class="admin-icon" aria-hidden="true"><use href="#i-circle-check"></use></svg>
+                    <h3>Publikimi dhe organizimi</h3>
+                </div>
+                <div class="admin-side-card-body">
+                    <div class="form-field">
+                        <label asp-for="ArticleCategoryId">Kategoria</label>
+                        <select asp-for="ArticleCategoryId">
+                            <option value="0">Zgjidh kategorinë</option>
+                            @foreach (var category in categories)
+                            {
+                                <option value="@category.Id">@category.Name</option>
+                            }
+                        </select>
+                        <span asp-validation-for="ArticleCategoryId" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-field">
+                        <label asp-for="ArticleTags">Tagjet</label>
+                        <select asp-for="ArticleTags" class="select2" multiple>
+                            @foreach (var tag in tags)
+                            {
+                                <option value="@tag.Title">@tag.Title</option>
+                            }
+                        </select>
+                        <span asp-validation-for="ArticleTags" class="text-danger"></span>
+                        <span class="field-hint">Zgjidh nga lista ose shkruaj një tag të ri.</span>
+                    </div>
+
+                    @if (canApprove)
+                    {
+                        <label class="admin-toggle-field">
+                            <input asp-for="IsApproved" />
+                            <span class="admin-toggle-copy">
+                                <strong>Publiko menjëherë</strong>
+                                <small>Artikulli do të jetë i dukshëm për lexuesit.</small>
+                            </span>
+                        </label>
+                    }
+                    else
+                    {
+                        <div class="admin-side-note">
+                            <svg class="admin-icon" aria-hidden="true"><use href="#i-info"></use></svg>
+                            <span>Artikulli do të ruhet si draft dhe do të presë miratim para publikimit.</span>
+                        </div>
+                    }
+                </div>
+            </section>
+
+            <section class="admin-side-card">
+                <div class="admin-side-card-head">
+                    <svg class="admin-icon" aria-hidden="true"><use href="#i-image"></use></svg>
+                    <h3>Kopertina e artikullit</h3>
+                </div>
+                <div class="admin-side-card-body">
+                    <div class="admin-cover-field">
+                        <div class="admin-cover-preview">
+                            <span class="admin-cover-badge">Kopertina</span>
+                            <div class="admin-cover-placeholder">
+                                <svg class="admin-icon" aria-hidden="true"><use href="#i-image"></use></svg>
+                                <span>Pa imazh të zgjedhur</span>
+                            </div>
+                            <img id="coverPreview" alt="Parapamje e kopertinës" hidden />
+                        </div>
+                        <label class="admin-upload">
+                            <input asp-for="CoverImage" type="file" accept="image/*" data-image-input data-image-preview="#coverPreview" data-upload-name="#coverUploadName" />
+                            <span class="admin-upload-icon"><svg class="admin-icon" aria-hidden="true"><use href="#i-image"></use></svg></span>
+                            <span class="admin-upload-copy">
+                                <strong id="coverUploadName">Zgjidh një imazh</strong>
+                                <small>JPG, PNG ose WEBP</small>
+                            </span>
+                        </label>
+                        <span asp-validation-for="CoverImage" class="text-danger"></span>
+                        <span class="field-hint">Imazhi i kopertinës është i detyrueshëm për artikujt e rinj.</span>
+                    </div>
+                </div>
+            </section>
+
+            <div class="admin-tip-card">
+                <span class="admin-tip-icon"><svg class="admin-icon" aria-hidden="true"><use href="#i-sparkles"></use></svg></span>
+                <h3>Kontroll para publikimit</h3>
+                <p>Sigurohu që titulli është i qartë, kopertina cilësore dhe kategoria përputhet me përmbajtjen.</p>
+            </div>
+        </aside>
+    </div>
+
+    <div class="admin-form-footer">
+        <div class="admin-form-footer-copy">
+            <strong>Gati për publikim?</strong>
+            <small>Mund ta ruash si draft dhe ta publikosh më vonë.</small>
+        </div>
+        <div class="admin-form-footer-actions">
+            <a asp-action="Index" asp-controller="AdminArticle" class="admin-btn admin-btn--ghost">Anulo</a>
+            <button type="submit" class="admin-btn admin-btn--primary">
+                <svg class="admin-icon" aria-hidden="true"><use href="#i-check"></use></svg>
+                Ruaj artikullin
+            </button>
+        </div>
+    </div>
+</form>
 
 @section Scripts
 {
@@ -105,7 +191,7 @@
                         [{ 'header': [1, 2, 3, false] }],
                         ['bold', 'italic', 'underline', 'strike'],
                         [{ 'color': [] }, { 'background': [] }],
-                        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                        [{ 'list': 'ordered' }, { 'list': 'bullet' }],
                         ['link'],
                         ['clean']
                     ]

@@ -3,24 +3,88 @@
 @{
     Layout = "~/Views/Shared/Admin/_Layout.cshtml";
     ViewData["Title"] = "Edito kategorinë";
+    ViewData["Subtitle"] = "Përditëso emrin e kategorisë dhe mbaj strukturën editoriale të qartë.";
 }
 
-<div class="admin-card" style="max-width:600px;">
-    <form asp-action="Edit" asp-controller="AdminArticleCategory" asp-route-id="@Model.Id" method="post" class="admin-form">
-        @Html.AntiForgeryToken()
-        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<a asp-action="Index" asp-controller="AdminArticleCategory" class="admin-page-back">
+    <svg class="admin-icon" aria-hidden="true"><use href="#i-arrow-left"></use></svg>
+    Kthehu te kategoritë
+</a>
 
-        <div class="form-field">
-            <label asp-for="Name">Emri i kategorisë</label>
-            <input asp-for="Name" />
-            <span asp-validation-for="Name" class="text-danger"></span>
+<div class="admin-form-layout admin-form-layout--narrow">
+    <section class="admin-form-card">
+        <div class="admin-form-card-head">
+            <span class="admin-form-card-icon admin-form-card-icon--amber">
+                <svg class="admin-icon" aria-hidden="true"><use href="#i-folder"></use></svg>
+            </span>
+            <div class="admin-form-card-title">
+                <h2>Përditëso kategorinë</h2>
+                <p>Ndryshimi do të pasqyrohet në të gjitha faqet që përdorin këtë kategori.</p>
+            </div>
         </div>
+        <form asp-action="Edit" asp-controller="AdminArticleCategory" asp-route-id="@Model.Id" method="post" class="admin-form" data-admin-form>
+            @Html.AntiForgeryToken()
+            <div class="admin-form-card-body">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-field">
+                    <label asp-for="Name">
+                        <span>Emri i kategorisë</span>
+                        <span class="field-optional">I detyrueshëm</span>
+                    </label>
+                    <input asp-for="Name" autocomplete="off" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                    <span class="field-hint">Ndryshimi i emrit nuk i zhvendos artikujt në një kategori tjetër.</span>
+                </div>
+                <div class="admin-section-divider">Informacion</div>
+                <div class="admin-profile-preview">
+                    <span class="admin-thumb admin-thumb--amber">
+                        <svg class="admin-icon" aria-hidden="true"><use href="#i-folder"></use></svg>
+                    </span>
+                    <span class="admin-profile-preview-copy">
+                        <strong>@Model.Name</strong>
+                        <small>Krijuar më @Model.CreatedAt.ToString("dd.MM.yyyy") · ID #@Model.Id</small>
+                    </span>
+                </div>
+            </div>
+            <div class="admin-form-card-foot">
+                <a asp-action="Index" asp-controller="AdminArticleCategory" class="admin-btn admin-btn--ghost">Anulo</a>
+                <button type="submit" class="admin-btn admin-btn--primary">
+                    <svg class="admin-icon" aria-hidden="true"><use href="#i-check"></use></svg>
+                    Ruaj ndryshimet
+                </button>
+            </div>
+        </form>
+    </section>
 
-        <div class="admin-form-actions">
-            <button type="submit" class="primary-button">Ruaj ndryshimet</button>
-            <a asp-action="Index" asp-controller="AdminArticleCategory" class="secondary-button">Anulo</a>
+    <aside class="admin-editor-side">
+        <div class="admin-side-card">
+            <div class="admin-side-card-head">
+                <svg class="admin-icon" aria-hidden="true"><use href="#i-info"></use></svg>
+                <h3>Informacion i kategorisë</h3>
+            </div>
+            <div class="admin-side-card-body">
+                <div class="admin-info-list">
+                    <div class="admin-info-item">
+                        <svg class="admin-icon" aria-hidden="true"><use href="#i-calendar"></use></svg>
+                        <span>Krijuar më @Model.CreatedAt.ToString("dd.MM.yyyy") në @Model.CreatedAt.ToString("HH:mm")</span>
+                    </div>
+                    <div class="admin-info-item">
+                        <svg class="admin-icon" aria-hidden="true"><use href="#i-edit"></use></svg>
+                        <span>@(Model.UpdatedAt.HasValue ? $"Përditësuar më {Model.UpdatedAt.Value:dd.MM.yyyy} në {Model.UpdatedAt.Value:HH:mm}" : "Nuk është përditësuar ende")</span>
+                    </div>
+                    <div class="admin-info-item">
+                        <svg class="admin-icon" aria-hidden="true"><use href="#i-folder"></use></svg>
+                        <span>Identifikuesi i kategorisë: #@Model.Id</span>
+                    </div>
+                </div>
+            </div>
         </div>
-    </form>
+        <div class="admin-tip-card">
+            <span class="admin-tip-icon"><svg class="admin-icon" aria-hidden="true"><use href="#i-sparkles"></use></svg></span>
+            <h3>Kujdes me emërtimin</h3>
+            <p>Një emër i qartë mbetet i lexueshëm në menu, në kartela dhe në kërkim, edhe në ekrane të vogla.</p>
+        </div>
+    </aside>
 </div>
 
 @section Scripts {

@@ -4,56 +4,133 @@
 @{
     Layout = "~/Views/Shared/Admin/_Layout.cshtml";
     ViewData["Title"] = "Rolet";
+    ViewData["Subtitle"] = "Përcakto nivelet e aksesit dhe mbaj të sigurt rrjedhën e punës në redaksi.";
+    var roles = Model ?? new List<IdentityRole>();
+    var coreRoleNames = new[] { "Drejtor", "Admin", "Administrator", "Redaktor", "Gazetar" };
+    var total = roles.Count;
+    var coreRoles = roles.Count(x => coreRoleNames.Contains(x.Name ?? string.Empty, StringComparer.OrdinalIgnoreCase));
+    var customRoles = total - coreRoles;
 }
 
-<div class="admin-card">
-    <div class="admin-toolbar">
-        <div>
-            <span class="eyebrow">Menaxhim</span>
-            <h2>Lista e roleve</h2>
+<div class="admin-stat-grid admin-stat-grid--3">
+    <article class="admin-stat-card admin-stat-card--violet">
+        <div class="admin-stat-top">
+            <span class="admin-stat-icon"><svg class="admin-icon" aria-hidden="true"><use href="#i-shield"></use></svg></span>
+            <span class="admin-stat-badge">Aksesi</span>
         </div>
-        <a asp-action="Create" asp-controller="AdminUserRole" class="primary-button">Krijo rol</a>
+        <p class="admin-stat-value">@total</p>
+        <p class="admin-stat-label">Role totale</p>
+        <p class="admin-stat-meta">Nivelet e lejeve të konfiguruara</p>
+    </article>
+    <article class="admin-stat-card admin-stat-card--blue">
+        <div class="admin-stat-top">
+            <span class="admin-stat-icon"><svg class="admin-icon" aria-hidden="true"><use href="#i-circle-check"></use></svg></span>
+            <span class="admin-stat-badge">Standard</span>
+        </div>
+        <p class="admin-stat-value">@coreRoles</p>
+        <p class="admin-stat-label">Role kryesore</p>
+        <p class="admin-stat-meta">Struktura bazë e redaksisë</p>
+    </article>
+    <article class="admin-stat-card admin-stat-card--cyan">
+        <div class="admin-stat-top">
+            <span class="admin-stat-icon"><svg class="admin-icon" aria-hidden="true"><use href="#i-sparkles"></use></svg></span>
+            <span class="admin-stat-badge">Të personalizuara</span>
+        </div>
+        <p class="admin-stat-value">@customRoles</p>
+        <p class="admin-stat-label">Role shtesë</p>
+        <p class="admin-stat-meta">Krijuar për nevoja specifike të ekipit</p>
+    </article>
+</div>
+
+<section class="admin-panel">
+    <div class="admin-toolbar">
+        <div class="admin-toolbar-title">
+            <h2>Matrica e roleve</h2>
+            <p>Çdo rol përcakton se cilat seksione të panelit mund të hapen.</p>
+        </div>
+        <div class="admin-toolbar-actions">
+            <label class="admin-search">
+                <svg class="admin-icon" aria-hidden="true"><use href="#i-search"></use></svg>
+                <input type="search" placeholder="Kërko rol..." aria-label="Kërko rol" data-admin-search="#rolesGrid" data-result-count="#rolesCount" />
+            </label>
+            <a asp-action="Create" asp-controller="AdminUserRole" class="admin-btn admin-btn--primary">
+                <svg class="admin-icon" aria-hidden="true"><use href="#i-plus"></use></svg>
+                Krijo rol
+            </a>
+        </div>
     </div>
 
-    <div class="table-responsive">
-        <table class="table admin-table align-middle">
-            <thead>
-                <tr>
-                    <th>Emri i rolit</th>
-                    <th class="text-end">Veprime</th>
-                </tr>
-            </thead>
-            <tbody>
-                @if (Model.Any())
-                {
-                    @foreach (var item in Model)
-                    {
-                        <tr>
-                            <td><strong>@item.Name</strong></td>
-                            <td class="text-end">
-                                <div class="table-actions">
-                                    <a asp-action="Edit" asp-controller="AdminUserRole" asp-route-id="@item.Id" class="secondary-button">Edito</a>
-                                    <form asp-action="Delete" asp-controller="AdminUserRole" asp-route-id="@item.Id" method="post">
-                                        @Html.AntiForgeryToken()
-                                        <button type="submit" class="danger-button" onclick="return confirm('A dëshironi ta fshini rolin?');">Fshij</button>
-                                    </form>
-                                </div>
-                            </td>
-                        </tr>
-                    }
-                }
-                else
-                {
-                    <tr>
-                        <td colspan="2">
-                            <div class="empty-state small">
-                                <h3>Nuk ka role për shfaqje</h3>
-                                <p>Krijoni rolin e parë të sistemit.</p>
-                            </div>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+    <div class="admin-filter-bar">
+        <span class="admin-result-count" id="rolesCount">@total nga @total</span>
     </div>
-</div>
+
+    <div class="admin-role-grid" id="rolesGrid">
+        @foreach (var item in roles)
+        {
+            var roleName = item.Name ?? "Pa emër";
+            var isDirector = roleName.Equals("Drejtor", StringComparison.OrdinalIgnoreCase);
+            var isAdmin = roleName.Equals("Admin", StringComparison.OrdinalIgnoreCase) || roleName.Equals("Administrator", StringComparison.OrdinalIgnoreCase);
+            var isEditor = roleName.Equals("Redaktor", StringComparison.OrdinalIgnoreCase);
+            var isJournalist = roleName.Equals("Gazetar", StringComparison.OrdinalIgnoreCase);
+            var tone = isDirector ? "admin-role-card--violet" : isAdmin ? "admin-role-card--blue" : isEditor ? "admin-role-card--emerald" : isJournalist ? "admin-role-card--amber" : "admin-role-card--cyan";
+            var description = isDirector
+                ? "Qasje e plotë në panel, përdorues dhe vendime editoriale."
+                : isAdmin
+                    ? "Menaxhim i përmbajtjes, përdoruesve dhe konfigurimit të portalit."
+                    : isEditor
+                        ? "Rishikim, publikim dhe organizim i artikujve të redaksisë."
+                        : isJournalist
+                            ? "Krijim dhe redaktim i artikujve të vetë."
+                            : "Rol i personalizuar me leje të përcaktuara nga administrata.";
+            <article class="admin-role-card @tone" data-search-item data-search-text="@roleName @description">
+                <div class="admin-role-head">
+                    <span class="admin-role-icon">
+                        <svg class="admin-icon" aria-hidden="true"><use href="#i-shield"></use></svg>
+                    </span>
+                    <div class="admin-role-copy">
+                        <h3>@roleName</h3>
+                        <p>@description</p>
+                    </div>
+                </div>
+                <div class="admin-role-meta">
+                    <span class="admin-role-code">
+                        <svg class="admin-icon" aria-hidden="true"><use href="#i-key"></use></svg>
+                        @((isDirector || isAdmin || isEditor || isJournalist) ? "Rol standard" : "I personalizuar")
+                    </span>
+                    <div class="admin-role-actions">
+                        <a asp-action="Edit" asp-controller="AdminUserRole" asp-route-id="@item.Id" class="admin-btn admin-btn--soft admin-btn--sm">
+                            <svg class="admin-icon" aria-hidden="true"><use href="#i-edit"></use></svg>
+                            Edito
+                        </a>
+                        <form asp-action="Delete" asp-controller="AdminUserRole" asp-route-id="@item.Id" method="post">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="admin-btn admin-btn--danger admin-btn--sm" onclick="return confirm('A dëshironi ta fshini rolin?');">
+                                <svg class="admin-icon" aria-hidden="true"><use href="#i-trash"></use></svg>
+                                Fshij
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </article>
+        }
+        @if (total == 0)
+        {
+            <div class="admin-empty">
+                <span class="admin-empty-icon"><svg class="admin-icon" aria-hidden="true"><use href="#i-shield"></use></svg></span>
+                <h3>Nuk ka role për shfaqje</h3>
+                <p>Krijo rolin e parë për të përcaktuar aksesin në panel.</p>
+                <a asp-action="Create" asp-controller="AdminUserRole" class="admin-btn admin-btn--primary">
+                    <svg class="admin-icon" aria-hidden="true"><use href="#i-plus"></use></svg>
+                    Krijo rol
+                </a>
+            </div>
+        }
+        <div class="admin-empty-inline" data-search-empty-inline>
+            <div class="admin-empty">
+                <span class="admin-empty-icon"><svg class="admin-icon" aria-hidden="true"><use href="#i-search"></use></svg></span>
+                <h3>Nuk u gjet asnjë rol</h3>
+                <p>Provo një emër tjetër për kërkimin.</p>
+            </div>
+        </div>
+    </div>
+</section>
