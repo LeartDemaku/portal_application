@@ -47,18 +47,18 @@ namespace PortalApp.Areas.Identity.Pages.Account
 
         public class InputModel
         {
-            [Required, Display(Name = "Emri")]
+            [Required(ErrorMessage = "Shkruani emrin."), Display(Name = "Emri")]
             public string FirstName { get; set; }
 
-            [Required, Display(Name = "Mbiemri")]
+            [Required(ErrorMessage = "Shkruani mbiemrin."), Display(Name = "Mbiemri")]
             public string LastName { get; set; }
 
-            [Required]
-            [EmailAddress]
+            [Required(ErrorMessage = "Shkruani email-in.")]
+            [EmailAddress(ErrorMessage = "Email-i nuk është i vlefshëm.")]
             [Display(Name = "Email")]
             public string Email { get; set; }
 
-            [Required]
+            [Required(ErrorMessage = "Shkruani fjalëkalimin.")]
             [StringLength(100, ErrorMessage = "Fjalëkalimi duhet të ketë minimum {2} dhe maksimum {1} karaktere.", MinimumLength = 6)]
             [DataType(DataType.Password)]
             [Display(Name = "Fjalekalimi")]

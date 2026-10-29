@@ -38,7 +38,7 @@ namespace PortalApp.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Comment(int id, ArticleCommentStoreViewModel data)
+        public async Task<IActionResult> Comment(int id, [Bind(Prefix = nameof(PortalArticleDetailsViewModel.CommentForm))] ArticleCommentStoreViewModel data)
         {
             var article = await _db.Articles
                 .AsNoTracking()

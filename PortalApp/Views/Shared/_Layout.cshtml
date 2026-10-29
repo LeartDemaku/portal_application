@@ -1,119 +1,281 @@
+@using System.Globalization
 @using PortalApp.Services
 @inject IPortalQueryService PortalQueryService
 @{
     var sections = await PortalQueryService.GetNavigationItemsAsync();
     var currentPath = Context.Request.Path.Value ?? "/";
+    var isHome = currentPath == "/";
+
+    // Titulli, përshkrimi dhe fotoja për Google dhe rrjetet sociale
+    var pageTitle = ViewData["Title"] as string;
+    var fullTitle = string.IsNullOrWhiteSpace(pageTitle) || isHome
+        ? "ZëriYnë — Jehona e së vërtetës"
+        : $"{pageTitle} · ZëriYnë";
+    var description = ViewData["Description"] as string
+        ?? "ZëriYnë: lajmet e fundit, analiza dhe histori nga politika, ekonomia, teknologjia, sporti, shëndetësia dhe bota.";
+    var siteUrl = $"{Context.Request.Scheme}://{Context.Request.Host}{Context.Request.PathBase}";
+    var canonicalUrl = $"{siteUrl}{Context.Request.Path}";
+    var ogImage = ViewData["OgImage"] as string ?? "/images/portal/placeholder.svg";
+    var ogImageUrl = ogImage.StartsWith("http", StringComparison.OrdinalIgnoreCase) ? ogImage : $"{siteUrl}{ogImage}";
+    var ogType = ViewData["OgType"] as string ?? "website";
+
+    var albanian = CultureInfo.GetCultureInfo("sq-AL");
+    var todayText = DateTime.Now.ToString("dddd, d MMMM yyyy", albanian);
+    todayText = char.ToUpper(todayText[0], albanian) + todayText[1..];
+
+    var isIdentityArea = string.Equals(ViewContext.RouteData.Values["area"] as string, "Identity", StringComparison.OrdinalIgnoreCase);
 }
 <!DOCTYPE html>
-<html lang="sq">
+<html lang="sq" data-theme="light">
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - ZëriYnë</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#f6f5f1" />
+    <meta name="color-scheme" content="light dark" />
+    <script>
+        // Vendos temën para se të vizatohet faqja, që të mos ketë "flash" të bardhë
+        (function () {
+            var theme;
+            try { theme = localStorage.getItem("zy-theme"); } catch (e) { }
+            if (theme !== "light" && theme !== "dark") {
+                theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+            }
+            var root = document.documentElement;
+            root.setAttribute("data-theme", theme);
+            root.classList.add("js");
+            if (theme === "dark") {
+                document.querySelector('meta[name="theme-color"]').setAttribute("content", "#08090c");
+            }
+        })();
+    </script>
+    <title>@fullTitle</title>
+    <meta name="description" content="@description" />
+    <link rel="canonical" href="@canonicalUrl" />
+    <meta property="og:site_name" content="ZëriYnë" />
+    <meta property="og:locale" content="sq_AL" />
+    <meta property="og:type" content="@ogType" />
+    <meta property="og:title" content="@fullTitle" />
+    <meta property="og:description" content="@description" />
+    <meta property="og:url" content="@canonicalUrl" />
+    <meta property="og:image" content="@ogImageUrl" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" href="~/favicon.ico" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/PortalApp.styles.css" asp-append-version="true" />
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500..800&family=Inter:wght@400..700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/portal.css" asp-append-version="true" />
+    @await RenderSectionAsync("Head", required: false)
     @await RenderSectionAsync("Styles", required: false)
 </head>
-<body class="portal-body">
+<body>
+    <a class="skip-link" href="#main">Kalo te përmbajtja</a>
+
+    @* Ikonat: vizatohen një herë dhe përdoren kudo me <use href="#i-..."> *@
+    <svg class="svg-sprite" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+        <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7.5" /><path d="m20.5 20.5-4.2-4.2" /></symbol>
+        <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" /></symbol>
+        <symbol id="i-moon" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" /></symbol>
+        <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10" /></symbol>
+        <symbol id="i-close" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12" /></symbol>
+        <symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" /></symbol>
+        <symbol id="i-chevron-right" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6" /></symbol>
+        <symbol id="i-arrow-up" viewBox="0 0 24 24"><path d="m5 12 7-7 7 7M12 19V5" /></symbol>
+        <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></symbol>
+        <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" /><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" /></symbol>
+        <symbol id="i-share" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" /><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4" /></symbol>
+        <symbol id="i-facebook" viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" /></symbol>
+        <symbol id="i-x" viewBox="0 0 24 24"><path d="M4 4l11.7 16H20L8.3 4H4zM4 20l6.8-6.8M13.2 10.8 20 4" /></symbol>
+        <symbol id="i-whatsapp" viewBox="0 0 24 24"><path d="M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9L3 21" /><path d="M9 10a.5.5 0 0 0 1 0V9a.5.5 0 0 0-1 0v1a5 5 0 0 0 5 5h1a.5.5 0 0 0 0-1h-1a.5.5 0 0 0 0 1" /></symbol>
+        <symbol id="i-user" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></symbol>
+        <symbol id="i-logout" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" /></symbol>
+        <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5" /><rect x="14" y="3" width="7" height="7" rx="1.5" /><rect x="3" y="14" width="7" height="7" rx="1.5" /><rect x="14" y="14" width="7" height="7" rx="1.5" /></symbol>
+        <symbol id="i-inbox" viewBox="0 0 24 24"><path d="M22 12h-6l-2 3h-4l-2-3H2" /><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z" /></symbol>
+        <symbol id="i-message" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></symbol>
+        <symbol id="i-home" viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /><path d="M9 22V12h6v10" /></symbol>
+    </svg>
+
     <header class="site-header" data-site-header>
-        <div class="site-topbar">
-            <div class="container site-topbar-inner">
-                <div class="topbar-left">
-                    <span class="topbar-edition">Edicioni Digjital</span>
-                </div>
-                <div class="topbar-right">
-                    <span class="topbar-date">@DateTime.Now.ToString("dd MMMM yyyy")</span>
-                </div>
+        <div class="container header-bar">
+            <a class="brand" asp-controller="Home" asp-action="Index" aria-label="ZëriYnë — Ballina">
+                <span class="brand-mark" aria-hidden="true">ZY</span>
+                <span class="brand-copy">
+                    <span class="brand-name">ZëriYnë</span>
+                    <span class="brand-tagline">Jehona e së vërtetës</span>
+                </span>
+            </a>
+
+            <a class="header-search" asp-controller="Home" asp-action="Search" data-search-open>
+                <svg class="icon icon-sm"><use href="#i-search" /></svg>
+                <span>Kërko lajme, tema, autorë…</span>
+                <kbd>Ctrl K</kbd>
+            </a>
+
+            <div class="header-actions">
+                <a class="icon-btn search-mobile" asp-controller="Home" asp-action="Search" data-search-open aria-label="Kërko">
+                    <svg class="icon"><use href="#i-search" /></svg>
+                </a>
+                <button class="icon-btn theme-toggle" type="button" data-theme-toggle aria-label="Ndrysho temën">
+                    <svg class="icon icon-moon"><use href="#i-moon" /></svg>
+                    <svg class="icon icon-sun"><use href="#i-sun" /></svg>
+                </button>
+                <partial name="_LoginPartial" />
+                <button class="icon-btn menu-toggle" type="button" data-menu-open aria-controls="menu-drawer" aria-expanded="false" aria-label="Hap menunë">
+                    <svg class="icon"><use href="#i-menu" /></svg>
+                </button>
             </div>
         </div>
-        <nav class="navbar navbar-expand-lg portal-navbar" id="main-navbar">
+
+        <nav class="category-nav" aria-label="Kategoritë">
             <div class="container">
-                <a class="navbar-brand portal-brand" asp-controller="Home" asp-action="Index">
-                    <span class="portal-brand-mark">
-                        <span class="brand-mark-text">ZY</span>
-                        <span class="brand-mark-glow"></span>
-                    </span>
-                    <span class="portal-brand-copy">
-                        <strong class="brand-name">ZëriYnë</strong>
-                        <small class="brand-tagline">Jehona e së vërtetës</small>
-                    </span>
-                </a>
-
-                <button class="navbar-toggler portal-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#portalNavbarNav" aria-controls="portalNavbarNav" aria-expanded="false" aria-label="Hap menunë">
-                    <span class="toggler-bar"></span>
-                    <span class="toggler-bar"></span>
-                    <span class="toggler-bar"></span>
-                </button>
-
-                <div class="collapse navbar-collapse" id="portalNavbarNav">
-                    <ul class="navbar-nav portal-nav-links me-auto">
-                        <li class="nav-item">
-                            <a class="nav-link @(currentPath == "/" ? "active" : null)" asp-controller="Home" asp-action="Index">Ballina</a>
-                        </li>
+                <div class="category-scroller">
+                    <ul class="category-links">
+                        <li><a class="@(isHome ? "active" : null)" style="--accent:var(--brand)" asp-controller="Home" asp-action="Index" aria-current="@(isHome ? "page" : null)">Ballina</a></li>
                         @foreach (var navSection in sections)
                         {
-                            var sectionPath = $"/kategori/{navSection.Slug}";
-                            <li class="nav-item">
-                                <a class="nav-link @(currentPath.StartsWith(sectionPath, StringComparison.OrdinalIgnoreCase) || currentPath.Equals($"/{navSection.Slug}", StringComparison.OrdinalIgnoreCase) ? "active" : null)" asp-controller="Sections" asp-action="Show" asp-route-slug="@navSection.Slug">@navSection.Title</a>
+                            var isActive = currentPath.StartsWith($"/kategori/{navSection.Slug}", StringComparison.OrdinalIgnoreCase);
+                            var accent = PortalSectionRegistry.Resolve(navSection.Title).AccentColor;
+                            <li>
+                                <a class="@(isActive ? "active" : null)" style="--accent:@accent" asp-controller="Sections" asp-action="Show" asp-route-slug="@navSection.Slug" aria-current="@(isActive ? "page" : null)">@navSection.Title</a>
                             </li>
                         }
                     </ul>
-
-                    <div class="portal-actions">
-                        <form class="portal-search" asp-controller="Home" asp-action="Search" method="get">
-                            <svg class="search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-                                <circle cx="11" cy="11" r="8"/>
-                                <path d="m21 21-4.35-4.35"/>
-                            </svg>
-                            <input type="search" name="q" value="@Context.Request.Query["q"]" placeholder="Kërko..." aria-label="Kërko" />
-                            <button type="submit" aria-label="Kërko">Kërko</button>
-                        </form>
-                        <div class="portal-auth">
-                            <partial name="_LoginPartial" />
-                        </div>
-                    </div>
                 </div>
+                <span class="nav-date">@todayText</span>
             </div>
         </nav>
+
+        @if (IsSectionDefined("HeaderProgress"))
+        {
+            @await RenderSectionAsync("HeaderProgress")
+        }
     </header>
 
-    <main class="site-main">
-        @RenderBody()
+    <main class="site-main" id="main">
+        @if (isIdentityArea)
+        {
+            <div class="container identity-shell">
+                @RenderBody()
+            </div>
+        }
+        else
+        {
+            @RenderBody()
+        }
     </main>
 
     <footer class="site-footer">
         <div class="container">
-            <div class="site-footer-grid">
-                <div>
-                    <p class="site-footer-title">ZëriYnë</p>
-                    <p class="site-footer-copy">Platformë editoriale me fokus të qartë në ekonomi, teknologji, sport, shëndetësi, politikë dhe zhvillime globale.</p>
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a class="brand" asp-controller="Home" asp-action="Index" aria-label="ZëriYnë — Ballina">
+                        <span class="brand-mark" aria-hidden="true">ZY</span>
+                        <span class="brand-copy">
+                            <span class="brand-name">ZëriYnë</span>
+                            <span class="brand-tagline">Jehona e së vërtetës</span>
+                        </span>
+                    </a>
+                    <p>Platformë editoriale me fokus në ekonomi, teknologji, sport, shëndetësi, politikë dhe zhvillime globale. E lexueshme në çdo pajisje.</p>
                 </div>
                 <div>
-                    <p class="site-footer-title">Navigimi</p>
-                    <div class="site-footer-links">
+                    <p class="footer-title">Kategoritë</p>
+                    <div class="footer-links is-columns">
+                        @foreach (var navSection in sections)
+                        {
+                            <a asp-controller="Sections" asp-action="Show" asp-route-slug="@navSection.Slug">@navSection.Title</a>
+                        }
+                    </div>
+                </div>
+                <div>
+                    <p class="footer-title">Portali</p>
+                    <div class="footer-links">
                         <a asp-controller="Home" asp-action="Index">Ballina</a>
-                        <a asp-controller="Home" asp-action="Search">Kërko</a>
+                        <a asp-controller="Home" asp-action="Search">Kërko në arkivë</a>
                         <a asp-controller="Home" asp-action="Privacy">Privatësia</a>
                     </div>
                 </div>
                 <div>
-                    <p class="site-footer-title">Redaksia</p>
-                    <p class="site-footer-copy">Publikim i shpejtë, i strukturuar dhe i përshtatur për çdo pajisje.</p>
+                    <p class="footer-title">Pamja</p>
+                    <div class="footer-theme" role="group" aria-label="Tema e faqes">
+                        <button type="button" data-theme-set="light" aria-pressed="false">
+                            <svg class="icon"><use href="#i-sun" /></svg> Light
+                        </button>
+                        <button type="button" data-theme-set="dark" aria-pressed="false">
+                            <svg class="icon"><use href="#i-moon" /></svg> Dark
+                        </button>
+                    </div>
                 </div>
             </div>
-            <div class="site-footer-bottom">
+
+            <p class="footer-wordmark" aria-hidden="true">ZëriYnë</p>
+
+            <div class="footer-bottom">
                 <p>&copy; @DateTime.Now.Year ZëriYnë. Të gjitha të drejtat e rezervuara.</p>
+                <p>@todayText</p>
             </div>
         </div>
     </footer>
 
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+    <button class="icon-btn to-top" type="button" data-to-top aria-label="Kthehu në fillim të faqes">
+        <svg class="icon"><use href="#i-arrow-up" /></svg>
+    </button>
+
+    @* Dritarja e kërkimit (hapet me butonin, Ctrl+K ose "/") *@
+    <dialog class="search-dialog" id="search-dialog" aria-label="Kërko në portal">
+        <div class="search-panel">
+            <form class="search-field" asp-controller="Home" asp-action="Search" method="get" role="search">
+                <svg class="icon"><use href="#i-search" /></svg>
+                <input type="search" name="q" placeholder="Çfarë po kërkoni?" aria-label="Fjala kyçe" autocomplete="off" enterkeyhint="search" />
+                <button class="icon-btn" type="button" data-dialog-close aria-label="Mbyll kërkimin">
+                    <svg class="icon"><use href="#i-close" /></svg>
+                </button>
+            </form>
+            @if (sections.Any())
+            {
+                <div class="search-suggestions">
+                    <p>Shfleto sipas kategorisë</p>
+                    <ul>
+                        @foreach (var navSection in sections)
+                        {
+                            <li><a style="--accent:@PortalSectionRegistry.Resolve(navSection.Title).AccentColor" asp-controller="Sections" asp-action="Show" asp-route-slug="@navSection.Slug">@navSection.Title</a></li>
+                        }
+                    </ul>
+                </div>
+            }
+            <div class="search-hint">
+                <span><kbd>Enter</kbd> kërko</span>
+                <span><kbd>Esc</kbd> mbyll</span>
+            </div>
+        </div>
+    </dialog>
+
+    @* Menyja anësore për telefon dhe tablet *@
+    <dialog class="drawer" id="menu-drawer" aria-label="Menyja">
+        <div class="drawer-panel">
+            <div class="drawer-head">
+                <span class="drawer-title">@todayText</span>
+                <button class="icon-btn" type="button" data-dialog-close aria-label="Mbyll menunë">
+                    <svg class="icon"><use href="#i-close" /></svg>
+                </button>
+            </div>
+            <nav class="drawer-links" aria-label="Navigimi kryesor">
+                <a class="@(isHome ? "active" : null)" asp-controller="Home" asp-action="Index">
+                    <span>Ballina</span>
+                    <svg class="icon icon-sm"><use href="#i-chevron-right" /></svg>
+                </a>
+                @foreach (var navSection in sections)
+                {
+                    var isActive = currentPath.StartsWith($"/kategori/{navSection.Slug}", StringComparison.OrdinalIgnoreCase);
+                    <a class="@(isActive ? "active" : null)" style="--accent:@PortalSectionRegistry.Resolve(navSection.Title).AccentColor" asp-controller="Sections" asp-action="Show" asp-route-slug="@navSection.Slug">
+                        <span>@navSection.Title</span>
+                        <svg class="icon icon-sm"><use href="#i-chevron-right" /></svg>
+                    </a>
+                }
+            </nav>
+            <partial name="_LoginPartial" view-data='new ViewDataDictionary(ViewData) { { "Variant", "drawer" } }' />
+        </div>
+    </dialog>
+
+    <script src="~/js/portal.js" asp-append-version="true" defer></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

@@ -1,17 +1,20 @@
 @model PortalArticleCardViewModel
+@{
+    var accent = PortalApp.Services.PortalSectionRegistry.Resolve(Model.CategoryName).AccentColor;
+}
 
-<article class="mini-story" onclick="if(event.target.tagName !== 'A') location.href='@Url.Action("Show", "Home", new { id = Model.Id })'">
-    <div class="mini-story-copy">
-        <a class="mini-story-category" asp-controller="Sections" asp-action="Show" asp-route-slug="@Model.CategorySlug">@Model.CategoryName</a>
-        <h3 class="mini-story-title">
+<article class="mini-card" style="--accent:@accent" data-reveal>
+    <div class="mini-card-body">
+        <a class="chip" asp-controller="Sections" asp-action="Show" asp-route-slug="@Model.CategorySlug">@Model.CategoryName</a>
+        <h3 class="mini-card-title">
             <a asp-controller="Home" asp-action="Show" asp-route-id="@Model.Id">@Model.Title</a>
         </h3>
-        <div class="meta-row">
-            <span>@Model.CreatedAt.ToString("dd.MM.yyyy")</span>
-            <span>@Model.ReadTimeMinutes min</span>
+        <div class="meta">
+            <time datetime="@Model.CreatedAt.ToString("yyyy-MM-ddTHH:mm:ss")" data-relative>@Model.CreatedAt.ToString("dd.MM.yyyy")</time>
+            <span class="meta-dot">@Model.ReadTimeMinutes min</span>
         </div>
     </div>
-    <a class="mini-story-media" asp-controller="Home" asp-action="Show" asp-route-id="@Model.Id">
-        <img src="@Model.CoverImageUrl" alt="@Model.Title" />
-    </a>
+    <div class="mini-card-media">
+        <img src="@Model.CoverImageUrl" alt="" loading="lazy" decoding="async" />
+    </div>
 </article>

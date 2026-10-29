@@ -32,11 +32,11 @@ namespace PortalApp.Areas.Identity.Pages.Account
 
         public class InputModel
         {
-            [Required]
-            [EmailAddress]
+            [Required(ErrorMessage = "Shkruani email-in.")]
+            [EmailAddress(ErrorMessage = "Email-i nuk është i vlefshëm.")]
             public string Email { get; set; }
 
-            [Required]
+            [Required(ErrorMessage = "Shkruani fjalëkalimin.")]
             [DataType(DataType.Password)]
             public string Password { get; set; }
 

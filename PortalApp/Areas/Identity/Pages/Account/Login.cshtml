@@ -5,51 +5,49 @@
     ViewData["Title"] = "Kyçu";
 }
 
-<div class="auth-page">
-    <div class="container">
-        <div class="auth-wrapper">
-            <div class="auth-card">
-                <div class="auth-card-header">
-                    <h2>Mirësevini</h2>
-                    <p>Hyni në llogarinë tuaj në ZëriYnë</p>
+<section class="auth">
+    <div class="auth-card">
+        <span class="brand-mark" aria-hidden="true">ZY</span>
+        <h1>Mirë se vini</h1>
+        <p class="auth-card-intro">Hyni në llogarinë tuaj në ZëriYnë.</p>
+
+        <form id="account" method="post" class="auth-form" novalidate>
+            <div asp-validation-summary="ModelOnly" class="form-summary" role="alert"></div>
+
+            <div>
+                <div class="field">
+                    <input asp-for="Input.Email" type="email" autocomplete="username" aria-required="true" placeholder=" " />
+                    <label asp-for="Input.Email">Email-i</label>
                 </div>
-                <div class="auth-card-body">
-                    <form id="account" method="post" class="auth-form">
-                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3" role="alert"></div>
-                        
-                        <div class="form-floating mb-3">
-                            <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
-                            <label asp-for="Input.Email" class="form-label">Email adresa</label>
-                            <span asp-validation-for="Input.Email" class="text-danger small"></span>
-                        </div>
-                        
-                        <div class="form-floating mb-3">
-                            <input asp-for="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="password" />
-                            <label asp-for="Input.Password" class="form-label">Fjalëkalimi</label>
-                            <span asp-validation-for="Input.Password" class="text-danger small"></span>
-                        </div>
-                        
-                        <div class="d-flex justify-content-between align-items-center mb-4">
-                            <div class="form-check custom-checkbox">
-                                <input class="form-check-input" asp-for="Input.RememberMe" />
-                                <label asp-for="Input.RememberMe" class="form-check-label">Mbaj mend</label>
-                            </div>
-                            <a id="forgot-password" asp-page="./ForgotPassword" class="auth-link">Keni harruar fjalëkalimin?</a>
-                        </div>
-                        
-                        <button id="login-submit" type="submit" class="w-100 primary-button auth-btn">Kyçu në Llogari</button>
-                        
-                        <div class="mt-4 text-center">
-                            <span class="text-muted">Nuk keni llogari?</span>
-                            <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl" class="auth-link ms-1">Regjistrohuni këtu</a>
-                        </div>
-                    </form>
-                </div>
+                <span asp-validation-for="Input.Email" class="field-error"></span>
             </div>
-        </div>
+
+            <div>
+                <div class="field">
+                    <input asp-for="Input.Password" autocomplete="current-password" aria-required="true" placeholder=" " />
+                    <label asp-for="Input.Password">Fjalëkalimi</label>
+                </div>
+                <span asp-validation-for="Input.Password" class="field-error"></span>
+            </div>
+
+            <div class="auth-options">
+                <label class="check">
+                    <input asp-for="Input.RememberMe" />
+                    Më mbaj mend
+                </label>
+                <a id="forgot-password" asp-page="./ForgotPassword" class="auth-link">Keni harruar fjalëkalimin?</a>
+            </div>
+
+            <button id="login-submit" type="submit" class="btn btn-primary btn-block">Kyçu</button>
+
+            <p class="auth-foot">
+                Nuk keni llogari?
+                <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl" class="auth-link">Regjistrohuni</a>
+            </p>
+        </form>
     </div>
-</div>
+</section>
 
 @section Scripts {
-    <partial name="_ValidationScriptsPartial" />
+    <partial name="~/Views/Shared/Partials/_PortalValidationScripts.cshtml" />
 }

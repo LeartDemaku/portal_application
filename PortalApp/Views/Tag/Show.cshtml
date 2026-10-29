@@ -1,9 +1,14 @@
 @model PortalListingPageViewModel
 @{
     ViewData["Title"] = Model.Title;
+    ViewData["Description"] = Model.Description;
+    if (Model.FeaturedArticle != null)
+    {
+        ViewData["OgImage"] = Model.FeaturedArticle.CoverImageUrl;
+    }
 }
 
-<div class="portal-page">
+<div class="page">
     <div class="container">
         <partial name="~/Views/Shared/Partials/_PortalListing.cshtml" model="Model" />
     </div>

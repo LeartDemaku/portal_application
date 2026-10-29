@@ -5,68 +5,67 @@
     ViewData["Title"] = "Regjistrohu";
 }
 
-<div class="auth-page">
-    <div class="container">
-        <div class="auth-wrapper">
-            <div class="auth-card">
-                <div class="auth-card-header">
-                    <h2>Regjistrohu</h2>
-                    <p>Krijo një llogari në ZëriYnë për të shijuar eksperiencën e plotë.</p>
+<section class="auth">
+    <div class="auth-card is-wide">
+        <span class="brand-mark" aria-hidden="true">ZY</span>
+        <h1>Krijo llogarinë</h1>
+        <p class="auth-card-intro">Regjistrohuni në ZëriYnë për eksperiencën e plotë.</p>
+
+        <form method="post" class="auth-form" asp-route-returnUrl="@Model.ReturnUrl" novalidate>
+            <div asp-validation-summary="ModelOnly" class="form-summary" role="alert"></div>
+
+            <div class="auth-row">
+                <div>
+                    <div class="field">
+                        <input asp-for="Input.FirstName" autocomplete="given-name" placeholder=" " />
+                        <label asp-for="Input.FirstName">Emri</label>
+                    </div>
+                    <span asp-validation-for="Input.FirstName" class="field-error"></span>
                 </div>
-                <div class="auth-card-body">
-                    <form method="post" class="auth-form">
-                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-floating mb-3">
-                                    <input asp-for="Input.FirstName" class="form-control" placeholder="Emri" />
-                                    <label asp-for="Input.FirstName">Emri</label>
-                                    <span asp-validation-for="Input.FirstName" class="text-danger small"></span>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-floating mb-3">
-                                    <input asp-for="Input.LastName" class="form-control" placeholder="Mbiemri" />
-                                    <label asp-for="Input.LastName">Mbiemri</label>
-                                    <span asp-validation-for="Input.LastName" class="text-danger small"></span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-floating mb-3">
-                            <input asp-for="Input.Email" class="form-control" placeholder="Email" />
-                            <label asp-for="Input.Email">Email</label>
-                            <span asp-validation-for="Input.Email" class="text-danger small"></span>
-                        </div>
-
-                        <div class="form-floating mb-3">
-                            <input asp-for="Input.Password" class="form-control" placeholder="Fjalekalimi" />
-                            <label asp-for="Input.Password">Fjalëkalimi</label>
-                            <span asp-validation-for="Input.Password" class="text-danger small"></span>
-                        </div>
-
-                        <div class="form-floating mb-4">
-                            <input asp-for="Input.ConfirmPassword" class="form-control" placeholder="Konfirmo fjalekalimin" />
-                            <label asp-for="Input.ConfirmPassword">Konfirmo fjalëkalimin</label>
-                            <span asp-validation-for="Input.ConfirmPassword" class="text-danger small"></span>
-                        </div>
-
-                        <button type="submit" class="w-100 primary-button auth-btn">
-                            Krijo Llogarinë
-                        </button>
-                        
-                        <div class="mt-4 text-center">
-                            <span class="text-muted">Keni tashmë një llogari?</span>
-                            <a asp-page="./Login" asp-route-returnUrl="@Model.ReturnUrl" class="auth-link ms-1">Kyçuni këtu</a>
-                        </div>
-                    </form>
+                <div>
+                    <div class="field">
+                        <input asp-for="Input.LastName" autocomplete="family-name" placeholder=" " />
+                        <label asp-for="Input.LastName">Mbiemri</label>
+                    </div>
+                    <span asp-validation-for="Input.LastName" class="field-error"></span>
                 </div>
             </div>
-        </div>
+
+            <div>
+                <div class="field">
+                    <input asp-for="Input.Email" type="email" autocomplete="email" placeholder=" " />
+                    <label asp-for="Input.Email">Email-i</label>
+                </div>
+                <span asp-validation-for="Input.Email" class="field-error"></span>
+            </div>
+
+            <div class="auth-row">
+                <div>
+                    <div class="field">
+                        <input asp-for="Input.Password" autocomplete="new-password" placeholder=" " />
+                        <label asp-for="Input.Password">Fjalëkalimi</label>
+                    </div>
+                    <span asp-validation-for="Input.Password" class="field-error"></span>
+                </div>
+                <div>
+                    <div class="field">
+                        <input asp-for="Input.ConfirmPassword" autocomplete="new-password" placeholder=" " />
+                        <label asp-for="Input.ConfirmPassword">Konfirmo fjalëkalimin</label>
+                    </div>
+                    <span asp-validation-for="Input.ConfirmPassword" class="field-error"></span>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block">Krijo llogarinë</button>
+
+            <p class="auth-foot">
+                Keni tashmë llogari?
+                <a asp-page="./Login" asp-route-returnUrl="@Model.ReturnUrl" class="auth-link">Kyçuni</a>
+            </p>
+        </form>
     </div>
-</div>
+</section>
 
 @section Scripts {
-    <partial name="_ValidationScriptsPartial" />
+    <partial name="~/Views/Shared/Partials/_PortalValidationScripts.cshtml" />
 }

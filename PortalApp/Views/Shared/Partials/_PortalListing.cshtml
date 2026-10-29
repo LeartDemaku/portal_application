@@ -1,48 +1,60 @@
 @model PortalListingPageViewModel
+@{
+    var isSearch = Model.CategorySlug == null && Model.TagName == null;
+    var hasQuery = !string.IsNullOrWhiteSpace(Model.SearchQuery);
+    var totalArticles = (Model.FeaturedArticle != null ? 1 : 0) + Model.HeadlineArticles.Count + Model.Articles.Count;
+    var eyebrow = Model.CategorySlug != null ? "Kategoria" : Model.TagName != null ? "Tema" : "Kërkimi";
+    var accent = string.IsNullOrWhiteSpace(Model.AccentColor) ? "var(--brand)" : Model.AccentColor;
+}
 
-<section class="listing-hero" style="--listing-accent:@Model.AccentColor">
+<section class="listing-hero @(isSearch ? "has-search" : null)" style="--accent:@accent">
     <div>
-        <span class="eyebrow">Editorial</span>
+        <span class="eyebrow">@eyebrow</span>
         <h1>@Model.Title</h1>
         <p>@Model.Description</p>
+        @if (!isSearch || hasQuery)
+        {
+            <p class="listing-count"><strong>@totalArticles</strong> @(totalArticles == 1 ? "artikull" : "artikuj")</p>
+        }
     </div>
-    <form class="listing-search" asp-controller="Home" asp-action="Search" method="get">
-        <input type="search" name="q" value="@Model.SearchQuery" placeholder="Kerko ne portal" />
-        <button type="submit">Kerko</button>
-    </form>
+    @if (isSearch)
+    {
+        <form class="inline-search" asp-controller="Home" asp-action="Search" method="get" role="search">
+            <svg class="icon icon-sm"><use href="#i-search" /></svg>
+            <input type="search" name="q" value="@Model.SearchQuery" placeholder="Shkruani një fjalë kyçe…" aria-label="Fjala kyçe" enterkeyhint="search" />
+            <button class="btn btn-primary" type="submit">Kërko</button>
+        </form>
+    }
 </section>
 
 @if (Model.FeaturedArticle != null)
 {
+    var featured = Model.FeaturedArticle;
+    var featuredAccent = PortalApp.Services.PortalSectionRegistry.Resolve(featured.CategoryName).AccentColor;
+
     @if (Model.HeadlineArticles.Any())
     {
-        <section class="hero-grid compact">
-            <article class="hero-card premium-hero compact">
-                <a class="premium-hero-cover-link" asp-controller="Home" asp-action="Show" asp-route-id="@Model.FeaturedArticle.Id">
-                    <img class="premium-hero-img" src="@Model.FeaturedArticle.CoverImageUrl" alt="@Model.FeaturedArticle.Title" />
-                    <div class="premium-hero-overlay"></div>
-                </a>
-                <div class="premium-hero-content">
-                    <div class="premium-hero-meta">
-                        <a class="premium-hero-category" asp-controller="Sections" asp-action="Show" asp-route-slug="@Model.FeaturedArticle.CategorySlug">@Model.FeaturedArticle.CategoryName</a>
+        <section class="hero" aria-label="Lajmet kryesore">
+            <article class="hero-main" style="--accent:@featuredAccent">
+                <div class="hero-main-media">
+                    <img src="@featured.CoverImageUrl" alt="" fetchpriority="high" decoding="async" />
+                </div>
+                <div class="hero-main-body">
+                    <div>
+                        <a class="chip chip-solid" asp-controller="Sections" asp-action="Show" asp-route-slug="@featured.CategorySlug">@featured.CategoryName</a>
                     </div>
-                    <h2 class="premium-hero-title">
-                        <a asp-controller="Home" asp-action="Show" asp-route-id="@Model.FeaturedArticle.Id">@Model.FeaturedArticle.Title</a>
+                    <h2 class="hero-main-title">
+                        <a asp-controller="Home" asp-action="Show" asp-route-id="@featured.Id">@featured.Title</a>
                     </h2>
-                    <p class="premium-hero-summary">@Model.FeaturedArticle.Summary</p>
-                    <div class="premium-hero-footer">
-                        <div class="premium-hero-author">
-                            <span>@Model.FeaturedArticle.AuthorName</span>
-                        </div>
-                        <div class="premium-hero-details">
-                            <span>@Model.FeaturedArticle.CreatedAt.ToString("dd.MM.yyyy")</span>
-                            <span class="dot-separator">•</span>
-                            <span>@Model.FeaturedArticle.ReadTimeMinutes min lexim</span>
-                        </div>
+                    <p class="hero-main-summary">@featured.Summary</p>
+                    <div class="meta">
+                        <strong>@featured.AuthorName</strong>
+                        <time class="meta-dot" datetime="@featured.CreatedAt.ToString("yyyy-MM-ddTHH:mm:ss")" data-relative>@featured.CreatedAt.ToString("dd.MM.yyyy")</time>
+                        <span class="meta-dot">@featured.ReadTimeMinutes min lexim</span>
                     </div>
                 </div>
             </article>
-            <div class="headline-stack">
+            <div class="hero-side">
                 @foreach (var article in Model.HeadlineArticles)
                 {
                     <partial name="~/Views/Home/Partials/_ArticleMini.cshtml" model="article" />
@@ -52,40 +64,36 @@
     }
     else
     {
-        <section class="single-featured-section">
-            <article class="featured-horizontal-card">
-                <a class="featured-horizontal-media" asp-controller="Home" asp-action="Show" asp-route-id="@Model.FeaturedArticle.Id">
-                    <img src="@Model.FeaturedArticle.CoverImageUrl" alt="@Model.FeaturedArticle.Title" />
-                </a>
-                <div class="featured-horizontal-body">
-                    <div class="story-card-meta">
-                        <a class="premium-hero-category" asp-controller="Sections" asp-action="Show" asp-route-slug="@Model.FeaturedArticle.CategorySlug">@Model.FeaturedArticle.CategoryName</a>
-                        <span>@Model.FeaturedArticle.CreatedAt.ToString("dd.MM.yyyy")</span>
-                    </div>
-                    <h2 class="featured-horizontal-title">
-                        <a asp-controller="Home" asp-action="Show" asp-route-id="@Model.FeaturedArticle.Id">@Model.FeaturedArticle.Title</a>
-                    </h2>
-                    <p class="featured-horizontal-summary">@Model.FeaturedArticle.Summary</p>
-                    <div class="story-card-footer">
-                        <span>@Model.FeaturedArticle.AuthorName</span>
-                        <span>@Model.FeaturedArticle.ReadTimeMinutes min lexim</span>
-                    </div>
+        <article class="featured-row" style="--accent:@featuredAccent">
+            <div class="featured-row-media">
+                <img src="@featured.CoverImageUrl" alt="" fetchpriority="high" decoding="async" />
+            </div>
+            <div class="featured-row-body">
+                <a class="chip" asp-controller="Sections" asp-action="Show" asp-route-slug="@featured.CategorySlug">@featured.CategoryName</a>
+                <h2 class="featured-row-title">
+                    <a asp-controller="Home" asp-action="Show" asp-route-id="@featured.Id">@featured.Title</a>
+                </h2>
+                <p class="featured-row-summary">@featured.Summary</p>
+                <div class="meta">
+                    <strong>@featured.AuthorName</strong>
+                    <time class="meta-dot" datetime="@featured.CreatedAt.ToString("yyyy-MM-ddTHH:mm:ss")" data-relative>@featured.CreatedAt.ToString("dd.MM.yyyy")</time>
+                    <span class="meta-dot">@featured.ReadTimeMinutes min lexim</span>
                 </div>
-            </article>
-        </section>
+            </div>
+        </article>
     }
 }
 
 @if (Model.Articles.Any())
 {
-    <section class="content-section">
-        <div class="section-heading">
+    <section class="section" aria-labelledby="listing-more-title">
+        <div class="section-head">
             <div>
                 <span class="eyebrow">Arkiva</span>
-                <h2>Me shume nga kjo faqe</h2>
+                <h2 id="listing-more-title">Më shumë artikuj</h2>
             </div>
         </div>
-        <div class="editorial-grid">
+        <div class="story-grid">
             @foreach (var article in Model.Articles)
             {
                 <partial name="~/Views/Home/Partials/_Article.cshtml" model="article" />
@@ -96,8 +104,23 @@
 else if (Model.FeaturedArticle == null)
 {
     <section class="empty-state">
-        <h2>Nuk u gjet asnje artikull</h2>
-        <p>Provoni nje kerkese tjeter ose rikthehuni ne balline.</p>
-        <a class="primary-link" asp-controller="Home" asp-action="Index">Kthehu ne balline</a>
+        <span class="empty-state-icon"><svg class="icon"><use href="#i-@(isSearch ? "search" : "inbox")" /></svg></span>
+        @if (isSearch && !hasQuery)
+        {
+            <h2>Çfarë dëshironi të lexoni?</h2>
+            <p>Shkruani një fjalë kyçe për të kërkuar në tituj, përmbajtje, kategori dhe tema.</p>
+        }
+        else if (isSearch)
+        {
+            <h2>Nuk u gjet asnjë artikull</h2>
+            <p>Provoni një fjalë tjetër ose më të shkurtër.</p>
+            <a class="btn btn-ghost" asp-controller="Home" asp-action="Index">Kthehu në ballinë</a>
+        }
+        else
+        {
+            <h2>Ende nuk ka artikuj këtu</h2>
+            <p>Kjo faqe do të mbushet sapo redaksia të publikojë artikujt e parë.</p>
+            <a class="btn btn-ghost" asp-controller="Home" asp-action="Index">Kthehu në ballinë</a>
+        }
     </section>
 }

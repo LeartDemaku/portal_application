@@ -1,21 +1,27 @@
 ﻿@page
 @model LogoutModel
 @{
-    ViewData["Title"] = "Log out";
+    ViewData["Title"] = "Dalja";
 }
 
-<header>
-    <h1>@ViewData["Title"]</h1>
-    @{
-        if (User.Identity?.IsAuthenticated ?? false)
+<section class="auth">
+    <div class="auth-card">
+        <span class="brand-mark" aria-hidden="true">ZY</span>
+        @if (User.Identity?.IsAuthenticated ?? false)
         {
-            <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/", new { area = "" })" method="post">
-                <button type="submit" class="nav-link btn btn-link text-dark">Click here to Logout</button>
+            <h1>Dëshironi të dilni?</h1>
+            <p class="auth-card-intro">Do të dilni nga llogaria juaj në këtë pajisje.</p>
+            <form class="auth-form" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/", new { area = "" })" method="post">
+                <button type="submit" class="btn btn-primary btn-block">Dil nga llogaria</button>
             </form>
         }
         else
         {
-            <p>You have successfully logged out of the application.</p>
+            <h1>Dolët me sukses</h1>
+            <p class="auth-card-intro">Ju dolët nga llogaria. Shihemi së shpejti.</p>
+            <div class="auth-form">
+                <a class="btn btn-primary btn-block" asp-area="" asp-controller="Home" asp-action="Index">Kthehu në ballinë</a>
+            </div>
         }
-    }
-</header>
+    </div>
+</section>

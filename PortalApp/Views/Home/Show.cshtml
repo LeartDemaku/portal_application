@@ -1,33 +1,110 @@
 @model PortalArticleDetailsViewModel
+@using System.Text.Json
+@using System.Text.RegularExpressions
 @{
     ViewData["Title"] = Model.Title;
+    ViewData["OgImage"] = Model.CoverImageUrl;
+    ViewData["OgType"] = "article";
+
+    // Përshkrimi për Google: 160 shkronjat e para të tekstit, pa etiketa HTML
+    var plainText = Regex.Replace(System.Net.WebUtility.HtmlDecode(Regex.Replace(Model.Content, "<.*?>", " ")), @"\s+", " ").Trim();
+    var description = plainText.Length > 160 ? $"{plainText[..157].TrimEnd()}…" : plainText;
+    ViewData["Description"] = description;
+
+    var siteUrl = $"{Context.Request.Scheme}://{Context.Request.Host}{Context.Request.PathBase}";
+    var articleUrl = $"{siteUrl}{Context.Request.Path}";
+    var encodedUrl = Uri.EscapeDataString(articleUrl);
+    var encodedTitle = Uri.EscapeDataString(Model.Title);
+    var accent = PortalApp.Services.PortalSectionRegistry.Resolve(Model.CategoryName).AccentColor;
+    var authorInitial = string.IsNullOrWhiteSpace(Model.AuthorName) ? "R" : Model.AuthorName[..1];
+    var hasHtmlContent = !string.IsNullOrWhiteSpace(Model.Content) && (Model.Content.Contains("<p>") || Model.Content.Contains("<br>") || Model.Content.Contains("<div>") || Model.Content.Contains("<h"));
+
+    // Të dhëna të strukturuara (schema.org) që Google ta njohë faqen si lajm
+    var structuredData = JsonSerializer.Serialize(new Dictionary<string, object>
+    {
+        ["@context"] = "https://schema.org",
+        ["@type"] = "NewsArticle",
+        ["headline"] = Model.Title,
+        ["description"] = description,
+        ["image"] = new[] { $"{siteUrl}{Model.CoverImageUrl}" },
+        ["datePublished"] = Model.CreatedAt.ToString("yyyy-MM-ddTHH:mm:ss"),
+        ["articleSection"] = Model.CategoryName,
+        ["keywords"] = string.Join(", ", Model.Tags),
+        ["mainEntityOfPage"] = articleUrl,
+        ["author"] = new Dictionary<string, object> { ["@type"] = "Person", ["name"] = Model.AuthorName },
+        ["publisher"] = new Dictionary<string, object> { ["@type"] = "Organization", ["name"] = "ZëriYnë" }
+    });
 }
 
-<div class="portal-page">
+@section Head {
+    <meta property="article:published_time" content="@Model.CreatedAt.ToString("yyyy-MM-ddTHH:mm:ss")" />
+    <meta property="article:section" content="@Model.CategoryName" />
+    <script type="application/ld+json">@Html.Raw(structuredData)</script>
+}
+
+@section HeaderProgress {
+    <div class="read-progress" data-read-progress aria-hidden="true"></div>
+}
+
+<div class="page" style="--accent:@accent">
     <div class="container">
-        <section class="article-hero">
-            <div class="article-hero-copy">
-                <a class="article-category" asp-controller="Sections" asp-action="Show" asp-route-slug="@Model.CategorySlug">@Model.CategoryName</a>
-                <h1>@Model.Title</h1>
-                <div class="meta-row">
-                    <span>@Model.AuthorName</span>
-                    <span>@Model.CreatedAt.ToString("dd.MM.yyyy")</span>
-                    <span>@Model.ReadTimeMinutes min lexim</span>
+        <nav class="breadcrumb" aria-label="Ku ndodheni">
+            <a asp-controller="Home" asp-action="Index">Ballina</a>
+            <svg class="icon"><use href="#i-chevron-right" /></svg>
+            <a asp-controller="Sections" asp-action="Show" asp-route-slug="@Model.CategorySlug">@Model.CategoryName</a>
+            <svg class="icon"><use href="#i-chevron-right" /></svg>
+            <span aria-current="page">@Model.Title</span>
+        </nav>
+
+        <header class="article-header">
+            <a class="chip chip-solid" asp-controller="Sections" asp-action="Show" asp-route-slug="@Model.CategorySlug">@Model.CategoryName</a>
+            <h1>@Model.Title</h1>
+
+            <div class="article-byline">
+                <div class="author">
+                    <span class="avatar" aria-hidden="true">@authorInitial</span>
+                    <div>
+                        <strong>@Model.AuthorName</strong>
+                        <div class="meta">
+                            <time datetime="@Model.CreatedAt.ToString("yyyy-MM-ddTHH:mm:ss")">@Model.CreatedAt.ToString("dd.MM.yyyy, HH:mm")</time>
+                            <span class="meta-dot"><svg class="icon icon-sm"><use href="#i-clock" /></svg> @Model.ReadTimeMinutes min lexim</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="share">
+                    <span class="share-label">Shpërndaje</span>
+                    <button class="icon-btn" type="button" data-native-share data-url="@articleUrl" aria-label="Shpërndaje">
+                        <svg class="icon"><use href="#i-share" /></svg>
+                    </button>
+                    <a class="icon-btn" href="https://www.facebook.com/sharer/sharer.php?u=@encodedUrl" target="_blank" rel="noopener noreferrer" aria-label="Shpërndaje në Facebook">
+                        <svg class="icon"><use href="#i-facebook" /></svg>
+                    </a>
+                    <a class="icon-btn" href="https://twitter.com/intent/tweet?url=@encodedUrl&amp;text=@encodedTitle" target="_blank" rel="noopener noreferrer" aria-label="Shpërndaje në X">
+                        <svg class="icon"><use href="#i-x" /></svg>
+                    </a>
+                    <a class="icon-btn" href="https://wa.me/?text=@encodedTitle%20@encodedUrl" target="_blank" rel="noopener noreferrer" aria-label="Shpërndaje në WhatsApp">
+                        <svg class="icon"><use href="#i-whatsapp" /></svg>
+                    </a>
+                    <button class="icon-btn" type="button" data-copy-link data-url="@articleUrl" aria-label="Kopjo linkun">
+                        <svg class="icon"><use href="#i-link" /></svg>
+                    </button>
                 </div>
             </div>
-            <div class="article-hero-media">
-                <img src="@Model.CoverImageUrl" alt="@Model.Title" />
-            </div>
-        </section>
+        </header>
+
+        <figure class="article-cover">
+            <img src="@Model.CoverImageUrl" alt="@Model.Title" fetchpriority="high" decoding="async" />
+        </figure>
 
         <div class="article-layout">
-            <article class="article-body-card">
-                <div class="article-body">
-                    @if (!string.IsNullOrWhiteSpace(Model.Content) && (Model.Content.Contains("<p>") || Model.Content.Contains("<br>") || Model.Content.Contains("<div>") || Model.Content.Contains("<h")))
+            <div>
+                <article class="prose" data-article-body>
+                    @if (hasHtmlContent)
                     {
                         @Html.Raw(Model.Content)
                     }
-                    else if (Model.Paragraphs != null && Model.Paragraphs.Any())
+                    else if (Model.Paragraphs.Any())
                     {
                         @foreach (var paragraph in Model.Paragraphs)
                         {
@@ -38,11 +115,11 @@
                     {
                         @Html.Raw(Model.Content)
                     }
-                </div>
+                </article>
 
                 @if (Model.Tags.Any())
                 {
-                    <div class="tag-list">
+                    <div class="tag-cloud" aria-label="Temat">
                         @foreach (var tag in Model.Tags)
                         {
                             <a asp-controller="Tag" asp-action="Show" asp-route-name="@tag">#@tag</a>
@@ -50,35 +127,45 @@
                     </div>
                 }
 
-                <section class="comments-section">
-                    <div class="section-heading">
+                <section class="comments" id="komentet" aria-labelledby="comments-title">
+                    <div class="section-head">
                         <div>
-                            <span class="eyebrow">Komente</span>
-                            <h2>Diskutimi i lexuesve</h2>
+                            <span class="eyebrow">Diskutimi</span>
+                            <h2 id="comments-title">Komentet <span class="comment-count">@Model.Comments.Count</span></h2>
                         </div>
                     </div>
 
-                    <form class="comment-form" method="post" asp-controller="Home" asp-action="Comment" asp-route-id="@Model.Id">
-                        @Html.AntiForgeryToken()
-                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <form class="comment-form" method="post" asp-controller="Home" asp-action="Comment" asp-route-id="@Model.Id" asp-fragment="komentet" novalidate>
+                        <div asp-validation-summary="ModelOnly" class="form-summary" role="alert"></div>
                         <div class="comment-form-grid">
-                            <div class="form-field">
-                                <label asp-for="CommentForm.Name">Emri</label>
-                                <input asp-for="CommentForm.Name" />
-                                <span asp-validation-for="CommentForm.Name" class="text-danger"></span>
+                            <div>
+                                <div class="field">
+                                    <input asp-for="CommentForm.Name" placeholder=" " autocomplete="name" maxlength="100" />
+                                    <label asp-for="CommentForm.Name">Emri</label>
+                                </div>
+                                <span asp-validation-for="CommentForm.Name" class="field-error"></span>
                             </div>
-                            <div class="form-field">
-                                <label asp-for="CommentForm.Email">Email</label>
-                                <input asp-for="CommentForm.Email" />
-                                <span asp-validation-for="CommentForm.Email" class="text-danger"></span>
+                            <div>
+                                <div class="field">
+                                    <input asp-for="CommentForm.Email" placeholder=" " autocomplete="email" maxlength="200" />
+                                    <label asp-for="CommentForm.Email">Email</label>
+                                </div>
+                                <span asp-validation-for="CommentForm.Email" class="field-error"></span>
                             </div>
                         </div>
-                        <div class="form-field">
-                            <label asp-for="CommentForm.Comment">Komenti</label>
-                            <textarea asp-for="CommentForm.Comment" rows="5"></textarea>
-                            <span asp-validation-for="CommentForm.Comment" class="text-danger"></span>
+                        <div>
+                            <div class="field">
+                                <textarea asp-for="CommentForm.Comment" placeholder=" " rows="5" maxlength="2000"></textarea>
+                                <label asp-for="CommentForm.Comment">Shkruani komentin tuaj</label>
+                            </div>
+                            <span asp-validation-for="CommentForm.Comment" class="field-error"></span>
                         </div>
-                        <button type="submit" class="primary-button">Dergo komentin</button>
+                        <div class="comment-form-foot">
+                            <p>Email-i juaj nuk publikohet.</p>
+                            <button type="submit" class="btn btn-primary">
+                                <svg class="icon icon-sm"><use href="#i-message" /></svg> Dërgo komentin
+                            </button>
+                        </div>
                     </form>
 
                     <div class="comment-list">
@@ -91,42 +178,43 @@
                         }
                         else
                         {
-                            <div class="empty-state small">
-                                <h3>Nuk ka komente ende</h3>
-                                <p>Behu i pari qe hap diskutimin per kete artikull.</p>
+                            <div class="empty-state is-small">
+                                <span class="empty-state-icon"><svg class="icon"><use href="#i-message" /></svg></span>
+                                <h3>Ende nuk ka komente</h3>
+                                <p>Bëhuni i pari që hap diskutimin për këtë artikull.</p>
                             </div>
                         }
                     </div>
                 </section>
-            </article>
+            </div>
 
-            <aside class="article-sidebar">
-                <div class="sidebar-card">
-                    <span class="eyebrow">Me shume nga @Model.CategoryName</span>
-                    <h3>Artikuj te ngjashem</h3>
-                    <div class="sidebar-list">
-                        @if (Model.RelatedArticles.Any())
+            <aside class="article-aside" aria-label="Artikuj të ngjashëm">
+                <div class="aside-card">
+                    <span class="eyebrow">Më shumë nga @Model.CategoryName</span>
+                    <h2>Lexoni edhe</h2>
+                    @if (Model.RelatedArticles.Any())
+                    {
+                        @foreach (var article in Model.RelatedArticles)
                         {
-                            @foreach (var article in Model.RelatedArticles)
-                            {
-                                <partial name="Partials/_ArticleMini" model="article" />
-                            }
+                            <partial name="Partials/_ArticleMini" model="article" />
                         }
-                        else
-                        {
-                            <div class="empty-state small">
-                                <h3>Nuk ka artikuj te tjere</h3>
-                                <p>Kjo kategori nuk ka ende artikuj te lidhur.</p>
-                            </div>
-                        }
-                    </div>
+                    }
+                    else
+                    {
+                        <div class="empty-state is-small">
+                            <h3>Ende nuk ka artikuj të tjerë</h3>
+                            <p>Kjo kategori nuk ka ende artikuj të lidhur.</p>
+                        </div>
+                    }
                 </div>
+                <a class="btn btn-ghost btn-block" asp-controller="Sections" asp-action="Show" asp-route-slug="@Model.CategorySlug">
+                    Të gjitha nga @Model.CategoryName <svg class="icon icon-sm"><use href="#i-arrow-right" /></svg>
+                </a>
             </aside>
         </div>
     </div>
 </div>
 
-@section Scripts
-{
-    <partial name="_ValidationScriptsPartial" />
+@section Scripts {
+    <partial name="~/Views/Shared/Partials/_PortalValidationScripts.cshtml" />
 }

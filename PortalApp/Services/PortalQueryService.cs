@@ -17,7 +17,7 @@ namespace PortalApp.Services
 
     public class PortalQueryService : IPortalQueryService
     {
-        private const string FallbackImage = "/images/articles/lajmi_kryesor.png";
+        private const string FallbackImage = "/images/portal/placeholder.svg";
         private readonly ApplicationDbContext _db;
 
         public PortalQueryService(ApplicationDbContext db)
@@ -127,8 +127,8 @@ namespace PortalApp.Services
 
             return new PortalListingPageViewModel
             {
-                Title = $"Tag: #{cleanName}",
-                Description = "Artikuj te filtruar sipas temes dhe fjaleve kyce.",
+                Title = $"#{cleanName}",
+                Description = "Të gjithë artikujt e lidhur me këtë temë.",
                 AccentColor = "#7c3aed",
                 TagName = cleanName,
                 FeaturedArticle = ordered.Select(MapCard).FirstOrDefault(),
@@ -145,8 +145,8 @@ namespace PortalApp.Services
             {
                 return new PortalListingPageViewModel
                 {
-                    Title = "Kerko",
-                    Description = "Gjeni lajme sipas titullit, permbajtjes, kategorise ose tagut.",
+                    Title = "Kërko në portal",
+                    Description = "Gjeni lajme sipas titullit, përmbajtjes, kategorisë ose temës.",
                     AccentColor = "#334155",
                     SearchQuery = cleanQuery
                 };
@@ -167,8 +167,8 @@ namespace PortalApp.Services
 
             return new PortalListingPageViewModel
             {
-                Title = $"Rezultatet per \"{cleanQuery}\"",
-                Description = $"{ordered.Count} artikuj te gjetur nga kerkimi editorial.",
+                Title = $"Rezultatet për „{cleanQuery}“",
+                Description = ordered.Count == 1 ? "U gjet 1 artikull." : $"U gjetën {ordered.Count} artikuj.",
                 AccentColor = "#334155",
                 SearchQuery = cleanQuery,
                 FeaturedArticle = ordered.Select(MapCard).FirstOrDefault(),
@@ -276,7 +276,8 @@ namespace PortalApp.Services
 
         private static string BuildSummary(string content)
         {
-            var textOnly = System.Text.RegularExpressions.Regex.Replace(content, "<.*?>", string.Empty);
+            // Etiketat zëvendësohen me hapësirë që fjalët e paragrafëve të ndryshëm të mos ngjiten; &nbsp; etj. kthehen në tekst
+            var textOnly = System.Net.WebUtility.HtmlDecode(System.Text.RegularExpressions.Regex.Replace(content, "<.*?>", " "));
             var clean = string.Join(" ", textOnly
                 .Replace("\r", " ", StringComparison.Ordinal)
                 .Replace("\n", " ", StringComparison.Ordinal)

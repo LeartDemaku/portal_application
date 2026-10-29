@@ -1,14 +1,15 @@
 @model PortalArticleCardViewModel
+@{
+    var accent = PortalApp.Services.PortalSectionRegistry.Resolve(Model.CategoryName).AccentColor;
+    var isWide = ViewData["Wide"] as bool? == true;
+}
 
-<article class="story-card" onclick="if(event.target.tagName !== 'A') location.href='@Url.Action("Show", "Home", new { id = Model.Id })'">
-    <a class="story-card-media" asp-controller="Home" asp-action="Show" asp-route-id="@Model.Id">
-        <img src="@Model.CoverImageUrl" alt="@Model.Title" />
-    </a>
+<article class="story-card @(isWide ? "is-wide" : null)" style="--accent:@accent" data-reveal>
+    <div class="story-card-media">
+        <img src="@Model.CoverImageUrl" alt="" loading="lazy" decoding="async" />
+        <a class="chip chip-solid" asp-controller="Sections" asp-action="Show" asp-route-slug="@Model.CategorySlug">@Model.CategoryName</a>
+    </div>
     <div class="story-card-body">
-        <div class="story-card-meta">
-            <a asp-controller="Sections" asp-action="Show" asp-route-slug="@Model.CategorySlug">@Model.CategoryName</a>
-            <span>@Model.CreatedAt.ToString("dd.MM.yyyy")</span>
-        </div>
         <h3 class="story-card-title">
             <a asp-controller="Home" asp-action="Show" asp-route-id="@Model.Id">@Model.Title</a>
         </h3>
@@ -23,8 +24,11 @@
             </div>
         }
         <div class="story-card-footer">
-            <span>@Model.AuthorName</span>
-            <span>@Model.ReadTimeMinutes min</span>
+            <div class="meta">
+                <strong>@Model.AuthorName</strong>
+                <time class="meta-dot" datetime="@Model.CreatedAt.ToString("yyyy-MM-ddTHH:mm:ss")" data-relative>@Model.CreatedAt.ToString("dd.MM.yyyy")</time>
+                <span class="meta-dot">@Model.ReadTimeMinutes min lexim</span>
+            </div>
         </div>
     </div>
 </article>

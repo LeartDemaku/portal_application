@@ -124,12 +124,22 @@ if (app.Environment.IsDevelopment())
 }
 else
 {
-    app.UseExceptionHandler("/Error");
+    app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
-app.UseStaticFiles();
+app.UseStaticFiles(new StaticFileOptions
+{
+    OnPrepareResponse = context =>
+    {
+        // Skedarët me ?v=... (asp-append-version) ndryshojnë adresë sa herë ndryshojnë, prandaj ruhen 1 vit në shfletues
+        if (context.Context.Request.Query.ContainsKey("v"))
+        {
+            context.Context.Response.Headers.CacheControl = "public, max-age=31536000, immutable";
+        }
+    }
+});
 
 app.UseRouting();
 
